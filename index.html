@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041516";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041523";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5415,6 +5415,15 @@ Medieval.Save = (function (E) {
       var out = []; q.forEach(function (d) { if (d.id !== fbUser.uid) { var v = d.data(); v.uid = d.id; out.push(v); } }); cb(out);
     }, function () { /* hors ligne */ });
   }
+  /** Ajoute (ou change) un mot de passe sur le compte : utile pour se connecter depuis l'app iPhone. */
+  function setPassword(pw) {
+    if (!fbUser) return Promise.reject(new Error("Not signed in."));
+    if (!fbUser.email) return Promise.reject(new Error("This account has no e-mail address."));
+    var hasPw = (fbUser.providerData || []).some(function (p) { return p.providerId === "password"; });
+    if (hasPw) return fbUser.updatePassword(pw);
+    var cred = window.firebase.auth.EmailAuthProvider.credential(fbUser.email, pw);
+    return fbUser.linkWithCredential(cred);
+  }
   function signOut() {
     if (unwatch) { unwatch(); unwatch = null; }
     doc = null; fbUser = null; status.user = null; status.cloud = null;
@@ -5500,7 +5509,7 @@ Medieval.Save = (function (E) {
     hasCloud: function () { return !!doc; },
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
     listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
-    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose,
+    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose, setPassword: setPassword,
     db: function () { return fb && fbUser ? fb.db : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
@@ -5707,6 +5716,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (u) return html + '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(u.name) + '</b>' + (u.email && u.email !== u.name ? ' <span class="muted">(' + esc(u.email) + ')</span>' : "") + '. Your game is saved online and follows you on every device.</p>' +
       (S.status.cloudError || S.status.playerError ? '<p class="reasons">' + esc(S.status.cloudError || S.status.playerError) + '</p>' : (S.status.cloud ? '<p class="small muted">' + icon("check") + 'Last online save ' + F.time(S.status.cloud) + '.</p>' : "")) +
       (ui.diag ? '<p class="small">' + esc(ui.diag) + '</p>' : "") +
+      '<label class="lbl" for="accNewPass">Password for this account (to sign in from the iPhone home-screen app)</label><div class="row"><input id="accNewPass" type="password" autocomplete="new-password" placeholder="6+ characters" style="flex:1"><button class="btn" data-act="set-password">Save</button></div>' +
       '<div class="row"><button class="btn" data-act="diagnose">Check connection</button><button class="btn ghost" data-act="signout">Sign out</button></div></section>';
     return html + '<p class="small">Sign in to save your game online and play it on any device.</p>' +
       '<button class="btn primary wide" data-act="signin-google">' + icon("globe") + 'Sign in with Google</button>' +
@@ -5736,6 +5746,20 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       });
     });
   }
+  function welcomeSignedIn(p) {
+    p.then(function (remote) {
+      if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
+      if (remote) {
+        $("modal").hidden = true;
+        try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); } catch (e) { authError(e); return; }
+        M.refreshStatic(); renderChrome(); updateHud(); ensureShared();
+        toast(icon("check") + "<span>Welcome back, lord of <b>" + esc(state.name || "") + "</b>!</span>", "big");
+      } else {
+        var b = $("welcomeAcc");
+        if (b) b.outerHTML = '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(S.user().name) + '</b>. No city on this account yet: name your city below to found it.</p>';
+      }
+    }, authError);
+  }
   function afterSignIn(remote) {
     if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
     if (remote && (!state.name || remote.savedAt > (state.savedAt || 0) + 2000)) {
@@ -5747,7 +5771,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function authError(e) {
     var c = (e && e.code) || "", m = { "auth/invalid-credential": "Wrong e-mail or password.", "auth/wrong-password": "Wrong e-mail or password.", "auth/user-not-found": "No account with this e-mail: create one.",
-      "auth/email-already-in-use": "This e-mail already has an account: sign in.", "auth/weak-password": "Password too short (6 characters minimum).", "auth/invalid-email": "Invalid e-mail address.",
+      "auth/email-already-in-use": "This e-mail already has an account: sign in.", "auth/weak-password": "Password too short (6 characters minimum).", "auth/requires-recent-login": "For safety, sign out, sign in again, then save the password.",
+      "auth/credential-already-in-use": "This e-mail already has its own password account: sign in with it.", "auth/provider-already-linked": "A password is already set: it has been updated.", "auth/popup-closed-by-user": "Sign-in window closed.", "auth/invalid-email": "Invalid e-mail address.",
       "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase yet.", "auth/unauthorized-domain": "This web address is not authorised in Firebase (Authentication → Settings → Authorized domains)." }[c];
     toast(icon("dot") + "<span>" + esc(m || (e && e.message) || "Sign-in failed.") + "</span>", "bad");
   }
@@ -6741,20 +6766,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "build-traps": function () { result(E.buildTraps(state, ui.trapType, ui.trapCount || 1, now())); },
     "research-open": function (arg) { ui.researchTree = arg; openPanel("research"); },
     fullscreen: function () { toggleFullscreen(); setTimeout(function () { renderPanel(true); }, 300); },
-    "welcome-signin": function () {
-      S.signIn("google").then(function (remote) {
-        if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
-        if (remote) {
-          $("modal").hidden = true;
-          try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); } catch (e) { authError(e); return; }
-          M.refreshStatic(); renderChrome(); updateHud(); ensureShared();
-          toast(icon("check") + "<span>Welcome back, lord of <b>" + esc(state.name || "") + "</b>!</span>", "big");
-        } else {
-          var b = document.querySelector("[data-act=welcome-signin]");
-          if (b) b.outerHTML = '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(S.user().name) + '</b>. No city on this account yet: name your city below to found it.</p>';
-        }
-      }, authError);
+    "welcome-email": function () { welcomeSignedIn(S.signIn({ email: ($("wEmail").value || "").trim(), password: $("wPass").value || "" })); },
+    "set-password": function () {
+      var pw = $("accNewPass").value || "";
+      S.setPassword(pw).then(function () { ui.diag = "Password saved: you can now sign in with " + (S.user().email || "your e-mail") + " and this password, also from the home-screen app."; renderPanel(true); }, authError);
     },
+    "welcome-signin": function () { welcomeSignedIn(S.signIn("google")); },
     "signin-google": function () { S.signIn("google").then(afterSignIn, authError); },
     "signin-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "" }).then(afterSignIn, authError); },
     "signup-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "", create: true }).then(afterSignIn, authError); },
@@ -6873,7 +6890,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       '<ul class="howto"><li>' + icon("hammer") + '<span>Tap an <b>empty plot</b> to build: barracks, forge and prison inside the walls, farms and mines in the countryside.</span></li>' +
       '<li>' + icon("globe") + '<span>The <b>World</b> button opens the map: gather resources, destroy barbarian camps, attack nearby castles.</span></li>' +
       '<li>' + icon("helm") + '<span>Equip your <b>hero</b> with 7 pieces and pick the right troops: infantry beats cavalry, cavalry beats ranged, ranged beat infantry, siege engines crush castles.</span></li></ul>' +
-      (S.accountsAvailable() ? '<button class="btn wide" data-act="welcome-signin">' + icon("globe") + 'Already playing? Sign in with Google</button>' : "") +
+      (S.accountsAvailable() ? '<div class="card" id="welcomeAcc"><b>Already playing?</b>' +
+        '<button class="btn wide" data-act="welcome-signin">' + icon("globe") + 'Sign in with Google</button>' +
+        '<input id="wEmail" type="email" autocomplete="email" placeholder="E-mail"><input id="wPass" type="password" autocomplete="current-password" placeholder="Password" style="margin-top:6px">' +
+        '<div class="row"><button class="btn" data-act="welcome-email">Sign in with e-mail</button></div>' +
+        '<p class="muted small">On iPhone, Google sign-in does not work from the home-screen app: use your e-mail and password (set one in More → Account after signing in with Google once in Safari).</p></div>' : "") +
       '<label class="lbl" for="welcomeName">City name</label><input id="welcomeName" maxlength="28" placeholder="Valombre">' +
       '<label class="lbl" for="welcomeHero">Hero name</label><input id="welcomeHero" maxlength="20" placeholder="' + esc(state.hero.name) + '">' +
       '<button class="btn primary wide" data-act="found" style="margin-top:8px">Found my city</button></div>';
