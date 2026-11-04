@@ -5344,7 +5344,26 @@ Medieval.Save = (function (E) {
     return doc.get().then(function (snap) {
       var d = snap && snap.exists ? snap.data() : null;
       return d && typeof d.data === "string" ? d : null;
-    }).catch(function (e) { status.cloudError = e.message; return null; });
+    }).catch(function (e) { status.cloudError = describe(e); return null; });
+  }
+  function describe(e) {
+    var c = (e && e.code) || "", m = (e && e.message) || String(e);
+    if (/permission/.test(c) || /insufficient permissions/i.test(m)) return "Firestore refused access: publish the security rules (Firestore → Rules → Publish).";
+    if (/not-found/.test(c) && /database/i.test(m) || /does not exist/i.test(m)) return "No Firestore database yet: create it (Firestore Database → Create database).";
+    if (/unavailable|offline/i.test(c + m)) return "Offline: the game will sync when you are back online.";
+    return m;
+  }
+  /** Diagnostic de la connexion : lecture de la sauvegarde et de la liste des joueurs. */
+  function diagnose() {
+    if (!fb || !fbUser) return Promise.resolve({ ok: false, text: "Not signed in." });
+    var out = { uid: fbUser.uid };
+    return fb.db.collection("saves").doc(fbUser.uid).get().then(function (snap) {
+      out.save = snap.exists ? "found (" + new Date(snap.data().savedAt || 0).toLocaleString("en-GB") + ")" : "none yet";
+      return fb.db.collection("players").get();
+    }).then(function (q) {
+      out.players = q.size;
+      return { ok: true, text: "Online save: " + out.save + ". Players on the shared map: " + out.players + "." };
+    }).catch(function (e) { return { ok: false, text: describe(e) }; });
   }
   function initFirebase() {
     if (!fbReady()) return Promise.resolve(null);
@@ -5411,7 +5430,7 @@ Medieval.Save = (function (E) {
       ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { loot[k] = Math.max(0, Math.floor(state.resources[k] - prot)); });
       rec.army = army; rec.loot = loot; rec.wall = state.buildings.wall.level; rec.traps = E.trapCount ? E.trapCount(state) : 0;
       rec.marches = w.marches ? w.marches.length : 0;
-      fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).catch(function () { /* hors ligne */ });
+      fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).then(function () { status.playerError = null; }, function (e) { status.playerError = describe(e); });
     } catch (e) { /* ignore */ }
   }
 
@@ -5435,14 +5454,14 @@ Medieval.Save = (function (E) {
   }
 
   function writeCloud(state) {
-    if (!doc) return Promise.resolve(false);
+    if (!doc || !state || !state.name) return Promise.resolve(false); // jamais une partie pas encore fondée
     if (writing) { pendingCloud = true; return Promise.resolve(false); }
     writing = true; cloudDirty = false;
     var savedAt = Date.now();
     return doc.set({ savedAt: savedAt, data: E.serialize(state) }).then(function () {
       status.cloud = savedAt; status.cloudError = null; lastCloudWrite = savedAt; publishPlayer(state); return true;
     }, function (e) {
-      status.cloudError = (e && e.code === "invalid_argument") ? "read-only" : ((e && e.message) || "failed");
+      status.cloudError = (e && e.code === "invalid_argument") ? "read-only" : describe(e);
       if (e && e.code === "invalid_argument") doc = null; // ce lecteur ne peut pas écrire
       return false;
     }).then(function (ok) {
@@ -5478,7 +5497,7 @@ Medieval.Save = (function (E) {
     hasCloud: function () { return !!doc; },
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
     listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
-    uid: function () { return fbUser ? fbUser.uid : null; },
+    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose,
     db: function () { return fb && fbUser ? fb.db : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
@@ -5683,7 +5702,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (!S.accountsAvailable()) return "";
     var u = S.user(), html = '<section class="card"><h3>Account</h3>';
     if (u) return html + '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(u.name) + '</b>' + (u.email && u.email !== u.name ? ' <span class="muted">(' + esc(u.email) + ')</span>' : "") + '. Your game is saved online and follows you on every device.</p>' +
-      '<div class="row"><button class="btn ghost" data-act="signout">Sign out</button></div></section>';
+      (S.status.cloudError || S.status.playerError ? '<p class="reasons">' + esc(S.status.cloudError || S.status.playerError) + '</p>' : (S.status.cloud ? '<p class="small muted">' + icon("check") + 'Last online save ' + F.time(S.status.cloud) + '.</p>' : "")) +
+      (ui.diag ? '<p class="small">' + esc(ui.diag) + '</p>' : "") +
+      '<div class="row"><button class="btn" data-act="diagnose">Check connection</button><button class="btn ghost" data-act="signout">Sign out</button></div></section>';
     return html + '<p class="small">Sign in to save your game online and play it on any device.</p>' +
       '<button class="btn primary wide" data-act="signin-google">' + icon("globe") + 'Sign in with Google</button>' +
       '<label class="lbl" for="accEmail">Or with an e-mail address</label><input id="accEmail" type="email" autocomplete="email" placeholder="you@example.com">' +
@@ -5714,8 +5735,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function afterSignIn(remote) {
     if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
-    if (remote && remote.savedAt > (state.savedAt || 0) + 2000) {
-      try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); toast(icon("check") + "<span>Welcome back! Your online game is loaded.</span>", "big"); }
+    if (remote && (!state.name || remote.savedAt > (state.savedAt || 0) + 2000)) {
+      try { setState(E.deserialize(remote.data)); $("modal").hidden = true; handleEvents(E.advance(state, now())); S.writeLocal(state); toast(icon("check") + "<span>Welcome back! Your online game is loaded.</span>", "big"); }
       catch (e) { toast(icon("dot") + "<span>Your online save could not be read.</span>", "bad"); }
     } else { S.writeCloud(state); toast(icon("check") + "<span>Signed in. This game is now saved online.</span>", "big"); }
     M.refreshStatic(); renderPanel(true); renderChrome(); updateHud();
@@ -6733,6 +6754,10 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "signin-google": function () { S.signIn("google").then(afterSignIn, authError); },
     "signin-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "" }).then(afterSignIn, authError); },
     "signup-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "", create: true }).then(afterSignIn, authError); },
+    diagnose: function () {
+      ui.diag = "Checking…"; renderPanel(true);
+      S.writeCloud(state).then(function () { return S.diagnose(); }).then(function (r) { ui.diag = r.text + (S.status.cloudError ? " · Save error: " + S.status.cloudError : ""); renderPanel(true); if (r.ok) ensureShared(); });
+    },
     signout: function () { S.signOut().then(function () { renderPanel(true); toast(icon("check") + "<span>Signed out. Your game stays on this device.</span>"); }); },
     "ally-join": function (arg) { result(E.joinAlliance(state, arg, now()), icon("crown") + "<span>Welcome to the alliance!</span>"); },
     "ally-create": function () { result(E.createAlliance(state, $("alName").value, $("alTag").value, now()), icon("crown") + "<span>Your alliance is founded.</span>"); },
@@ -6865,6 +6890,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     updateHud(); renderChrome(); renderPanel(false); updateLive();
     if (ui.persistPending) persist();
     if (state.netOut && state.netOut.length && Medieval.Online) Medieval.Online.flush();
+    var ce = S.status && (S.status.cloudError || S.status.playerError);
+    if (ce && ce !== ui.lastCloudErr && ce !== "read-only") { ui.lastCloudErr = ce; toast(icon("alert") + "<span>Online save problem: " + esc(ce) + "</span>", "bad"); }
   }
 
   function bindDom() {
@@ -6938,8 +6965,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (loaded) {
       begin(loaded, false);
       cloudP.then(function (remote) {
-        if (remote && remote.savedAt > (state.savedAt || 0) + 2000) {
-          try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); toast(icon("check") + "<span>Newer progress loaded from your account.</span>", "big"); }
+        if (remote && (!state.name || remote.savedAt > (state.savedAt || 0) + 2000)) {
+          try { setState(E.deserialize(remote.data)); $("modal").hidden = true; handleEvents(E.advance(state, now())); S.writeLocal(state); toast(icon("check") + "<span>Newer progress loaded from your account.</span>", "big"); }
           catch (e) { /* on garde la locale */ }
         } else if (S.hasCloud()) S.writeCloud(state);
       });
