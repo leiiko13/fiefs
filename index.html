@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042212";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042224";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -623,6 +623,31 @@ details[open] summary { margin-bottom: 6px; }
 .titlebtn { display: grid; gap: 2px; text-align: left; padding: 7px 8px; border-radius: 6px; border: 1px solid #000; cursor: pointer; color: var(--vellum); background: linear-gradient(180deg, #2f5a3a, #15301e); }
 .titlebtn.bad { background: linear-gradient(180deg, #6a1e18, #32100c); } .titlebtn span { font-size: 11px; opacity: .85; }
 .titlebtn.on { box-shadow: inset 0 0 0 2px #ffd36b; }
+/* ---- bandeau de quête : Claim intégré à l'image ---- */
+body.has-quest .questbar.done .q-tag { background: var(--img-qplate) center / 100% 100% no-repeat; filter: sepia(.6) saturate(2.4) brightness(1.15) hue-rotate(-8deg); color: #3a1d02; box-shadow: none; border: 0; }
+/* ---- parchemin commun ---- */
+.btn.claim { background: linear-gradient(180deg, #2f8a3a, #145a20); color: #fff; border: 1px solid #06200a; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 2px 0 rgba(0,0,0,.4); font-weight: 800; }
+.qpanel { gap: 8px; }
+.qsec { display: flex; align-items: center; gap: 8px; margin: 6px 0 0; padding: 8px 12px; border-radius: 6px; background: linear-gradient(90deg, #5a1410, #2a0806); color: #ffe7b0; font-family: var(--f-display); font-size: 16px; letter-spacing: .02em; text-transform: none; box-shadow: inset 0 0 0 1px rgba(231,192,98,.4); }
+.qsec .ico { width: 20px; height: 20px; color: #ffd36b; }
+.qrow { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; background: linear-gradient(180deg, #efe4cb, #dccba5); color: #2a1a0c; border: 1px solid rgba(0,0,0,.35); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.qrow.big { grid-template-columns: 76px 1fr auto; border: 2px solid #c9a24c; background: linear-gradient(180deg, #f7efdc, #e8dabb); }
+.qrow .pv { width: 76px; height: 56px; }
+.qr-txt { display: grid; gap: 4px; min-width: 0; } .qr-txt b { font-size: 15px; color: #3a1d0a; }
+.qr-rew .cost { margin: 0; } .qr-rew .cost li { color: #3a2410; }
+.qr-bar { position: relative; height: 14px; border-radius: 7px; background: rgba(0,0,0,.25); overflow: hidden; }
+.qr-bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #c9922e, #f2cf6c); } .qr-bar em { position: relative; display: block; text-align: center; font: 800 10px/14px var(--f-body); font-style: normal; color: #2a1a0c; }
+.qr-go { border: 0; background: none; font-size: 30px; color: #6b5638; cursor: pointer; padding: 0 4px; }
+/* ---- récompenses dans les lettres ---- */
+.giftlines { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 4px; }
+.giftlines li { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; background: #fff8e8; border: 1px solid rgba(0,0,0,.15); }
+.giftlines li .ico, .giftlines li .rimg { width: 26px; height: 26px; } .giftlines li b { font-size: 15px; color: #1d5a20; }
+.giftlines.done { opacity: .55; }
+.claimed { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 0; font-weight: 800; color: #1d5a20; }
+.mclaim { display: block; margin-top: 4px; padding: 2px 8px; border-radius: 9px; background: #2f8a3a; color: #fff; font: 800 11px var(--f-body); font-style: normal; text-align: center; }
+/* ---- déplacement d'un bâtiment ---- */
+.movebar { position: fixed; z-index: 12; left: 50%; transform: translateX(-50%); top: calc(110px + var(--sat, 0px)); display: flex; align-items: center; gap: 10px; width: min(560px, calc(100% - 20px)); padding: 10px 12px; border-radius: 10px; background: linear-gradient(180deg, #1d5a7a, #0e3046); color: #eaf8ff; box-shadow: 0 4px 12px rgba(0,0,0,.5), inset 0 0 0 1px #7fe8ff; }
+.movebar .ico { width: 22px; height: 22px; flex: none; } .movebar span { flex: 1; font-size: 14px; }
 
 </style>
 
@@ -1158,6 +1183,12 @@ Medieval.Data = (function () {
     BO("atk8h", "Attack +20% (8 h)", "all_atk", 20, 8, 320), BO("def8h", "Defense +20% (8 h)", "all_def", 20, 8, 320), BO("hp8h", "Health +20% (8 h)", "all_hp", 20, 8, 320)
   );
   SHOP.push(
+    { id: "xp1k", kind: "xp", name: "Hero XP tome (1,000)", amount: 1000, price: 30 },
+    { id: "xp10k", kind: "xp", name: "Hero XP tome (10,000)", amount: 10000, price: 250 },
+    { id: "vip100", kind: "vip", name: "100 VIP points", amount: 100, price: 40 },
+    { id: "vip1000", kind: "vip", name: "1,000 VIP points", amount: 1000, price: 350 },
+    { id: "tpRandom", kind: "teleport", name: "Random Teleport", price: 60 },
+    { id: "tpAdvanced", kind: "teleport", name: "Advanced Teleport", target: true, price: 500 },
     { id: "shield8h", kind: "shield", name: "Peace Shield (8 h)", seconds: 8 * 3600, price: 150 },
     { id: "shield24h", kind: "shield", name: "Peace Shield (24 h)", seconds: 24 * 3600, price: 380 },
     { id: "shield3d", kind: "shield", name: "Peace Shield (3 days)", seconds: 72 * 3600, price: 900 }
@@ -1787,12 +1818,9 @@ Medieval.Engine = (function (D) {
     if (job.kind === "build") s.stats.built++; else s.stats.upgraded++;
     var ev = { type: job.kind === "build" ? "built" : "upgraded", buildingId: b.id, buildingType: b.type, level: b.level, at: at };
     if (b.type === "castle" && D.STRONGHOLD_GIFT) {
-      var gift = D.STRONGHOLD_GIFT(b.level);
-      E.grant(s, gift.resources);
-      if (!s.bag) s.bag = {};
-      for (var k in gift.items) s.bag[k] = (s.bag[k] || 0) + gift.items[k];
+      var gift = D.STRONGHOLD_GIFT(b.level);   // à réclamer depuis la messagerie
       ev.gift = gift;
-      E.report(s, { kind: "info", at: at, title: "Stronghold level " + b.level + ": gifts", text: E.giftText ? E.giftText(gift) : "" , gift: gift });
+      E.report(s, { kind: "info", at: at, title: "Stronghold level " + b.level + ": gifts", text: "Your Stronghold reached level " + b.level + ". The empire sends you these gifts:", gift: gift, claimable: true });
     }
     return ev;
   }
@@ -1835,6 +1863,29 @@ Medieval.Engine = (function (D) {
     if (s.reports.length > 60) s.reports.length = 60;
     s.unread = s.reports.filter(function (x) { return !x.read; }).length;
     return r;
+  };
+  /** Récompense jointe à un message : on la récupère d'un coup. */
+  E.claimMail = function (s, id) {
+    var r = s.reports.filter(function (x) { return x.id === id; })[0];
+    if (!r || !r.gift || !r.claimable) return { ok: false, reasons: ["Nothing to claim."] };
+    E.grant(s, r.gift.resources || {});
+    if (!s.bag) s.bag = {};
+    for (var k in r.gift.items || {}) s.bag[k] = (s.bag[k] || 0) + r.gift.items[k];
+    r.claimable = false; r.claimedAt = s.lastTick; r.read = true;
+    return { ok: true, gift: r.gift };
+  };
+  E.claimableMails = function (s) { return s.reports.filter(function (r) { return r.claimable; }).length; };
+  /** Déplace un bâtiment sur un autre terrain de la même zone (échange s'il est occupé). */
+  E.moveBuilding = function (s, id, plot) {
+    var b = s.buildings[id];
+    if (!b || D.BUILDINGS[b.type].zone === "fixed") return { ok: false, reasons: ["This building cannot be moved."] };
+    if (typeof plot !== "string" || E.zoneOfPlot(plot) !== D.BUILDINGS[b.type].zone) return { ok: false, reasons: [D.BUILDINGS[b.type].zone === "inner" ? "This building must stay inside the walls." : "This building must stay in the countryside."] };
+    if (E.plotIndex(plot) >= E.plotsOpen(s, E.zoneOfPlot(plot))) return { ok: false, reasons: ["This land isn't cleared yet."] };
+    if (plot === b.plot) return { ok: true };
+    var other = E.buildingAt(s, plot);
+    if (other) other.plot = b.plot;
+    b.plot = plot;
+    return { ok: true, swapped: other ? other.id : null };
   };
   E.markRead = function (s, id) {
     s.reports.forEach(function (r) { if (!id || r.id === id) r.read = true; });
@@ -2511,6 +2562,15 @@ Medieval.Engine = (function (D) {
       if (!j) return { ok: false, reasons: ["This task is already finished."], events: events };
       j.end = Math.max(now, j.end - it.seconds * 1000);
       if (j.end <= now) { j.end = now; E._pushEvent(events, E._completeJob(s, j, now)); }
+    } else if (it.kind === "xp") {
+      E.heroGainXp(s, it.amount, events, now);
+    } else if (it.kind === "vip") {
+      if (!s.vip) s.vip = { points: 0, level: 0, lastDay: null, streak: 0 };
+      s.vip.points += it.amount; var before = s.vip.level; s.vip.level = E.vipLevelFor(s.vip.points);
+      if (s.vip.level > before) events.push({ type: "vipDaily", points: it.amount, streak: s.vip.streak, level: s.vip.level, up: true, at: now });
+    } else if (it.kind === "teleport") {
+      var tr = E.teleport(s, it.target ? opts && opts.x : null, it.target ? opts && opts.y : null, now);
+      if (!tr.ok) return { ok: false, reasons: tr.reasons, events: events };
     } else if (it.kind === "shield") {
       s.shieldUntil = Math.max(now, s.shieldUntil || 0) + it.seconds * 1000;
     } else if (it.kind === "boost") {
@@ -2539,6 +2599,27 @@ Medieval.Engine = (function (D) {
     var out = [], b = s.boosts || {};
     for (var k in b) if (b[k] && b[k].until > now) out.push({ stat: k, pct: b[k].pct, until: b[k].until });
     return out;
+  };
+  /** Téléportation de la cité : (x, y) précis, ou au hasard si non fournis. */
+  E.canSettle = function (s, x, y) {
+    var w = s.world; if (!w) return false;
+    if (x < 1 || y < 1 || x > w.size - 2 || y > w.size - 2) return false;
+    if (E.terrainAt(w, x, y) !== "g") return false;
+    var o = E.objectAt(s, x, y); if (o && o.kind !== "home") return false;
+    if (w.wonder && Math.abs(x - w.wonder.x) <= 6 && Math.abs(y - w.wonder.y) <= 6) return false;
+    return !(E.OTHERS || []).some(function (p) { return Math.abs(p.x - x) + Math.abs(p.y - y) < 2; });
+  };
+  E.teleport = function (s, x, y, now) {
+    var w = s.world;
+    if (!w) return { ok: false, reasons: ["No world map."] };
+    if (w.marches.length) return { ok: false, reasons: ["Recall all your marches first."] };
+    if (x === null || x === undefined) {
+      for (var k = 0; k < 500; k++) { var rx = 2 + Math.floor(Math.random() * (w.size - 4)), ry = 2 + Math.floor(Math.random() * (w.size - 4)); if (E.canSettle(s, rx, ry)) { x = rx; y = ry; break; } }
+      if (x === null || x === undefined) return { ok: false, reasons: ["No free land found."] };
+    } else if (!E.canSettle(s, x, y)) return { ok: false, reasons: ["You can't settle here: pick free plains outside the sacred forest."] };
+    w.home = { x: x, y: y };
+    w.incoming = [];
+    return { ok: true, x: x, y: y };
   };
   E.itemLabel = function (id) {
     var it = D.SHOP_BY_ID[id];
@@ -4197,7 +4278,7 @@ Medieval.MapView = (function (D, E, G, ART) {
   function inCity(c, r) { return c >= 0 && r >= 0 && c <= S && r <= S; }
 
   // ------------------------------------------------------------ état de la vue
-  var canvas, ctx, state, onSelect, cam = { x: 0, y: 0, s: 1 }, dpr = 1, W = 0, H = 0;
+  var canvas, ctx, state, onSelect, onLongPress = null, moving = null, cam = { x: 0, y: 0, s: 1 }, dpr = 1, W = 0, H = 0;
   var hover = null, selection = null, dirty = true, hits = [], startT = performance.now();
   var staticLayer = null, lastStaticBuild = 0, sprites = {}, spriteBucket = 0, active = true;
   var WORLD = (function () {
@@ -4683,6 +4764,7 @@ Medieval.MapView = (function (D, E, G, ART) {
     var isS = same(selection, tgt), isH = same(hover, tgt), x = o.x, y = o.y;
     if (b) {
       if (isS || isH) outline(x, y, K * 0.95, isS);
+      if (moving === b.id) { var pu = 0.5 + 0.5 * Math.sin(t * 6); ctx.save(); ctx.shadowColor = "#5fe0ff"; ctx.shadowBlur = 20; poly(ctx, G.diamond(x, y, K * 0.98), "rgba(90,220,255," + (0.18 + pu * 0.2) + ")", "#7fe8ff", 3); ctx.restore(); }
       var job = E.jobFor(state, b.id, ["build", "upgrade"]), other = E.jobFor(state, b.id, ["train", "craft", "heal"]), top;
       if (b.level === 0) {
         ctx.save(); ctx.translate(x, y); ctx.scale(K, K);
@@ -4697,6 +4779,9 @@ Medieval.MapView = (function (D, E, G, ART) {
       hits.push({ x0: x - 60 * K, x1: x + 60 * K, y0: top, y1: y + 30 * K, base: y - 20 * K, t: tgt });
       badges.push({ x: x, y: top, bx: x - G.HW * K * 0.5, by: y + G.HH * K * 0.5, id: b.id, level: b.level, job: job || other, now: now });
       return;
+    }
+    if (moving && st === "open" && state.buildings[moving] && D.BUILDINGS[state.buildings[moving].type].zone === (inner ? "inner" : "outer")) {
+      ctx.save(); ctx.setLineDash([10, 8]); poly(ctx, G.diamond(x, y, K * 0.9), "rgba(90,220,255,.12)", "rgba(127,232,255,.9)", 2.5); ctx.restore();
     }
     if (st === "open") {
       var ptile = inner ? tileAsset("tile-plot") : null;
@@ -4829,12 +4914,21 @@ Medieval.MapView = (function (D, E, G, ART) {
   }
 
   function bind() {
-    var pointers = {}, drag = null, pinch = null, moved = false;
+    var pointers = {}, drag = null, pinch = null, moved = false, lp = null, longFired = false;
     canvas.addEventListener("pointerdown", function (e) {
       canvas.setPointerCapture(e.pointerId);
       pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
       var ids = Object.keys(pointers);
-      if (ids.length === 1) { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; moved = false; }
+      if (ids.length === 1) {
+        drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; moved = false; longFired = false;
+        var r0 = canvas.getBoundingClientRect(), px = e.clientX - r0.left, py = e.clientY - r0.top;
+        clearTimeout(lp);
+        lp = setTimeout(function () {                      // appui long : mode déplacement
+          if (moved || !onLongPress) return;
+          var tg = targetAt(px, py);
+          if (tg && tg.kind === "building") { longFired = true; onLongPress(tg); }
+        }, 550);
+      } else clearTimeout(lp);
       if (ids.length === 2) {
         var a = pointers[ids[0]], b = pointers[ids[1]];
         pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), s: cam.s, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, cx: cam.x, cy: cam.y }; moved = true;
@@ -4851,7 +4945,7 @@ Medieval.MapView = (function (D, E, G, ART) {
       }
       if (drag && ids.length === 1) {
         var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-        if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+        if (Math.abs(dx) + Math.abs(dy) > 6) { moved = true; clearTimeout(lp); }
         if (moved) { cam.x = drag.cx + dx; cam.y = drag.cy + dy; clamp(); dirty = true; canvas.classList.add("dragging"); }
         return;
       }
@@ -4866,7 +4960,8 @@ Medieval.MapView = (function (D, E, G, ART) {
       if (Object.keys(pointers).length < 2) pinch = null;
       if (Object.keys(pointers).length === 0) {
         canvas.classList.remove("dragging");
-        if (drag && !moved && !wasPinch && e.type === "pointerup" && onSelect) onSelect(targetAt(e.clientX - r.left, e.clientY - r.top));
+        clearTimeout(lp);
+        if (drag && !moved && !wasPinch && !longFired && e.type === "pointerup" && onSelect) onSelect(targetAt(e.clientX - r.left, e.clientY - r.top));
         drag = null;
       }
     }
@@ -4920,12 +5015,13 @@ Medieval.MapView = (function (D, E, G, ART) {
   }
   return {
     PLOT_POS: PLOT_POS,
-    init: function (cv, opts) { G.onAssets(function () { staticLayer = null; dirty = true; }); canvas = cv; ctx = cv.getContext("2d"); onSelect = opts.onSelect; resize(); bind(); fit(); requestAnimationFrame(loop); },
+    init: function (cv, opts) { G.onAssets(function () { staticLayer = null; dirty = true; }); canvas = cv; ctx = cv.getContext("2d"); onSelect = opts.onSelect; onLongPress = opts.onLongPress; resize(); bind(); fit(); requestAnimationFrame(loop); },
     setActive: function (v) { active = v; if (v) { resize(); clamp(); dirty = true; } },
     setState: function (s) { state = s; dirty = true; },
     refreshStatic: function () { staticLayer = null; dirty = true; },
     setSelection: function (t) { selection = t; dirty = true; },
     markDirty: function () { dirty = true; },
+    setMoving: function (id) { moving = id; dirty = true; },
     fit: fit, zoomIn: function () { zoomBy(1.25); }, zoomOut: function () { zoomBy(0.8); },
     screenPos: function (id) { var p = posOf(id), q = xy(p.c, p.r); return { x: q.x * cam.s + cam.x, y: q.y * cam.s + cam.y }; },
     centerOn: function (id) { var p = posOf(id); if (!p) return; var q = xy(p.c, p.r); cam.x = W / 2 - q.x * cam.s; cam.y = H * 0.45 - q.y * cam.s; clamp(); dirty = true; },
@@ -6218,6 +6314,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (ti) return '<p class="royal ' + (ti.good ? "" : "bad") + '">' + icon("crown") + '<b>' + ti.name + ' of ' + D.KINGDOM.name + '</b><span>' + ti.desc + '</span></p>';
     return "";
   }
+  function afterTeleport() { WV.setState(state); persist(true); if (S.uid()) { S.publishPlayer(state); S.writeCloud(state); } if (ui.view === "world") { var h = E.homeOf(state); WV.centerOn(h.x, h.y); } }
   function uidSalt() { var h = 7, u = String(S.uid() || ""); for (var i = 0; i < u.length; i++) h = (h * 31 + u.charCodeAt(i)) | 0; return Math.abs(h); }
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
@@ -6338,7 +6435,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (hk !== ui.lastHeroKey) { ui.lastHeroKey = hk; HA.paint($("avatar"), state, true); }
     var q = E.claimableCount(state); $("bQuests").hidden = !q; $("bQuests").textContent = q;
 
-    $("bReports").hidden = !state.unread; $("bReports").textContent = state.unread;
+    var mb = Math.max(state.unread, E.claimableMails(state)); $("bReports").hidden = !mb; $("bReports").textContent = mb;
     if ($("vipLvl")) $("vipLvl").textContent = state.vip ? state.vip.level : 0;
     var hp = state.hero.points; $("bHero").hidden = !hp; $("bHero").textContent = hp;
   }
@@ -6506,6 +6603,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       else html += '<section class="card"><h3>Upgrade to level ' + c.toLevel + '</h3><div class="bi-cost">' + costHtml(c.cost) + '<span class="dur">' + icon("clock") + F.duration(c.time) + '</span></div>' +
         (c.ok ? '<button class="btn primary wide" data-act="upgrade" data-arg="' + id + '">' + icon("hammer") + 'Upgrade</button>' : reasonsHtml(c)) + '</section>';
     }
+    if (D.BUILDINGS[b.type].zone !== "fixed") html += '<button class="btn ghost" data-act="move-start" data-arg="' + id + '">' + icon("march") + 'Move this building</button><p class="muted small">Tip: press and hold a building in the city to move it.</p>';
     if (b.level > 0 && EXTRA[b.type]) html += EXTRA[b.type](b);
     return html + '</div>';
   };
@@ -6724,17 +6822,24 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   // --- quêtes
   PANELS.quests = function () {
-    var open = E.openQuests(state).sort(function (a, b) { return (E.questProgress(state, b).done ? 1 : 0) - (E.questProgress(state, a).done ? 1 : 0) || a - b; });
-    var html = head(state.quests.claimed.length + " / " + D.QUESTS.length + " completed", "Quests") + '<div class="p-body">';
-    if (!open.length) html += '<p>All quests completed.</p>';
-    open.slice(0, 12).forEach(function (i) {
-      var q = D.QUESTS[i], p = E.questProgress(state, i);
-      html += '<div class="card"><div class="jb-top"><span>' + esc(q.text) + '</span><span class="num muted">' + F.compact(p.cur) + ' / ' + F.compact(p.need) + '</span></div>' +
-        '<div class="bar gold"><i style="width:' + (p.cur / p.need * 100).toFixed(1) + '%"></i></div><div class="row"><span class="muted small">Reward</span>' + resList(q.reward) +
-        (p.done ? '<button class="btn gold tiny" data-act="claim" data-arg="' + i + '" style="margin-left:auto">Claim</button>' : "") + '</div></div>';
-    });
+    var open = E.openQuests(state), done = open.filter(function (i) { return E.questProgress(state, i).done; }), todo = open.filter(function (i) { return !E.questProgress(state, i).done; });
+    var rec = todo[0];
+    var html = head(state.quests.claimed.length + " / " + D.QUESTS.length + " completed", "Empire Quests") + '<div class="p-body qpanel">';
+    if (done.length > 1) html += '<button class="btn claim wide" data-act="claim-all">Collect all (' + done.length + ')</button>';
+    var qrow = function (i, big) {
+      var q = D.QUESTS[i], p = E.questProgress(state, i), m = q.cond.b ? q.cond.b : null;
+      var go = !p.done && m && D.BUILDINGS[m] ? (E.countType(state, m) ? E.buildingsOfType(state, m).sort(function (a, b) { return b.level - a.level; })[0].id : null) : null;
+      return '<div class="qrow' + (big ? " big" : "") + (p.done ? " done" : "") + '">' + (big && m ? '<canvas class="pv" data-pv="' + m + '" data-lv="' + Math.max(1, q.cond.n || 1) + '"></canvas>' : "") +
+        '<div class="qr-txt"><b>' + esc(q.text) + '</b><span class="qr-rew">' + resList(q.reward) + '</span>' + (!p.done && p.need > 1 ? '<span class="qr-bar"><i style="width:' + (p.cur / p.need * 100).toFixed(1) + '%"></i><em>' + F.compact(p.cur) + ' / ' + F.compact(p.need) + '</em></span>' : "") + '</div>' +
+        (p.done ? '<button class="btn claim" data-act="claim" data-arg="' + i + '">Claim</button>' : m && D.BUILDINGS[m] ? '<button class="qr-go" data-act="' + (go ? "open" : "find-plot") + '" data-arg="' + (go || m) + '">›</button>' : '<span class="qr-go">›</span>') + '</div>';
+    };
+    if (rec !== undefined) html += '<h3 class="qsec">' + icon("scroll") + 'Recommended</h3>' + qrow(rec, true);
+    if (done.length) html += '<h3 class="qsec">' + icon("check") + 'Completed</h3>' + done.map(function (i) { return qrow(i); }).join("");
+    if (todo.length > 1) html += '<h3 class="qsec">' + icon("hammer") + 'Build &amp; grow</h3>' + todo.slice(1, 16).map(function (i) { return qrow(i); }).join("");
+    if (!open.length) html += '<p>All quests completed. Glory to you!</p>';
     return html + '</div>';
   };
+
 
   // --- héros
   function itemSlotBtn(it, slotKey, act) {
@@ -6844,6 +6949,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     return '<div class="tablewrap"><table class="table"><thead><tr><th>' + title + '</th><th class="r">Before</th><th class="r">Losses</th><th class="r">Left</th></tr></thead><tbody>' + ids.map(function (id) {
       return '<tr><td>' + tname(id) + '</td><td class="r">' + F.num(side.before[id]) + '</td><td class="r neg">−' + F.num(side.lost[id]) + '</td><td class="r">' + F.num(side.left[id]) + '</td></tr>'; }).join("") + '</tbody></table></div>';
   }
+  function giftLines(r) {
+    var g = r.gift, rows = [];
+    Object.keys(g.resources || {}).forEach(function (k) { if (g.resources[k] > 0) rows.push('<li>' + icon(k) + '<span>' + RES_NAME[k] + '</span><b>' + F.num(g.resources[k]) + '</b></li>'); });
+    Object.keys(g.items || {}).forEach(function (id) { rows.push('<li>' + icon(D.SHOP_BY_ID[id].kind === "speedup" ? "clock" : D.SHOP_BY_ID[id].res || "check") + '<span>' + esc(E.itemLabel(id)) + '</span><b>×' + g.items[id] + '</b></li>'); });
+    return '<ul class="giftlines' + (r.claimable ? "" : " done") + '">' + rows.join("") + '</ul>';
+  }
   var MAILTAB = { inbox: function (r) { return r.kind === "info"; }, reports: function (r) { return r.kind !== "info"; }, saved: function (r) { return r.saved; } };
   PANELS.reports = function () {
     if (ui.reportId) {
@@ -6855,10 +6966,10 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
           '<div class="mv-head"><div><b>' + (r.kind === "info" ? "Royal Herald" : r.kind === "spy" ? "Scouts" : "War Council") + '</b><h3>' + esc(reportTitle(r)) + '</h3></div><div class="mv-meta"><span>' + new Date(r.at).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" }) + '</span>' +
           '<button class="mstar' + (r.saved ? " on" : "") + '" data-act="mail-star" data-arg="' + r.id + '">★</button></div></div><div class="mv-card">';
         var foot = function () {
-          var act = /gift|King|crown|Wonder/i.test(r.title || "") ? (/gift/i.test(r.title) ? '<button class="btn teal wide" data-act="panel" data-arg="items">Open my items</button>' : '<button class="btn teal wide" data-act="toggle-view">Go to the world map</button>') : "";
+          var act = r.claimable ? '<button class="btn claim wide" data-act="mail-claim" data-arg="' + r.id + '">Claim</button>' : r.gift ? '<p class="claimed">' + icon("check") + 'Collected</p>' : /King|crown|Wonder/i.test(r.title || "") ? '<button class="btn teal wide" data-act="toggle-view">Go to the world map</button>' : "";
           return '</div>' + (act ? '<div class="mv-card">' + act + '</div>' : "") + '<div class="mv-card mv-tools"><button data-act="mail-delete" data-arg="' + r.id + '">' + icon("close") + '<span>Delete</span></button></div></div>';
         };
-        if (r.kind === "info") return html + '<div class="mv-from"><span class="mv-seal">' + icon("crown") + '</span><b>Royal Herald</b></div><p class="mv-text">' + esc(r.text) + '</p>' + foot();
+        if (r.kind === "info") return html + '<div class="mv-from"><span class="mv-seal">' + icon("crown") + '</span><b>Royal Herald</b></div><p class="mv-text">' + esc(r.text) + '</p>' + (r.gift ? giftLines(r) : "") + foot();
         if (r.kind === "spy") return html + spyHtml(r) + foot();
         var html0 = html; html = "";
         var isDef = r.kind === "defense" || r.kind === "tiledef";
@@ -6886,7 +6997,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     h2 += '<div class="mail-list">' + list.map(function (r) {
       var win = r.kind === "info" || r.kind === "spy" ? null : r.win, prev = r.kind === "info" ? (r.text || "") : r.kind === "spy" ? "Scout report" : (r.win ? "Victory" : "Defeat") + (r.lord ? " · " + r.lord : "");
       return '<div class="mrow' + (r.read ? "" : " unread") + '"><button class="mrow-main" data-act="report" data-arg="' + r.id + '"><span class="r-ico ' + (win === null ? "" : win ? "win" : "loss") + '">' + icon(r.kind === "defense" ? "castle" : r.kind === "info" ? "scroll" : r.kind === "spy" ? "globe" : "sword") + '</span>' +
-        '<span class="mrow-txt"><span class="mrow-from">' + (r.kind === "info" ? "Rise &amp; Conquer" : "War council") + '</span><b class="r-title">' + esc(reportTitle(r)) + '</b><span class="r-sub">' + esc(prev).slice(0, 90) + '</span></span><span class="mrow-date">' + F.ago(r.at) + '</span></button>' +
+        '<span class="mrow-txt"><span class="mrow-from">' + (r.kind === "info" ? "Rise &amp; Conquer" : "War council") + '</span><b class="r-title">' + esc(reportTitle(r)) + '</b><span class="r-sub">' + esc(prev).slice(0, 90) + '</span></span><span class="mrow-date">' + F.ago(r.at) + (r.claimable ? '<i class="mclaim">Claim</i>' : "") + '</span></button>' +
         '<button class="mstar' + (r.saved ? " on" : "") + '" data-act="mail-star" data-arg="' + r.id + '" aria-label="Save">★</button></div>';
     }).join("") + '</div>';
     if (list.length) h2 += '<div class="row mail-foot"><button class="btn tiny ghost" data-act="read-all">Mark all as read</button>' + (tab !== "saved" ? '<button class="btn tiny ghost" data-act="mail-clean">Delete read</button>' : "") + '</div>';
@@ -6901,7 +7012,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     html += '<div class="tabs">' + [["shop", "Shop"], ["bag", "My items (" + E.bagTotal(state) + ")"]].map(function (t) {
       return '<button class="tab' + (tab === t[0] ? " on" : "") + '" data-act="items-tab" data-arg="' + t[0] + '">' + t[1] + '</button>'; }).join("") + '</div>';
     var group = function (title, list, row) { return list.length ? '<section class="card"><h3>' + title + '</h3><div class="shop">' + list.map(row).join("") + '</div></section>' : ""; };
-    var tileIcon = function (it) { return it.kind === "speedup" ? icon("clock") : it.kind === "shield" ? icon("castle") : it.kind === "boost" ? icon(/enemy/.test(it.stat) ? "alert" : "sword") : icon(it.res); };
+    var tileIcon = function (it) { return it.kind === "speedup" ? icon("clock") : it.kind === "shield" ? icon("castle") : it.kind === "xp" ? icon("helm") : it.kind === "vip" ? icon("crown") : it.kind === "teleport" ? icon("globe") : it.kind === "boost" ? icon(/enemy/.test(it.stat) ? "alert" : "sword") : icon(it.res); };
     var boosts = E.activeBoosts(state, now());
     if (E.shielded(state, now())) html += '<section class="card"><div class="jb-top"><span>' + icon("castle") + 'Peace Shield</span><span class="num" data-live-until="' + state.shieldUntil + '"></span></div></section>';
     if (boosts.length) html += '<section class="card"><h3>Active boosts</h3>' + boosts.map(function (b) {
@@ -6914,6 +7025,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       };
       html += group("Speed-ups", D.SHOP.filter(function (x) { return x.kind === "speedup"; }), row);
       html += group("Peace Shields", D.SHOP.filter(function (x) { return x.kind === "shield"; }), row);
+      html += group("Hero & VIP", D.SHOP.filter(function (x) { return x.kind === "xp" || x.kind === "vip"; }), row);
+      html += group("Teleport", D.SHOP.filter(function (x) { return x.kind === "teleport"; }), row);
       html += group("Boosts (all battles)", D.SHOP.filter(function (x) { return x.kind === "boost"; }), row);
       html += group("Resources", D.SHOP.filter(function (x) { return x.kind === "res"; }), row);
       html += '<p class="muted small">Gold comes from gold deposits on the world map, quests and barbarian camps.</p>';
@@ -6927,6 +7040,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       };
       html += group("Speed-ups", mine.filter(function (x) { return x.kind === "speedup"; }), row2);
       html += group("Peace Shields", mine.filter(function (x) { return x.kind === "shield"; }), row2);
+      html += group("Hero & VIP", mine.filter(function (x) { return x.kind === "xp" || x.kind === "vip"; }), row2);
+      html += group("Teleport", mine.filter(function (x) { return x.kind === "teleport"; }), row2);
       html += group("Boosts", mine.filter(function (x) { return x.kind === "boost"; }), row2);
       html += group("Resources", mine.filter(function (x) { return x.kind === "res"; }), row2);
       var jobs = state.jobs.slice().sort(function (a, b) { return a.end - b.end; });
@@ -7033,7 +7148,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   var TERRAIN = { g: "Plains", f: "Forest", m: "Mountains", w: "Lake", x: "Outside the kingdom" };
   PANELS.tile = function (pos) {
     var o = E.objectAt(state, pos.x, pos.y), coord = "X:" + pos.x + " Y:" + pos.y;
-    if (!o) return head(coord, TERRAIN[E.terrainAt(state.world, pos.x, pos.y)] || "Terrain") + '<div class="p-body"><p class="muted">Nothing of interest here.</p></div>';
+    if (!o) {
+      var canGo = E.canSettle(state, pos.x, pos.y), haveTp = E.bagCount(state, "tpAdvanced"), tpPrice = D.SHOP_BY_ID.tpAdvanced.price;
+      return head(coord, TERRAIN[E.terrainAt(state.world, pos.x, pos.y)] || "Terrain") + '<div class="p-body"><p class="muted">Nothing of interest here.</p>' +
+        (canGo ? '<button class="btn primary wide" data-act="teleport-here" data-arg="' + pos.x + ':' + pos.y + '">' + icon("globe") + 'Move my city here · ' + (haveTp ? "Advanced Teleport (×" + haveTp + ")" : icon("gold") + tpPrice) + '</button><p class="muted small">Settle next to your allies. All your marches must be home.</p>' : "") + '</div>';
+    }
     if (o.kind === "home") return head(coord, esc(state.name || "My city")) + '<div class="p-body">' + royalLine(state.royal && state.royal.king, state.royal && state.royal.title) +
       (E.shielded(state, now()) ? '<p class="small">' + icon("check") + '<b>Peace Shield</b> active for <span data-live-until="' + state.shieldUntil + '"></span>.</p>' : '<p class="muted small">No shield. Buy a Peace Shield in Items to stop all attacks on your city.</p>') +
       '<p>Your city, Stronghold level ' + E.castleLevel(state) + '.</p><button class="btn primary" data-act="toggle-view">' + icon("castle") + 'Enter the city</button></div>';
@@ -7389,9 +7508,29 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       jobs.push(Medieval.Online.grantTitle(p[0], p[1] || null));
       Promise.all(jobs).then(function () { toast(icon("crown") + "<span>" + (p[1] ? "Title granted: <b>" + D.TITLE_BY_ID[p[1]].name + "</b>." : "Title removed.") + "</span>", "big"); }, authError);
     },
+    "move-start": function (arg) { startMove(arg); },
+    "move-cancel": function () { endMove(); },
+    "mail-claim": function (arg) {
+      var r = E.claimMail(state, arg);
+      if (result(r, icon("check") + "<span>Collected: " + esc(E.giftText(r.gift || {})) + ".</span>")) updateHud();
+    },
+    "claim-all": function () {
+      var got = {}; E.openQuests(state).filter(function (i) { return E.questProgress(state, i).done; }).forEach(function (i) { var r = E.claimQuest(state, i); if (r.ok) for (var k in r.reward) got[k] = (got[k] || 0) + r.reward[k]; });
+      result({ ok: true }, icon("check") + "<span>Collected: " + esc(E.giftText({ resources: got })) + ".</span>");
+    },
     "items-tab": function (arg) { ui.itemsTab = arg; renderPanel(true); },
     buy: function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.buyItem(state, arg, 1), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b> (" + it.price + " gold).</span>"); },
-    "use-item": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "boost" || it.kind === "shield" ? "is active." : "added to your city.") + "</span>"); },
+    "teleport-here": function (arg) {
+      var p = arg.split(":").map(Number);
+      if (!E.bagCount(state, "tpAdvanced")) { var b = E.buyItem(state, "tpAdvanced", 1); if (!b.ok) { result(b); return; } }
+      if (result(E.useItem(state, "tpAdvanced", { x: p[0], y: p[1] }, now()), icon("globe") + "<span>Your city moved to <b>X:" + p[0] + " Y:" + p[1] + "</b>.</span>")) afterTeleport();
+    },
+    "use-item": function (arg) {
+      var it = D.SHOP_BY_ID[arg];
+      if (it.kind === "teleport" && it.target) { toast(icon("globe") + "<span>Open the world map and tap an empty tile to move your city there.</span>"); return; }
+      if (result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "teleport" ? "used: your city moved to X:" + E.homeOf(state).x + " Y:" + E.homeOf(state).y + "." : it.kind === "boost" || it.kind === "shield" ? "is active." : it.kind === "xp" ? "read by your hero." : it.kind === "vip" ? "added." : "added to your city.") + "</span>") && it.kind === "teleport") afterTeleport();
+    },
+    "use-item-old": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "boost" || it.kind === "shield" ? "is active." : "added to your city.") + "</span>"); },
     "use-speed": function (arg) { var p = arg.split(":"); result(E.useItem(state, p[0], { jobId: p[1] }, now()), icon("clock") + "<span>Sped up by <b>" + esc(F.duration(D.SHOP_BY_ID[p[0]].seconds)) + "</b>.</span>"); },
     "research-tree": function (arg) { ui.researchView = arg; ui.researchTree = arg; renderPanel(true); $("panelBody").scrollTop = 0; },
     "research-back": function () { ui.researchView = null; renderPanel(true); $("panelBody").scrollTop = 0; },
@@ -7469,7 +7608,24 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var act = el.getAttribute("data-act");
     if (ACTIONS[act]) { e.stopPropagation(); e.preventDefault(); ACTIONS[act](el.getAttribute("data-arg")); }
   }
+  function startMove(id) {
+    var b = state.buildings[id]; if (!b || D.BUILDINGS[b.type].zone === "fixed") return;
+    ui.moving = id; M.setMoving(id); closePanel();
+    var bar = $("moveBar") || document.body.appendChild(Object.assign(document.createElement("div"), { id: "moveBar", className: "movebar" }));
+    bar.innerHTML = icon("march") + '<span>Moving <b>' + bname(b.type) + '</b>: tap a new plot (or another building to swap).</span><button class="btn tiny" data-act="move-cancel">Done</button>';
+    bar.hidden = false;
+  }
+  function endMove() { ui.moving = null; M.setMoving(null); if ($("moveBar")) $("moveBar").hidden = true; }
   function onCitySelect(t) {
+    if (ui.moving) {
+      if (!t || t.kind === "locked") { endMove(); return; }
+      var dest = t.kind === "plot" ? t.plot : t.kind === "building" && state.buildings[t.id] ? state.buildings[t.id].plot : null;
+      if (t.kind === "building" && t.id === ui.moving) { endMove(); return; }
+      var r = dest ? E.moveBuilding(state, ui.moving, dest) : { ok: false, reasons: ["Pick a plot in the same area."] };
+      if (!r.ok) { toast(icon("dot") + "<span>" + esc(r.reasons.join(" ")) + "</span>", "bad"); return; }
+      persist(); M.refreshStatic(); M.markDirty(); toast(icon("check") + "<span>" + (r.swapped ? "Buildings swapped." : "Building moved.") + "</span>");
+      return;
+    }
     if (!t) { closePanel(); return; }
     if (t.kind === "building") openPanel("building", t.id);
     else if (t.kind === "plot") openPanel("plot", t.plot);
@@ -7589,7 +7745,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (window.MEDIEVAL_WEB && fsSupported() && window.matchMedia && matchMedia("(pointer: coarse)").matches)
       document.addEventListener("pointerup", function once() { document.removeEventListener("pointerup", once); if (!document.fullscreenElement) toggleFullscreen(); });
     if (G0 && G0.onAssets) G0.onAssets(function () { ui.lastHeroKey = ""; });
-    M.init($("city"), { onSelect: onCitySelect });
+    M.init($("city"), { onSelect: onCitySelect, onLongPress: function (tg) { startMove(tg.id); } });
     WV.init($("world"), { onSelect: onWorldSelect, onView: function (x, y) { var t = D.KINGDOM.name + " · X:" + x + " Y:" + y; if (ui.cache.coords !== t) { ui.cache.coords = t; $("coords").textContent = t; } } });
     var loaded = null, local = S.readLocal();
     try { if (hotData && hotData.save) loaded = E.deserialize(hotData.save); else if (local) loaded = E.deserialize(local.data); }
