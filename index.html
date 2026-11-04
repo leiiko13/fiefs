@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042312";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042317";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1293,15 +1293,21 @@ Medieval.Data = (function () {
   var SHOP_BY_ID = {}; SHOP.forEach(function (x) { SHOP_BY_ID[x.id] = x; });
 
   // ------------------------------------------------------------ monstres (remplacent les camps de barbares)
+  /* Un monstre par semaine (rotation le lundi) ; tous les niveaux 1 → 10 de la même espèce. */
   var MONSTERS = [
-    { key: "wolves",   name: "Dire Wolves", icon: "🐺", from: 1, desc: "A pack of giant wolves with eyes like embers. They hunt travellers on the roads." },
-    { key: "harpy",    name: "Harpies",     icon: "🦅", from: 3, desc: "Shrieking bird-women nest in the rocks and swoop on anything that moves." },
-    { key: "minotaur", name: "Minotaur",    icon: "🐂", from: 5, desc: "A bull-headed giant guards a labyrinth of stone. His axe splits shields in two." },
-    { key: "cyclops",  name: "Cyclops",     icon: "👁️", from: 7, desc: "A one-eyed giant who hurls boulders. His cave hides a shepherd's fortune." },
-    { key: "griffin",  name: "Griffin",     icon: "🦁", from: 9, desc: "Half eagle, half lion, it guards a nest of gold on the high crags." },
-    { key: "hydra",    name: "Hydra",       icon: "🐉", from: 10, desc: "Cut one head, two grow back. Only the bravest heroes come back from its marsh." }
+    { key: "drake",    name: "Fire Drake",   icon: "🐉", desc: "A young red dragon has made its lair among the rocks. It breathes fire on caravans and sleeps on a hoard of stolen gold." },
+    { key: "wyvern",   name: "Wyvern",       icon: "🐉", desc: "A two-legged winged dragon with a venomous tail. It snatches cattle from the fields." },
+    { key: "frostwyrm",name: "Frost Wyrm",   icon: "🐉", desc: "A pale dragon of ice and wind. Its breath freezes armor solid." },
+    { key: "hydra",    name: "Hydra",        icon: "🐉", desc: "Cut one head, two grow back. Only the bravest heroes come back from its marsh." },
+    { key: "basilisk", name: "Basilisk",     icon: "🐍", desc: "The king of serpents. One look into its golden eyes turns soldiers to stone." }
   ];
-  function monsterOf(level) { var m = MONSTERS[0]; MONSTERS.forEach(function (x) { if (level >= x.from) m = x; }); return m; }
+  var MONSTER_EPOCH = Date.UTC(2026, 10, 2);   // lundi 2 novembre 2026 : semaine du Fire Drake
+  function monsterOf(level, t) {
+    var wk = Math.floor(((t || Date.now()) - MONSTER_EPOCH) / (7 * 86400000));
+    return MONSTERS[((wk % MONSTERS.length) + MONSTERS.length) % MONSTERS.length];
+  }
+  /** Niveau d'un nouveau monstre : surtout des petits (1-3), rarement des 9-10. */
+  var MONSTER_WEIGHTS = [20, 18, 15, 12, 10, 8, 6, 5, 4, 2];
 
   // ------------------------------------------------------------ royaume, roi et titres
   var KINGDOM = {
@@ -1454,7 +1460,7 @@ Medieval.Data = (function () {
   var TEST_PACK2 = { shield24h: 2, tpAdvanced: 2 };
 
   return {
-    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2, MONSTERS: MONSTERS, monsterOf: monsterOf,
+    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2, MONSTERS: MONSTERS, monsterOf: monsterOf, MONSTER_WEIGHTS: MONSTER_WEIGHTS,
     PACE: PACE, RESOURCES: RESOURCES, BUILDINGS: BUILDINGS, CASTLE_MAX: CASTLE_MAX, CASTLE_REQUIREMENTS: CASTLE_REQUIREMENTS,
     INNER_ORDER: INNER_ORDER, OUTER_ORDER: OUTER_ORDER, INNER_PLOTS: INNER_PLOTS, OUTER_PLOTS: OUTER_PLOTS,
     BUILDERS: BUILDERS, MARCHES: MARCHES, marchSize: marchSize, BASE_STORAGE: BASE_STORAGE, BASE_PROTECT: BASE_PROTECT,
@@ -1563,7 +1569,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, monsterLv1: true, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2115,6 +2121,7 @@ Medieval.Engine = (function (D) {
     if (o.version < 6) s.bag = JSON.parse(JSON.stringify(D.START_BAG));
     if (!s.bag || typeof s.bag !== "object") s.bag = {};
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
+    if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
     if (!s.testPack3) {
       s.testPack3 = true; s.resources.gold = (s.resources.gold || 0) + 5000;
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "5,000 gold for the test", text: "The treasury sends you 5,000 gold to try the game: speed up, buy shields, teleports and resources in the Items shop." });
@@ -3127,10 +3134,20 @@ Medieval.Engine = (function (D) {
     ["inf", "cav", "arc"].forEach(function (type) { out[type + T] = Math.round(total * mix[type]); });
     return out;
   };
+  E.monsterLevel = function (s) {
+    var Wt = D.MONSTER_WEIGHTS, tot = Wt.reduce(function (a, b) { return a + b; }, 0), r = E.rand(s) * tot;
+    for (var i = 0; i < Wt.length; i++) { r -= Wt[i]; if (r < 0) return i + 1; }
+    return 1;
+  };
+  /** Remet des niveaux bien répartis sur les monstres déjà présents (ancienne carte trop forte). */
+  E.reshuffleMonsters = function (s) {
+    if (!s.world) return;
+    s.world.tiles.forEach(function (t) { if (t.kind === "camp" && !t.by) { t.level = E.monsterLevel(s); t.troops = E.campTroops(s, t.level); } });
+  };
   function spawnCamp(s) {
     var pos = randomFree(s, 3, (s.world && s.world.spawnMax) || 16);
     if (!pos) return;
-    var d = dist(pos, HOME(s)), level = Math.max(1, Math.min(10, Math.round(d / 1.6 + E.rand(s) * 3 - 2)));
+    var level = E.monsterLevel(s);
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: level, troops: E.campTroops(s, level), x: pos.x, y: pos.y, by: null });
   }
 
@@ -3230,7 +3247,7 @@ Medieval.Engine = (function (D) {
     for (var i = 1; i < n; i++) { var x = Math.round(a.x + (b.x - a.x) * i / n), y = Math.round(a.y + (b.y - a.y) * i / n); if (E.terrainAt(s.world, x, y) === "f") f++; }
     return f / Math.max(1, n - 1);
   };
-  E.monsterOf = function (level) { return D.monsterOf(level); };
+  E.monsterOf = function (level, t) { return D.monsterOf(level, t); };
   E.travelSeconds = function (s, troops, target, from, hero) {
     var a = from || HOME(s), d = dist(a, target), slow = 1 + W.forestSlow * E.forestShare(s, a, target);
     var sp = E.bonus(s, "march_speed") + (hero ? E.bonus(s, "hero_speed") : 0);
@@ -3290,7 +3307,7 @@ Medieval.Engine = (function (D) {
   function targetLabel(s, kind, tg) {
     if (kind === "wonder") return "the Wonder";
     if (kind === "attack") return tg.name + " (lv. " + tg.level + ")";
-    if (kind === "bandit") return D.monsterOf(tg.level).name + " lv. " + tg.level;
+    if (kind === "bandit") return D.monsterOf(tg.level, s.lastTick).name + " lv. " + tg.level;
     return E.resTileName(tg.res) + " lv. " + tg.level;
   }
   E.resTileName = function (res) {
@@ -3411,7 +3428,7 @@ Medieval.Engine = (function (D) {
       removeTile(s, camp);
     }
     E.report(s, rep);
-    events.push({ type: "battle", win: res.win, label: D.monsterOf(camp.level).name + " lv. " + camp.level, at: t });
+    events.push({ type: "battle", win: res.win, label: D.monsterOf(camp.level, t).name + " lv. " + camp.level, at: t });
   }
 
   function arrive(s, m, t, events) {
@@ -5326,7 +5343,8 @@ Medieval.WorldView = (function (D, E, G) {
   }
   /** Couronne au-dessus du roi. */
   function crownFx(g, x, y, s, t) {
-    var b = Math.sin(t * 2) * 3;
+    var b = Math.sin(t * 2) * 3, ci = G.asset("fx-crown", 1);
+    if (ci && ci.img) { var cw = 46 * s, ch = cw * ci.h / ci.w; g.save(); g.shadowColor = "rgba(255,210,90,.9)"; g.shadowBlur = 16; g.drawImage(ci.img, x - cw / 2, y + b - ch / 2, cw, ch); g.restore(); return; }
     g.save(); g.translate(x, y + b); g.scale(s, s);
     g.shadowColor = "rgba(255,210,90,.9)"; g.shadowBlur = 14;
     g.fillStyle = "#f2c94c"; g.strokeStyle = "#7a4e0c"; g.lineWidth = 1.6;
@@ -5344,15 +5362,16 @@ Medieval.WorldView = (function (D, E, G) {
   }
   /** Médaillon flottant au-dessus d'une ville titrée (or = faveur, rouge = disgrâce). */
   function titleFx(g, x, y, s, t, T) {
-    var b = Math.sin(t * 2 + 1) * 2.5;
+    var b = Math.sin(t * 2 + 1) * 2.5, ti = G.asset("title-" + T.id, 1);
+    if (ti && ti.img) { var tw = 40 * s, th = tw * ti.h / ti.w; g.save(); g.shadowColor = T.good ? "rgba(255,210,90,.85)" : "rgba(230,70,60,.85)"; g.shadowBlur = 12; g.drawImage(ti.img, x - tw / 2, y + b - th / 2, tw, th); g.restore(); return; }
     g.save(); g.translate(x, y + b); g.scale(s, s);
     g.shadowColor = T.good ? "rgba(255,210,90,.85)" : "rgba(230,70,60,.85)"; g.shadowBlur = 12;
     var gr = g.createRadialGradient(0, -3, 2, 0, 0, 15);
     gr.addColorStop(0, T.good ? "#fff1b8" : "#f3b0a4"); gr.addColorStop(1, T.good ? "#c8901f" : "#8f231c");
     g.fillStyle = gr; g.strokeStyle = T.good ? "#6b4508" : "#3d0b08"; g.lineWidth = 2;
     g.beginPath(); g.arc(0, 0, 14, 0, 6.3); g.fill(); g.stroke();
-    g.shadowBlur = 0; g.font = "15px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-    g.fillText(T.icon || "★", 0, 1);
+    g.shadowBlur = 0; g.font = "700 15px Cinzel, Georgia, serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.fillStyle = T.good ? "#5a3a08" : "#fff0e8"; g.fillText(T.name.replace(/^(Master of |Master |Keeper of |Royal )/, "").charAt(0), 0, 1);
     g.restore();
   }
   function ARMY_IMG() { var a = G.asset("wm-army", 1); return a && a.img ? a : null; }
@@ -5410,7 +5429,7 @@ Medieval.WorldView = (function (D, E, G) {
   }
   /** Repaire de monstre : image « mon-<clé> » si elle existe, sinon une grotte et l'emoji du monstre. */
   function monsterIcon(g, x, y, t, level) {
-    var mo = D.monsterOf(level), img = G.asset("mon-" + mo.key, 1), bob = Math.sin(t * 2.2 + x) * 1.5;
+    var mo = D.monsterOf(level, Date.now()), img = G.asset("mon-" + mo.key, 1), bob = Math.sin(t * 2.2 + x) * 1.5;
     if (img) { G.drawAsset(g, img, x, y + bob * 0.3, TW * 1.05); return; }
     // grotte
     poly(g, [[x - 24, y + 6], [x - 16, y - 14], [x - 2, y - 22], [x + 14, y - 16], [x + 24, y + 4], [x + 6, y + 10], [x - 12, y + 10]], "#7d7368", "rgba(0,0,0,.35)");
@@ -5418,9 +5437,8 @@ Medieval.WorldView = (function (D, E, G) {
     g.fillStyle = "#1a1210"; g.beginPath(); g.ellipse(x - 2, y + 2, 9, 7, 0, Math.PI, 0); g.lineTo(x + 7, y + 6); g.lineTo(x - 11, y + 6); g.fill();
     var f = 0.6 + 0.4 * Math.sin(t * 3 + y);
     g.fillStyle = "rgba(255,60,40," + f + ")"; g.beginPath(); g.arc(x - 5, y, 1.6, 0, 6.3); g.arc(x + 1, y, 1.6, 0, 6.3); g.fill();
-    // le monstre devant sa grotte
-    g.save(); g.font = "26px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
-    g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 4; g.fillText(mo.icon, x + 12, y - 4 + bob); g.restore();
+    // fumée qui sort de la grotte (en attendant l'image du monstre)
+    for (var k = 0; k < 3; k++) { var ph = (t * 0.5 + k / 3) % 1; g.fillStyle = "rgba(120,110,100," + (0.45 * (1 - ph)) + ")"; g.beginPath(); g.arc(x - 2 + Math.sin(ph * 6 + k) * 4, y - 6 - ph * 26, 3 + ph * 6, 0, 6.3); g.fill(); }
   }
   function plate(g, x, y, text, sub, col, s, textCol) {
     g.save(); g.translate(x, y); g.scale(s, s);
@@ -7106,13 +7124,13 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   // --- rapports
   function monsterLine(r) {
-    var mo = E.monsterOf(r.level), b = E.troopTotal(r.def.before || {}), l = E.troopTotal(r.def.lost || {});
+    var mo = E.monsterOf(r.level, r.at), b = E.troopTotal(r.def.before || {}), l = E.troopTotal(r.def.lost || {});
     var pct = b ? Math.min(100, Math.round(l / b * 100)) : 0;
     return '<div class="mon-hp"><span class="mon-emo">' + mo.icon + '</span><div><b>' + esc(mo.name) + ' lv. ' + r.level + '</b><span class="qr-bar"><i style="width:' + (100 - pct) + '%;background:linear-gradient(90deg,#8a1f19,#e0463c)"></i><em>' + (r.win ? "Slain" : "Wounds: " + pct + "%") + '</em></span></div></div>';
   }
   function reportTitle(r) {
     if (r.kind === "attack") return (r.win ? "Victory over " : "Defeat against ") + r.target;
-    if (r.kind === "camp") { var mo = E.monsterOf(r.level); return (r.win ? mo.name + " lv. " + r.level + " slain" : "Repelled by the " + mo.name + " lv. " + r.level); }
+    if (r.kind === "camp") { var mo = E.monsterOf(r.level, r.at); return (r.win ? mo.name + " lv. " + r.level + " slain" : "Repelled by the " + mo.name + " lv. " + r.level); }
     if (r.kind === "defense") return (r.win ? "Attack from " + r.target + " repelled" : "Raided by " + r.target);
     if (r.kind === "tile") return (r.win ? "Took the " : "Failed to take the ") + r.target + " from " + r.lord;
     if (r.kind === "tiledef") return "Driven off the " + r.target + " by " + r.lord;
