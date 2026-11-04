@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041949";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042023";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -914,6 +914,9 @@ Medieval.Data = (function () {
   var WORLD = {
     size: 30, home: { x: 15, y: 15 }, kingdom: 7,
     botCount: 12, resTiles: 42, camps: 18,
+    sharedSize: 44, sharedBots: 14, sharedRes: 80, sharedCamps: 30,   // carte commune
+    forestSlow: 0.8,             // +80 % de temps de marche à travers la forêt
+    wonderHoldMs: 3600000,       // garder la Merveille 1 h pour devenir roi
     secondsPerTile: 8, tickMs: 3600000,
     botGrowthChance: 1 / 30,     // chance par heure qu'un château robot gagne un niveau
     botMaxAhead: 1,              // un robot ne dépasse jamais votre château de plus d'1 niveau
@@ -2706,13 +2709,14 @@ Medieval.Engine = (function (D) {
     return w.terrain.charAt(y * w.size + x);
   };
   /** Position de votre cité (carte commune : chaque joueur a la sienne). */
-  function HOME(s) { return (s && s.world && s.world.home) || W.home; }
+  function HOME(s) { return (s && s.world && (s.world.home || s.world.center)) || W.home; }
   E.homeOf = HOME;
   /** Autres joueurs visibles sur la carte commune (mis à jour par l'interface). */
   E.OTHERS = [];
   E.objectAt = function (s, x, y) {
     var w = s.world, h = HOME(s);
     if (x === h.x && y === h.y) return { kind: "home", x: x, y: y };
+    if (w.wonder && x === w.wonder.x && y === w.wonder.y) return { kind: "wonder", wonder: w.wonder, x: x, y: y };
     for (var p = 0; p < E.OTHERS.length; p++) if (E.OTHERS[p].x === x && E.OTHERS[p].y === y) return { kind: "player", player: E.OTHERS[p], x: x, y: y };
     for (var i = 0; i < w.bots.length; i++) if (w.bots[i].x === x && w.bots[i].y === y) return { kind: "bot", bot: w.bots[i], x: x, y: y };
     for (var j = 0; j < w.tiles.length; j++) if (w.tiles[j].x === x && w.tiles[j].y === y) return { kind: w.tiles[j].kind, tile: w.tiles[j], x: x, y: y };
@@ -2728,7 +2732,9 @@ Medieval.Engine = (function (D) {
   }
   function randomFree(s, minD, maxD, spacing) {
     for (var k = 0; k < 400; k++) {
-      var x = E.randInt(s, 1, W.size - 2), y = E.randInt(s, 1, W.size - 2), d = dist({ x: x, y: y }, HOME(s));
+      var n = (s.world && s.world.size) || W.size;
+      var x = E.randInt(s, 1, n - 2), y = E.randInt(s, 1, n - 2), d = dist({ x: x, y: y }, HOME(s));
+      if (s.world && s.world.wonder && Math.abs(x - s.world.wonder.x) <= 6 && Math.abs(y - s.world.wonder.y) <= 6) continue; // forêt sacrée
       if (d >= minD && d <= maxD && free(s, x, y, spacing)) return { x: x, y: y };
     }
     return null;
@@ -2759,9 +2765,9 @@ Medieval.Engine = (function (D) {
   function spawnRes(s) {
     var r = E.rand(s) * 100, k = 0;
     while (r > RES_TILE_WEIGHTS[k]) { r -= RES_TILE_WEIGHTS[k]; k++; }
-    var res = RES_TILE_KINDS[k], pos = randomFree(s, 3, 16);
+    var res = RES_TILE_KINDS[k], pos = randomFree(s, 3, (s.world && s.world.spawnMax) || 16);
     if (!pos) return;
-    var d = dist(pos, HOME(s)), level = Math.max(1, Math.min(5, Math.round(d / 3.2 + E.rand(s) * 1.6 - 0.6)));
+    var d = s.world.wonder && !s.world.home ? Math.max(0, 24 - dist(pos, HOME(s))) : dist(pos, HOME(s)), level = Math.max(1, Math.min(5, Math.round(d / 3.2 + E.rand(s) * 1.6 - 0.6)));
     var amount = W.resAmount(res, level);
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "res", res: res, level: level, amount: amount, max: amount, x: pos.x, y: pos.y, by: null });
   }
@@ -2772,7 +2778,7 @@ Medieval.Engine = (function (D) {
     return out;
   };
   function spawnCamp(s) {
-    var pos = randomFree(s, 3, 16);
+    var pos = randomFree(s, 3, (s.world && s.world.spawnMax) || 16);
     if (!pos) return;
     var d = dist(pos, HOME(s)), level = Math.max(1, Math.min(10, Math.round(d / 1.6 + E.rand(s) * 3 - 2)));
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: level, troops: E.campTroops(s, level), x: pos.x, y: pos.y, by: null });
@@ -2804,19 +2810,38 @@ Medieval.Engine = (function (D) {
   // ------------------------------------------------------------ carte commune
   /** Génère le monde commun (même graine pour tous) et y place votre cité. */
   E.sharedWorld = function (seed, now) {
-    var tmp = { seed: seed | 0, nextId: 1, world: null };
-    tmp.world = null;
-    return E.generateWorld(tmp, now);
+    var s = { seed: seed | 0, nextId: 1, world: null }, size = W.sharedSize, C = Math.floor(size / 2), center = { x: C, y: C };
+    var elev = noiseField(s, size, 6), moist = noiseField(s, size, 7), terrain = "";
+    for (var y = 0; y < size; y++) for (var x = 0; x < size; x++) {
+      var e = elev(x, y), m = moist(x, y), dx = Math.abs(x - C), dy = Math.abs(y - C), edge = Math.min(x, y, size - 1 - x, size - 1 - y);
+      var c = "g";
+      if (dx <= 6 && dy <= 6) c = dx <= 2 && dy <= 2 ? "g" : "f";             // forêt sacrée, clairière de la Merveille
+      else if (e < 0.11) c = "w";
+      else if (e > 0.9 || edge === 0 && e > 0.75) c = "m";
+      else if (m > 0.72) c = "f";
+      terrain += c;
+    }
+    s.world = { size: size, kingdom: W.kingdom, terrain: terrain, tiles: [], bots: [], marches: [], incoming: [], nextTick: now + W.tickMs,
+      center: center, spawnMax: C - 1, wonder: { x: C, y: C, occ: null, king: null, openAt: 0 } };
+    for (var i = 0; i < W.sharedBots; i++) {
+      var pos = randomFree(s, 9, C - 2, 4) || randomFree(s, 8, C, 2);
+      if (!pos) continue;
+      var d = dist(pos, center), lv = Math.max(1, Math.min(12, Math.round(12 - (d - 9) * 0.7 + E.rand(s) * 2 - 1)));
+      s.world.bots.push(makeBot(s, i, pos, lv));
+    }
+    for (var r = 0; r < W.sharedRes; r++) spawnRes(s);
+    for (var k = 0; k < W.sharedCamps; k++) spawnCamp(s);
+    return s.world;
   };
   /** Choisit une place libre, loin des autres cités. taken : [{x,y}] */
   E.findHomeSpot = function (world, taken, salt) {
-    var c = W.home, best = null, bestScore = Infinity;
+    var c = world.center || W.home, best = null, bestScore = Infinity, minD = world.wonder ? 9 : 0, maxD = world.wonder ? c.x - 3 : 11;
     for (var y = 2; y < world.size - 2; y++) for (var x = 2; x < world.size - 2; x++) {
       var t = E.terrainAt(world, x, y); if (t !== "g") continue;
-      var d = dist({ x: x, y: y }, c); if (d > 11) continue;
+      var d = dist({ x: x, y: y }, c); if (d > maxD || d < minD) continue;
       if (taken.some(function (p) { return dist(p, { x: x, y: y }) < 3.5; })) continue;
       if (world.bots.some(function (b) { return dist(b, { x: x, y: y }) < 2.5; })) continue;
-      var score = d + (((x * 73856093) ^ (y * 19349663) ^ (salt | 0)) >>> 0) % 1000 / 400;
+      var score = (((x * 73856093) ^ (y * 19349663) ^ (salt | 0)) >>> 0) % 1000 / 60 + Math.abs(d - 13);
       if (score < bestScore) { bestScore = score; best = { x: x, y: y }; }
     }
     return best || { x: c.x, y: c.y };
@@ -2850,9 +2875,15 @@ Medieval.Engine = (function (D) {
     }
     return sp === Infinity ? 1 : sp;
   };
+  /** Part du trajet qui traverse la forêt (les marches y sont plus lentes). */
+  E.forestShare = function (s, a, b) {
+    var n = Math.max(2, Math.ceil(dist(a, b) * 2)), f = 0;
+    for (var i = 1; i < n; i++) { var x = Math.round(a.x + (b.x - a.x) * i / n), y = Math.round(a.y + (b.y - a.y) * i / n); if (E.terrainAt(s.world, x, y) === "f") f++; }
+    return f / Math.max(1, n - 1);
+  };
   E.travelSeconds = function (s, troops, target, from) {
-    var d = dist(from || HOME(s), target);
-    return Math.max(5, Math.round(d * W.secondsPerTile / E.marchSpeed(troops, s) / (1 + E.bonus(s, "march_speed") / 100)));
+    var a = from || HOME(s), d = dist(a, target), slow = 1 + W.forestSlow * E.forestShare(s, a, target);
+    return Math.max(5, Math.round(d * slow * W.secondsPerTile / E.marchSpeed(troops, s) / (1 + E.bonus(s, "march_speed") / 100)));
   };
   E.findTile = function (s, id) {
     var t = s.world.tiles; for (var i = 0; i < t.length; i++) if (t[i].id === id) return t[i];
@@ -2864,6 +2895,7 @@ Medieval.Engine = (function (D) {
   };
   function target(s, kind, id) {
     if (kind === "attack") return E.findBot(s, id);
+    if (kind === "wonder") return s.world.wonder || null;
     var t = E.findTile(s, id);
     if (!t) return null;
     if (kind === "gather" && t.kind !== "res") return null;
@@ -2883,6 +2915,10 @@ Medieval.Engine = (function (D) {
     if (kind === "gather" && tg.by) reasons.push("One of your marches is already gathering here.");
     if (kind === "gather" && s.world.marches.some(function (x) { return x.kind === "gather" && x.targetId === targetId && x.phase === "out"; })) reasons.push("One of your marches is already on its way there.");
     if (kind === "gather" && tg.res === "gold" && E.castleLevel(s) < 3) reasons.push("Requires Stronghold level 3 to mine gold.");
+    if (kind === "wonder") {
+      if (!E.wonderOpen(s, s.lastTick)) reasons.push("The Wonder is closed until the next contest.");
+      if (s.world.marches.some(function (x) { return x.kind === "wonder"; })) reasons.push("You already have a march at the Wonder.");
+    }
     return { ok: reasons.length === 0, reasons: reasons, troops: t, time: E.travelSeconds(s, t, tg), target: tg };
   };
 
@@ -2901,6 +2937,7 @@ Medieval.Engine = (function (D) {
     return { ok: true, march: m };
   };
   function targetLabel(s, kind, tg) {
+    if (kind === "wonder") return "the Wonder";
     if (kind === "attack") return tg.name + " (lv. " + tg.level + ")";
     if (kind === "bandit") return "Barbarian camp lv. " + tg.level;
     return E.resTileName(tg.res) + " lv. " + tg.level;
@@ -2922,6 +2959,11 @@ Medieval.Engine = (function (D) {
     if (!m) return { ok: false, reasons: ["This march is already home."] };
     if (m.phase === "back") return { ok: false, reasons: ["This march is already returning."] };
     if (m.phase === "out") { m.phase = "back"; m.backStart = now; m.next = now + (now - m.start); m.travel = (now - m.start) / 1000; }
+    else if (m.phase === "garrison") {
+      if (s.world.wonder) { s.world.wonder.mine = null; }
+      E.netEmit(s, { op: "wonderRelease" });
+      goHome(m, now);
+    }
     else if (m.phase === "gather") {
       var tile = E.findTile(s, m.targetId), got = gatheredSoFar(s, m, now);
       if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
@@ -3036,6 +3078,16 @@ Medieval.Engine = (function (D) {
       E.netEmit(s, { op: "occupy", tileId: tile.id, troops: clean(m.troops), bonus: combatBonus(s, m.hero), hero: m.hero, start: t, end: m.gatherEnd, amount: amount, rate: m.gatherRate });
       return;
     }
+    if (m.kind === "wonder") {
+      var wd = s.world.wonder;
+      if (!wd || !E.wonderOpen(s, t)) { E.report(s, { kind: "info", at: t, title: "Wonder closed", text: "The Wonder contest is over. Your march is heading home." }); goHome(m, t); return; }
+      if (wd.occ && !fightOccupant(s, m, { id: "wonder", occ: wd.occ, label: "the Wonder", x: wd.x, y: wd.y }, t, events)) { goHome(m, t); return; }
+      wd.occ = null; wd.mine = m.id; wd.since = t;
+      m.phase = "garrison"; m.next = Infinity; m.garrisonAt = t;
+      E.netEmit(s, { op: "wonderOccupy", troops: clean(m.troops), bonus: combatBonus(s, m.hero), hero: m.hero, since: t });
+      E.report(s, { kind: "info", at: t, title: "Your troops hold the Wonder", text: "Hold it for " + Math.round(W.wonderHoldMs / 60000) + " minutes without being driven off and you will be crowned King of the realm." });
+      return;
+    }
     if (m.kind === "attack") {
       var bot = E.findBot(s, m.targetId);
       if (bot) resolveAttack(s, m, bot, t, events);
@@ -3065,12 +3117,12 @@ Medieval.Engine = (function (D) {
     var occ = tile.occ, res = E.battle({ troops: m.troops, bonus: E.bonuses(s, { combat: m.hero, t: t }) }, { troops: occ.troops, bonus: occ.bonus || {} });
     var cas = E.addCasualties(s, res.att.lost, 0.5);
     m.troops = clean(res.att.left);
-    var rep = { kind: "tile", at: t, win: res.win, target: E.resTileName(tile.res) + " lv. " + tile.level, lord: occ.name || "Another lord", x: tile.x, y: tile.y,
+    var rep = { kind: "tile", at: t, win: res.win, target: tile.label || E.resTileName(tile.res) + " lv. " + tile.level, lord: occ.name || "Another lord", x: tile.x, y: tile.y,
       hero: m.hero, rounds: res.rounds, att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
     if (m.hero) E.heroGainXp(s, heroXpFrom(res.def.lost), events, t);
     if (res.win) {
       s.stats.wins++;
-      rep.events.push("You drove " + (occ.name || "them") + " off the tile. Your troops start gathering.");
+      rep.events.push("You drove " + (occ.name || "them") + " off " + (tile.label || "the tile") + ".");
       E.netEmit(s, { op: "dislodge", tileId: tile.id, victim: occ.uid, lost: res.def.lost, before: res.def.before, rounds: res.rounds, atk: res.att.before, atkLost: res.att.lost });
       tile.occ = null;
     } else s.stats.losses++;
@@ -3080,10 +3132,11 @@ Medieval.Engine = (function (D) {
   }
   /** Un autre joueur nous a chassés d'une case ressource (message reçu du serveur). */
   E.dislodged = function (s, hit, now) {
-    var m = s.world.marches.filter(function (x) { return x.kind === "gather" && x.targetId === hit.tileId && x.phase === "gather"; })[0];
+    var m = s.world.marches.filter(function (x) { return hit.tileId === "wonder" ? x.kind === "wonder" && x.phase === "garrison" : x.kind === "gather" && x.targetId === hit.tileId && x.phase === "gather"; })[0];
     var lost = {}, k;
     if (m) {
-      var got = gatheredSoFar(s, m, now);
+      var got = m.kind === "gather" ? gatheredSoFar(s, m, now) : 0;
+      if (m.kind === "wonder" && s.world.wonder) s.world.wonder.mine = null;
       for (k in hit.lost || {}) { var n = Math.min(m.troops[k] || 0, hit.lost[k]); if (n > 0) { lost[k] = n; m.troops[k] -= n; } }
       m.troops = clean(m.troops);
       if (got > 0) m.load[m.gatherRes] = (m.load[m.gatherRes] || 0) + got;
@@ -3095,6 +3148,24 @@ Medieval.Engine = (function (D) {
       att: { before: hit.atk || {}, lost: hit.atkLost || {}, left: {} }, def: { before: hit.before || {}, lost: lost, left: m ? m.troops : {} },
       wounded: cas.wounded, dead: cas.dead, loot: {}, events: [(hit.by || "Another lord") + " drove your gatherers off the tile."] });
     return { type: "battle", win: false, label: hit.by || "another lord", at: now };
+  };
+  /** La Merveille est-elle ouverte au combat ? (fermée après un couronnement, jusqu'au samedi suivant) */
+  /** Couronnement : vos troupes rentrent, vous êtes roi jusqu'au prochain tournoi. */
+  E.crowned = function (s, by, t) {
+    var m = s.world.marches.filter(function (x) { return x.kind === "wonder" && x.phase === "garrison"; })[0];
+    if (m) goHome(m, t);
+    if (s.world.wonder) { s.world.wonder.mine = null; s.world.wonder.king = { uid: by.uid, name: by.name, at: t }; s.world.wonder.openAt = E.nextWonderOpening(t); }
+    s.stats.crowned = (s.stats.crowned || 0) + 1;
+    E.report(s, { kind: "info", at: t, title: "You are King of the realm!", text: "Your troops held the Wonder. Your name is proclaimed across the kingdom until the next contest, on Saturday evening." });
+    return { type: "crowned", at: t };
+  };
+  E.wonderOpen = function (s, t) { var w = s.world && s.world.wonder; return !!w && !(w.openAt > (t || s.lastTick)); };
+  /** Prochaine ouverture : samedi 20 h (heure de Paris ≈ 19 h UTC) après la date t. */
+  E.nextWonderOpening = function (t) {
+    var d = new Date(t), day = d.getUTCDay(), add = (6 - day + 7) % 7;
+    var o = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + add, 19, 0, 0);
+    if (o <= t) o += 7 * 86400000;
+    return o;
   };
   /** File des messages à envoyer au serveur (carte commune). */
   E.netEmit = function (s, ev) { if (s.world && s.world.shared) { if (!s.netOut) s.netOut = []; s.netOut.push(ev); } };
@@ -4927,6 +4998,7 @@ Medieval.WorldView = (function (D, E, G) {
     w.bots.forEach(function (b) { objs.push({ o: b, k: "bot" }); });
     objs.push({ o: E.homeOf(state), k: "home" });
     E.OTHERS.forEach(function (o) { objs.push({ o: o, k: "player" }); });
+    if (w.wonder) objs.push({ o: w.wonder, k: "wonder" });
     objs.sort(function (a, b) { return (a.o.x + a.o.y) - (b.o.x + b.o.y) || a.o.x - b.o.x; });
     var labels = [];
     objs.forEach(function (it) {
@@ -4943,6 +5015,14 @@ Medieval.WorldView = (function (D, E, G) {
         var bimg = G.asset("castle", b.level);
         if (bimg) G.drawAsset(ctx, bimg, p.x, p.y, TW * (1 + Math.min(b.level, 21) * 0.025)); else miniCastle(ctx, p.x, p.y, b.level, "#4a5f8a", false, t);
         labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, b.name, "lv. " + b.level, "#8aa0c8", ui * 0.85); });
+      } else if (it.k === "wonder") {
+        var wd = it.o, wimg = G.asset("wonder", 1) || G.asset("castle", 11), glow = 0.5 + 0.5 * Math.sin(t * 2);
+        ctx.save(); ctx.globalAlpha = 0.35 + glow * 0.25;
+        var gg = ctx.createRadialGradient(p.x, p.y, 10, p.x, p.y, TW * 1.6); gg.addColorStop(0, "rgba(255,215,110,.9)"); gg.addColorStop(1, "rgba(255,215,110,0)");
+        ctx.fillStyle = gg; ctx.beginPath(); ctx.ellipse(p.x, p.y, TW * 1.6, TW * 0.8, 0, 0, 6.3); ctx.fill(); ctx.restore();
+        if (wimg) G.drawAsset(ctx, wimg, p.x, p.y, TW * (G.asset("wonder", 1) ? 2.6 : 2.2)); else miniCastle(ctx, p.x, p.y, 21, "#d9a73e", true, t);
+        var mineW = w.marches.some(function (m) { return m.kind === "wonder" && m.phase === "garrison"; });
+        labels.push(function () { plate(ctx, p.x, p.y + 44 * ui, "The Wonder", wd.king ? "King: " + wd.king.name : mineW ? "Held by you" : wd.occ ? "Held by " + (wd.occ.name || "?") : "Unclaimed", "#ffd36b", ui * 1.05); });
       } else if (it.k === "player") {
         var op = it.o, oimg = G.asset("castle", op.stronghold || 1);
         if (oimg) G.drawAsset(ctx, oimg, p.x, p.y, TW * (1 + Math.min(op.stronghold || 1, 21) * 0.025)); else miniCastle(ctx, p.x, p.y, op.stronghold || 1, "#3d7a4a", true, t);
@@ -5446,6 +5526,14 @@ Medieval.Save = (function (E) {
     var cred = window.firebase.auth.EmailAuthProvider.credential(fbUser.email, pw);
     return fbUser.linkWithCredential(cred);
   }
+  /** Supprime la sauvegarde, la fiche publique et le compte. */
+  function deleteAccount() {
+    if (!fb || !fbUser) return Promise.reject(new Error("Not signed in."));
+    var u = fbUser;
+    return Promise.all([fb.db.collection("saves").doc(u.uid).delete().catch(function () {}), fb.db.collection("players").doc(u.uid).delete().catch(function () {})])
+      .then(function () { return u.delete(); })
+      .then(function () { if (unwatch) { unwatch(); unwatch = null; } doc = null; fbUser = null; status.user = null; status.cloud = null; });
+  }
   function signOut() {
     if (unwatch) { unwatch(); unwatch = null; }
     doc = null; fbUser = null; status.user = null; status.cloud = null;
@@ -5531,7 +5619,7 @@ Medieval.Save = (function (E) {
     hasCloud: function () { return !!doc; },
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
     listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
-    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose, setPassword: setPassword, protect: protect, protectGoogle: protectGoogle,
+    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose, setPassword: setPassword, protect: protect, protectGoogle: protectGoogle, deleteAccount: deleteAccount,
     db: function () { return fb && fbUser ? fb.db : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
@@ -5560,6 +5648,33 @@ Medieval.Online = (function (D, E, S) {
 
   function db() { return S.db && S.db(); }
   function tilesRef() { return db().collection("world").doc(WORLD_DOC).collection("tiles"); }
+  function wonderRef() { return db().collection("world").doc(WORLD_DOC).collection("meta").doc("wonder"); }
+  var wonderDoc = null, unWonder = null, crowning = false;
+  function myName(s) { return (s.name || "City") + " (" + ((s.hero && s.hero.name) || "") + ")"; }
+  function applyWonder(s, v, now) {
+    var w = s.world.wonder, me = S.uid(); if (!w) return;
+    v = v || {};
+    w.occ = v.uid && v.uid !== me ? { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, since: v.since } : null;
+    w.holder = v.uid ? { uid: v.uid, name: v.name, since: v.since } : null;
+    w.king = v.king ? { uid: v.king, name: v.kingName, at: v.kingAt } : null;
+    w.openAt = v.openAt || 0;
+    void now;
+  }
+  /** Garde tenue assez longtemps : on se proclame roi. */
+  function checkCrown(s, now) {
+    var w = s.world && s.world.wonder, me = S.uid();
+    if (crowning || !w || !w.mine || !wonderDoc || wonderDoc.uid !== me || !(wonderDoc.since > 0)) return;
+    if (now - wonderDoc.since < D.WORLD.wonderHoldMs || (wonderDoc.openAt || 0) > now) return;
+    crowning = true;
+    var name = myName(s), since = wonderDoc.since;
+    db().runTransaction(function (tx) {
+      return tx.get(wonderRef()).then(function (d) {
+        var v = d.exists ? d.data() : {};
+        if (v.uid !== me || v.since !== since) throw new Error("lost");
+        tx.set(wonderRef(), { uid: null, name: null, troops: null, bonus: null, since: 0, king: me, kingName: name, kingAt: now, openAt: E.nextWonderOpening(now) }, { merge: true });
+      });
+    }).then(function () { api.onEvents([E.crowned(s, { uid: me, name: name }, now)]); }, function () {}).then(function () { crowning = false; });
+  }
   function hitsRef() { return db().collection("world").doc(WORLD_DOC).collection("hits"); }
   function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
@@ -5586,7 +5701,8 @@ Medieval.Online = (function (D, E, S) {
       if (taken.some(function (o) { return dist(o, p) < 1.5; })) continue;
       if (w.tiles.some(function (o) { return o.x === x && o.y === y; })) continue;
       var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
-      var res = KINDS[i], d = dist(p, { x: D.WORLD.home.x, y: D.WORLD.home.y });
+      var res = KINDS[i], d = Math.max(0, 24 - dist(p, w.center || D.WORLD.home));
+      if (w.wonder && Math.abs(x - w.wonder.x) <= 6 && Math.abs(y - w.wonder.y) <= 6) continue;
       var level = Math.max(1, Math.min(5, Math.round(d / 3.2 + Math.random() * 1.6 - 0.6))), amount = D.WORLD.resAmount(res, level);
       tx.set(tilesRef().doc("t" + x + "_" + y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: x, y: y });
       return;
@@ -5610,7 +5726,13 @@ Medieval.Online = (function (D, E, S) {
     sending = true;
     var ev = s.netOut[0], me = S.uid(), name = (s.name || "City") + " (" + ((s.hero && s.hero.name) || "") + ")";
     var p;
-    if (ev.op === "occupy") {
+    if (ev.op === "wonderOccupy") {
+      p = wonderRef().set({ uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, since: ev.since }, { merge: true });
+    } else if (ev.op === "wonderRelease") {
+      p = db().runTransaction(function (tx) {
+        return tx.get(wonderRef()).then(function (d) { if (d.exists && d.data().uid === me) tx.set(wonderRef(), { uid: null, name: null, troops: null, since: 0 }, { merge: true }); });
+      });
+    } else if (ev.op === "occupy") {
       p = tilesRef().doc(ev.tileId).update({ uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, start: ev.start, end: ev.end, gather: ev.amount, rate: ev.rate });
     } else if (ev.op === "release") {
       p = db().runTransaction(function (tx) {
@@ -5626,8 +5748,8 @@ Medieval.Online = (function (D, E, S) {
         });
       });
     } else if (ev.op === "dislodge") {
-      var tile = E.findTile(s, ev.tileId);
-      p = ev.victim ? hitsRef().add({ target: ev.victim, tileId: ev.tileId, tileName: tile ? E.resTileName(tile.res) + " lv. " + tile.level : "Resource tile",
+      var tile = ev.tileId === "wonder" ? null : E.findTile(s, ev.tileId);
+      p = ev.victim ? hitsRef().add({ target: ev.victim, tileId: ev.tileId, tileName: ev.tileId === "wonder" ? "the Wonder" : tile ? E.resTileName(tile.res) + " lv. " + tile.level : "Resource tile",
         by: name, lost: ev.lost || {}, before: ev.before || {}, atk: ev.atk || {}, atkLost: ev.atkLost || {}, rounds: ev.rounds || 1, at: Date.now() }) : Promise.resolve();
     } else p = Promise.resolve();
     p.then(function () { s.netOut.shift(); }, function (e) {
@@ -5649,6 +5771,11 @@ Medieval.Online = (function (D, E, S) {
           var docs = []; q.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
           applyTiles(st, docs, api.now()); api.refresh();
         }, function () {});
+        if (unWonder) unWonder();
+        unWonder = wonderRef().onSnapshot(function (d) {
+          var st = api.state(); if (!st || !st.world || st.world.shared !== seed) return;
+          wonderDoc = d.exists ? d.data() : null; applyWonder(st, wonderDoc, api.now()); api.refresh();
+        }, function () {});
         if (unHits) unHits();
         unHits = hitsRef().where("target", "==", S.uid()).onSnapshot(function (q) {
           var st = api.state(); if (!st) return;
@@ -5661,7 +5788,8 @@ Medieval.Online = (function (D, E, S) {
       });
     },
     flush: function () { if (api) send(api.state()); },
-    stop: function () { if (unTiles) unTiles(); if (unHits) unHits(); unTiles = unHits = null; api = null; }
+    tick: function () { if (api) checkCrown(api.state(), api.now()); },
+    stop: function () { if (unTiles) unTiles(); if (unHits) unHits(); if (unWonder) unWonder(); unTiles = unHits = unWonder = null; api = null; }
   };
 })(Medieval.Data, Medieval.Engine, Medieval.Save);
 
@@ -5741,17 +5869,17 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       '<p class="small muted">To keep it for good and play on another phone or computer, add an e-mail and a password:</p>' +
       '<input id="accEmail" type="email" autocomplete="email" placeholder="E-mail"><input id="accPass" type="password" autocomplete="new-password" placeholder="Password (6+ characters)" style="margin-top:6px">' +
       '<div class="row"><button class="btn primary" data-act="protect">Save with e-mail</button><button class="btn" data-act="protect-google">' + icon("globe") + 'Save with Google</button></div>' +
-      '<details class="small"><summary>I already have an account</summary><p class="muted small">Sign in with your e-mail and password to load your city on this device.</p>' +
+      '<h3 style="margin-top:8px">I already have an account</h3><p class="muted small">Sign in to load your city on this device.</p>' +
       '<input id="accEmail2" type="email" autocomplete="email" placeholder="E-mail"><input id="accPass2" type="password" autocomplete="current-password" placeholder="Password" style="margin-top:6px">' +
-      '<div class="row"><button class="btn" data-act="signin-email">Sign in</button><button class="btn ghost" data-act="signin-google">Google (in Safari)</button></div></details>' + foot + '</section>';
+      '<div class="row"><button class="btn" data-act="signin-email">Sign in</button><button class="btn ghost" data-act="signin-google">Google (in a browser)</button></div>' + foot + '</section>';
     if (u) return html + '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(u.email || u.name) + '</b>. Your city is saved online: sign in with this e-mail on any device to play it.</p>' +
-      '<details class="small"><summary>More options</summary>' +
-      '<label class="lbl" for="accNewPass">Set or change your password</label><div class="row"><input id="accNewPass" type="password" autocomplete="new-password" placeholder="6+ characters" style="flex:1"><button class="btn" data-act="set-password">Save</button></div>' +
-      '<div class="row"><button class="btn" data-act="diagnose">Check connection</button><button class="btn ghost" data-act="signout">Sign out</button></div></details>' + foot + '</section>';
+      '<div class="row"><button class="btn" data-act="signout">Sign out</button><button class="btn ghost" data-act="diagnose">Check connection</button></div>' +
+      (ui.confirm === "delete-account" ? '<p class="warn small">Your city, your hero and all your progress will be erased for good.</p><div class="row"><button class="btn danger" data-act="delete-account-confirm">Delete my account</button><button class="btn ghost" data-act="cancel-abort">Keep it</button></div>'
+        : '<button class="btn ghost danger-text" data-act="delete-account">Delete my account</button>') + foot + '</section>';
     return html + '<p class="small muted">Connecting…</p>' + foot + '</section>';
   }
   // ------------------------------------------------------------ carte commune (version web)
-  var SHARED_SEED = 900001;   // nouvelle carte commune (remise à zéro du 04/11)
+  var SHARED_SEED = 900002;   // carte commune 44×44 avec la Merveille
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
     return S.listPlayers().then(function (list) {
@@ -5890,8 +6018,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       rows.push('<button class="timer k-raid" data-act="panel" data-arg="incoming"><span class="t-ico">' + icon("alert") + '</span><span class="t-bar"><i data-live-span="' + a.launched + ':' + a.arrive + '"></i><span class="t-name">Attack from ' + esc(a.name) + '</span><span class="t-time" data-live-until="' + a.arrive + '"></span></span><span></span></button>');
     });
     state.world.marches.forEach(function (m) {
-      var phase = m.phase === "out" ? "To " : m.phase === "gather" ? "Gathering: " : "Back from ";
-      var span = m.phase === "out" ? [m.start, m.next] : m.phase === "gather" ? [m.gatherStart, m.gatherEnd] : [m.backStart, m.next];
+      var phase = m.phase === "out" ? "To " : m.phase === "gather" ? "Gathering: " : m.phase === "garrison" ? "Holding " : "Back from ";
+      var span = m.phase === "out" ? [m.start, m.next] : m.phase === "gather" ? [m.gatherStart, m.gatherEnd] : m.phase === "garrison" ? [m.garrisonAt, m.garrisonAt + D.WORLD.wonderHoldMs] : [m.backStart, m.next];
       rows.push('<button class="timer k-' + (m.kind === "gather" ? "gather" : "march") + '" data-act="goto-march" data-arg="' + m.id + '"><span class="t-ico">' + icon(m.kind === "gather" ? "march" : "sword") + '</span><span class="t-bar"><i data-live-span="' + span[0] + ':' + span[1] + '"></i><span class="t-name">' + phase + esc(m.label) + '</span><span class="t-time" data-live-until="' + span[1] + '"></span></span>' +
         (m.phase !== "back" ? '<span class="t-btn" role="button" data-act="recall" data-arg="' + m.id + '">Recall</span>' : '<span></span>') + '</button>');
     });
@@ -6534,6 +6662,17 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var o = E.objectAt(state, pos.x, pos.y), coord = "X:" + pos.x + " Y:" + pos.y;
     if (!o) return head(coord, TERRAIN[E.terrainAt(state.world, pos.x, pos.y)] || "Terrain") + '<div class="p-body"><p class="muted">Nothing of interest here.</p></div>';
     if (o.kind === "home") return head(coord, esc(state.name || "My city")) + '<div class="p-body"><p>Your city, Stronghold level ' + E.castleLevel(state) + '.</p><button class="btn primary" data-act="toggle-view">' + icon("castle") + 'Enter the city</button></div>';
+    if (o.kind === "wonder") {
+      var wd = o.wonder, open = E.wonderOpen(state, now()), mineM = state.world.marches.filter(function (x) { return x.kind === "wonder"; })[0];
+      var wh = head(coord + " · center of the realm", "The Wonder") + '<div class="p-body"><p class="small">Hold the Wonder with your troops for <b>' + Math.round(D.WORLD.wonderHoldMs / 60000) + ' minutes</b> without being driven off, and you are crowned <b>King of the realm</b>. One contest per week.</p><dl class="stats">' +
+        '<dt>King</dt><dd>' + (wd.king ? '<b>' + esc(wd.king.name || "?") + '</b> <span class="muted">(' + F.ago(wd.king.at) + ')</span>' : '<span class="muted">nobody yet</span>') + '</dd>' +
+        '<dt>Status</dt><dd>' + (open ? '<span class="pill green">Open</span>' : 'Closed until ' + new Date(wd.openAt).toLocaleString("en-GB", { weekday: "long", hour: "2-digit", minute: "2-digit" })) + '</dd>' +
+        '<dt>Held by</dt><dd>' + (mineM && mineM.phase === "garrison" ? '<b>you</b> · crowned in <span data-live-until="' + (mineM.garrisonAt + D.WORLD.wonderHoldMs) + '"></span>' : wd.occ ? esc(wd.occ.name || "another lord") + (wd.occ.since ? ' · since ' + F.ago(wd.occ.since) : "") : '<span class="muted">nobody</span>') + '</dd>' +
+        '<dt>Distance</dt><dd>' + E.worldDistance(wd, E.homeOf(state)).toFixed(1) + ' tiles · the sacred forest slows marches</dd></dl>';
+      if (mineM) return wh + (mineM.phase !== "back" ? '<button class="btn" data-act="recall" data-arg="' + mineM.id + '">Recall your troops</button>' : '<p class="muted small">Your troops are coming back.</p>') + '</div>';
+      if (!open) return wh + '</div>';
+      return wh + '<button class="btn primary wide" data-act="march" data-arg="wonder:wonder">' + icon("sword") + (wd.occ ? "Attack the holder" : "Send troops to hold it") + '</button></div>';
+    }
     if (o.kind === "player") {
       var pl = o.player;
       return head(coord + " · Stronghold " + (pl.stronghold || 1), (pl.tag ? "[" + esc(pl.tag) + "] " : "") + esc(pl.name || "City")) + '<div class="p-body"><dl class="stats"><dt>Lord</dt><dd>' + esc(pl.lord || "") + '</dd>' +
@@ -6572,6 +6711,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   function enemyOf(kind, target) {
     if (kind === "bandit") return { troops: target.troops, bonus: {}, known: true };
+    if (kind === "wonder" || kind === "gather") return target.occ ? { troops: target.occ.troops, bonus: target.occ.bonus || {}, known: E.bonus(state, "scouting") >= 5 } : { troops: {}, bonus: {}, known: true };
     if (kind === "attack") return { troops: target.troops, bonus: E.botBonus(target), known: watch() >= 10 || E.bonus(state, "scouting") >= 5, mix: D.WORLD.doctrines[target.doctrine].mix };
     return null;
   }
@@ -6614,12 +6754,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       m.troops = out;
     }
   }
-  function marchTarget(m) { return m.kind === "attack" ? E.findBot(state, m.targetId) : E.findTile(state, m.targetId); }
+  function marchTarget(m) { return m.kind === "attack" ? E.findBot(state, m.targetId) : m.kind === "wonder" ? state.world.wonder : E.findTile(state, m.targetId); }
 
   PANELS.march = function () {
     var m = ui.march, tg = marchTarget(m);
     if (!tg) return head("March", "Target gone") + '<div class="p-body"><p>This target no longer exists.</p></div>';
-    var title = m.kind === "gather" ? "Gather" : "Attack", sub = m.kind === "attack" ? tg.name + " · lv. " + tg.level : m.kind === "bandit" ? "Barbarian camp lv. " + tg.level : E.resTileName(tg.res) + " lv. " + tg.level;
+    var title = m.kind === "gather" ? "Gather" : m.kind === "wonder" ? "Take the Wonder" : "Attack", sub = m.kind === "wonder" ? "The Wonder" : m.kind === "attack" ? tg.name + " · lv. " + tg.level : m.kind === "bandit" ? "Barbarian camp lv. " + tg.level : E.resTileName(tg.res) + " lv. " + tg.level;
     var html = head(esc(sub) + " · X:" + tg.x + " Y:" + tg.y, title) + '<div class="p-body">';
     var ids = D.TROOP_IDS.filter(function (id) { return state.army[id] > 0; });
     if (!ids.length) return html + '<p>No troops at home. Train soldiers at the barracks.</p></div>';
@@ -6644,7 +6784,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       if (en.known) {
         var sim = E.battle({ troops: c.troops, bonus: E.bonuses(state, { combat: m.hero && heroOk }), siege: m.kind === "attack" ? "city" : "field" }, { troops: en.troops, bonus: en.bonus });
         html += '<p class="' + (sim.win ? "" : "warn") + '">' + icon(sim.win ? "check" : "alert") + (sim.win ? "Likely victory" : "Likely defeat") + ' · estimated losses ' + F.num(E.lossCount(sim.att)) + '</p>';
-      } else html += '<p class="muted small">This enemy is known for: ' + D.WORLD.doctrines[tg.doctrine].name.toLowerCase() + '. Pick the troop type that counters it.</p>';
+      } else if (tg.doctrine) html += '<p class="muted small">This enemy is known for: ' + D.WORLD.doctrines[tg.doctrine].name.toLowerCase() + '. Pick the troop type that counters it.</p>';
+      else html += '<p class="muted small">Scouting level 5 lets you predict this fight.</p>';
     }
     html += c.ok ? '<button class="btn ' + (m.kind === "gather" ? "teal" : "primary") + ' wide" data-act="send-march">' + icon(m.kind === "gather" ? "march" : "sword") + (m.kind === "gather" ? "Start gathering" : "Launch attack") + '</button>' : reasonsHtml(c);
     return html + '</div>';
@@ -6699,6 +6840,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       case "trained": return icon("sword") + "<span><b>" + esc(troopsLine(ev.troops)) + "</b> joined the army.</span>";
       case "healed": return icon("heal") + "<span><b>" + F.num(E.troopTotal(ev.troops)) + " soldiers</b> healed.</span>";
       case "crafted": return icon("anvil") + '<span>Crafted: <b style="color:' + D.RARITIES[ev.item.rarity].color + '">' + esc(E.itemName(ev.item)) + "</b> (" + D.RARITIES[ev.item.rarity].name.toLowerCase() + ").</span>";
+      case "crowned": return icon("crown") + "<span><b>You are King of the realm!</b></span>";
       case "researched": var rd = D.RESEARCH_BY_ID[ev.research]; return icon("book") + "<span>Research complete: <b>" + esc(rd.name) + "</b>" + (rd.max > 1 ? " level " + ev.level : "") + " · +" + F.num(ev.xp || 0) + " hero XP.</span>";
       case "trapsBuilt": return icon("castle") + "<span><b>" + F.num(ev.count) + " " + (ev.count > 1 ? D.TRAPS[ev.trap].plural : D.TRAPS[ev.trap].name) + "</b> ready on the wall.</span>";
       case "vipDaily": return icon("crown") + "<span>Daily login: <b>+" + ev.points + " VIP points</b> (" + ev.streak + "-day streak)." + (ev.up ? " <b>VIP " + ev.level + " reached!</b>" : "") + "</span>";
@@ -6815,7 +6957,14 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       S.diagnose.state = state;
       S.writeCloud(state).then(function () { return S.diagnose(); }).then(function (r) { ui.diag = r.text + (S.status.cloudError ? " · Save error: " + S.status.cloudError : ""); renderPanel(true); if (r.ok) ensureShared(); });
     },
-    signout: function () { S.signOut().then(function () { renderPanel(true); toast(icon("check") + "<span>Signed out. Your game stays on this device.</span>"); }); },
+    "delete-account": function () { ui.confirm = "delete-account"; renderPanel(true); },
+    "delete-account-confirm": function () {
+      ui.confirm = null;
+      S.deleteAccount().then(function () {
+        S.clearLocal(); ui.reloading = true; location.reload();
+      }, authError);
+    },
+    signout: function () { S.signOut().then(function () { S.clearLocal(); ui.reloading = true; location.reload(); }); },
     "ally-join": function (arg) { result(E.joinAlliance(state, arg, now()), icon("crown") + "<span>Welcome to the alliance!</span>"); },
     "ally-create": function () { result(E.createAlliance(state, $("alName").value, $("alTag").value, now()), icon("crown") + "<span>Your alliance is founded.</span>"); },
     "ally-leave": function () { ui.confirm = "leave-ally"; renderPanel(true); },
@@ -6912,7 +7061,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   // ------------------------------------------------------------ persistance
   var lastPersist = 0;
   function persist(force) {
-    if (!state) return;
+    if (!state || ui.reloading) return;
     if (!force && now() - lastPersist < 1500) { ui.persistPending = true; return; }
     lastPersist = now(); ui.persistPending = false; S.save(state, { force: !!force });
   }
@@ -6950,6 +7099,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     updateHud(); renderChrome(); renderPanel(false); updateLive();
     if (ui.persistPending) persist();
     if (state.netOut && state.netOut.length && Medieval.Online) Medieval.Online.flush();
+    if (Medieval.Online && state.world && state.world.wonder) Medieval.Online.tick();
     var ce = S.status && (S.status.cloudError || S.status.playerError);
     if (ce && ce !== ui.lastCloudErr && ce !== "read-only") { ui.lastCloudErr = ce; toast(icon("alert") + "<span>Online save problem: " + esc(ce) + "</span>", "bad"); }
   }
@@ -6991,7 +7141,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       if (e.key === "Enter" && (e.target.id === "welcomeName" || e.target.id === "welcomeHero")) ACTIONS.found();
     });
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden && state) { E.advance(state, now()); S.save(state, { force: true }); } else tick();
+      if (document.hidden && state && !ui.reloading) { E.advance(state, now()); S.save(state, { force: true }); } else tick();
     });
     window.addEventListener("pagehide", function () { if (state) S.writeLocal(state); });
   }
