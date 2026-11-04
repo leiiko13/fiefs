@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042124";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042139";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -553,6 +553,49 @@ body.has-nav .view-world .nav .viewtoggle { background: var(--img-castle) center
 body.has-nav .view-world .nav .viewtoggle > * { display: none; }
 details summary { cursor: pointer; color: var(--gilt); font-weight: 700; padding: 4px 0; }
 details[open] summary { margin-bottom: 6px; }
+/* ---- académie : liste des arbres et cartes ---- */
+.rlist { display: grid; gap: 6px; }
+.rl-row { display: grid; grid-template-columns: 48px 1fr auto 18px; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; border: 1px solid #000; cursor: pointer; text-align: left; color: var(--vellum);
+  background: linear-gradient(180deg, #e9dcc0, #d2c19c); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 2px 0 rgba(0,0,0,.35); }
+.rl-row b { color: #3a2410; font-size: 16px; font-family: var(--f-display); } .rl-row .muted { color: #6b5638 !important; display: block; line-height: 1.2; }
+.rl-ico { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 10px; background: radial-gradient(circle at 35% 30%, #f3d27a, #a8701e); box-shadow: inset 0 0 0 2px rgba(80,40,0,.4); }
+.rl-ico .ico { width: 28px; height: 28px; color: #3a2008; }
+.rl-pct { font: 800 16px var(--f-body); color: #3a2410; } .rl-go { font-size: 24px; color: #6b5638; }
+.rt-head { display: flex; align-items: center; gap: 10px; } .rt-head b { font-family: var(--f-display); display: flex; align-items: center; gap: 6px; } .rt-head .ico { width: 18px; height: 18px; }
+.rtree2 { display: grid; justify-items: center; padding: 6px 0 10px; border-radius: 10px; background: radial-gradient(ellipse at 50% 30%, #e6d8b8, #c9b48a); box-shadow: inset 0 0 0 1px rgba(0,0,0,.4); }
+.rcards { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0 8px; }
+.rlink { width: 6px; height: 22px; background: #3b2a1a; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,.4); }
+.rlink.lit { background: linear-gradient(90deg, #c47b2a, #f2c069, #c47b2a); }
+.rrow-lock { font: 800 11px var(--f-body); color: #6b4a22; letter-spacing: .06em; text-transform: uppercase; display: flex; align-items: center; gap: 4px; margin: 4px 0; } .rrow-lock .ico { width: 12px; height: 12px; }
+.rcard { width: 104px; display: grid; padding: 0; border: 2px solid #1a120a; border-radius: 6px; overflow: hidden; cursor: pointer; background: #f3ead6; box-shadow: 0 3px 0 rgba(0,0,0,.35); color: #2a1a0c; }
+.rc-art { position: relative; height: 70px; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, #ffb35c, #b8401c); }
+.rcard.unlock .rc-art { background: radial-gradient(circle at 50% 40%, #b49cf0, #43307e); }
+.rcard.done .rc-art { background: radial-gradient(circle at 50% 40%, #a9e08c, #2e6b2a); }
+.rc-art > .ico { width: 38px; height: 38px; color: #fff4d8; filter: drop-shadow(0 2px 2px rgba(0,0,0,.5)); }
+.rc-lock { position: absolute; top: 4px; left: 4px; } .rc-lock .ico { width: 16px; height: 16px; color: #fff; }
+.rc-name { font: 800 12px var(--f-body); padding: 5px 4px; min-height: 30px; display: grid; place-items: center; text-align: center; line-height: 1.1; }
+.rc-lv { position: relative; height: 18px; background: #2a2a2a; } .rc-lv i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(180deg, #4fc0b8, #1d7a74); }
+.rc-lv b { position: relative; display: block; text-align: center; font: 800 11px/18px var(--f-body); color: #fff; }
+.rcard.locked { filter: grayscale(.85) brightness(.8); }
+.rcard.sel { outline: 3px solid #f2c069; outline-offset: 1px; }
+.rcard.busy .rc-art { background: radial-gradient(circle at 50% 40%, #ffe08a, #b8861c); }
+.rdetail-wrap { position: sticky; top: -12px; z-index: 2; }
+/* ---- messagerie ---- */
+.mail { display: grid; gap: 8px; }
+.mail-tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-radius: 8px; overflow: hidden; border: 1px solid #000; }
+.mtab { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 4px; border: 0; border-right: 1px solid rgba(0,0,0,.25); background: linear-gradient(180deg, #efe4cb, #d8c7a2); color: #3a2410; font: 800 14px var(--f-body); cursor: pointer; }
+.mtab .ico { width: 16px; height: 16px; } .mtab.on { background: linear-gradient(180deg, #cdb98e, #b9a273); box-shadow: inset 0 3px 6px rgba(0,0,0,.25); }
+.mtab .badge { top: 2px; right: 4px; min-width: 16px; height: 16px; font-size: 10px; line-height: 13px; padding: 0 3px; }
+.mail-list { display: grid; gap: 6px; }
+.mrow { display: grid; grid-template-columns: 1fr 40px; border-radius: 6px; background: linear-gradient(180deg, #f1e7d1, #e2d3b2); border: 1px solid rgba(0,0,0,.35); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.mrow.unread { box-shadow: inset 4px 0 0 #b8322c, 0 2px 0 rgba(0,0,0,.25); }
+.mrow-main { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; align-items: center; padding: 8px; border: 0; background: none; text-align: left; cursor: pointer; color: #2a1a0c; }
+.mrow-main .r-ico { width: 30px; height: 30px; } .mrow-txt { display: grid; min-width: 0; line-height: 1.2; }
+.mrow-from { font-weight: 800; color: #3a2410; font-size: 13px; } .mrow .r-title { color: #5a2a10; font-size: 14px; } .mrow.unread .r-title { color: #8a1c14; }
+.mrow .r-sub { color: #6b5638; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mrow-date { font-size: 11px; color: #6b5638; align-self: start; white-space: nowrap; }
+.mstar { border: 0; background: none; font-size: 22px; color: #b9a983; cursor: pointer; } .mstar.on { color: #e0a21c; text-shadow: 0 1px 0 #6b4a0c; }
+.mail-empty { text-align: center; color: var(--muted); padding: 24px 8px; }
 
 </style>
 
@@ -1117,6 +1160,8 @@ Medieval.Data = (function () {
   // ------------------------------------------------------------ VIP
   /* Points gagnés en se connectant chaque jour (plus si on enchaîne les jours). */
   var VIP = {
+    // temps restant (s) en dessous duquel on peut finir une tâche gratuitement, par niveau VIP
+    freeFinish: [30, 60, 180, 300, 420, 600, 780, 960, 1200, 1500, 1800],
     daily: function (streak) { return Math.min(400, 100 + 30 * (streak - 1)); },
     levels: [
       { pts: 0,     bonus: {} },
@@ -1639,11 +1684,12 @@ Medieval.Engine = (function (D) {
   };
 
   // --- accélérer / annuler
+  E.freeFinishSeconds = function (s) { var L = (s && s.vip && s.vip.level) || 0; return D.VIP ? D.VIP.freeFinish[Math.min(L, D.VIP.freeFinish.length - 1)] : D.SPEEDUP.freeUnderSeconds; };
   E.speedupCost = function (s, jobId, now) {
     var j = E.findJob(s, jobId);
     if (!j) return null;
     var remaining = Math.max(0, (j.end - now) / 1000);
-    if (remaining <= D.SPEEDUP.freeUnderSeconds) return 0;
+    if (remaining <= E.freeFinishSeconds(s)) return 0;
     return Math.ceil(remaining / D.SPEEDUP.secondsPerGold);
   };
   E.speedup = function (s, jobId, now) {
@@ -6395,32 +6441,34 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var rj = E.researchJob(state);
     if (rj) html += jobBlock(rj);
     html += '<div class="row"><button class="btn tiny ghost" data-act="open" data-arg="' + a.id + '">' + icon("hammer") + 'Academy building</button></div>';
-    html += '<div class="tabs">' + Object.keys(D.RESEARCH_TREES).map(function (k) {
-      var T = D.RESEARCH_TREES[k], done = 0, all = 0;
-      D.RESEARCH.forEach(function (r) { if (r.tree === k) { all += r.max; done += E.researchLevel(state, r.id); } });
-      return '<button class="tab' + (k === ui.researchTree ? " on" : "") + '" data-act="research-tree" data-arg="' + k + '">' + icon(T.icon) + ' ' + T.name + ' <span class="muted small">' + done + '/' + all + '</span></button>';
-    }).join("") + '</div>';
-    var tree = ui.researchTree, TR = D.RESEARCH_TREES[tree];
-    html += '<p class="small muted">' + TR.desc + '</p>';
+    var pct = function (k) { var d = 0, all = 0; D.RESEARCH.forEach(function (r) { if (r.tree === k) { all += r.max; d += E.researchLevel(state, r.id); } }); return all ? d / all * 100 : 0; };
+    if (!ui.researchView) {
+      html += '<div class="rlist">' + Object.keys(D.RESEARCH_TREES).map(function (k) {
+        var T = D.RESEARCH_TREES[k];
+        return '<button class="rl-row" data-act="research-tree" data-arg="' + k + '"><span class="rl-ico">' + icon(T.icon) + '</span><span class="rl-txt"><b>' + T.name + '</b><span class="muted small">' + esc(T.desc) + '</span></span><span class="rl-pct">' + pct(k).toFixed(1) + '%</span><span class="rl-go">›</span></button>';
+      }).join("") + '</div>';
+      return html + '</div>';
+    }
+    var tree = ui.researchView, TR = D.RESEARCH_TREES[tree];
+    html += '<div class="rt-head"><button class="btn tiny ghost" data-act="research-back">‹ All trees</button><b>' + icon(TR.icon) + ' ' + TR.name + '</b><span class="muted small">' + pct(tree).toFixed(1) + '%</span></div>';
     var nodes = D.RESEARCH.filter(function (r) { return r.tree === tree; });
     var sel = ui.researchSel[tree] && D.RESEARCH_BY_ID[ui.researchSel[tree]] ? ui.researchSel[tree] : null;
-    if (!sel) { var first = nodes.filter(function (r) { return E.researchAvailable(state, r.id) && E.researchLevel(state, r.id) < r.max; })[0] || nodes[0]; sel = first.id; }
-    ui.researchSel[tree] = sel;
-    html += researchDetail(sel, a, rj);
+    if (sel) html += '<div class="rdetail-wrap">' + researchDetail(sel, a, rj) + '</div>';
     var rows = [];
     nodes.forEach(function (r) { (rows[r.row] = rows[r.row] || []).push(r); });
-    html += '<div class="rtree">' + rows.map(function (list, ri) {
+    html += '<div class="rtree2">' + rows.map(function (list, ri) {
       if (!list) return "";
-      var need = TR.rows[ri], open = a.level >= need;
-      return '<div class="rrow' + (open ? "" : " closed") + '"><div class="rrow-h">' + (open ? "" : icon("lock")) + 'Academy ' + need + '</div><div class="rnodes">' + list.map(function (r) {
+      var need = TR.rows[ri], open = a.level >= need, lit = list.some(function (r) { return E.researchAvailable(state, r.id) || E.researchLevel(state, r.id) > 0; });
+      return (ri ? '<div class="rlink' + (lit ? " lit" : "") + '"></div>' : "") +
+        (open ? "" : '<div class="rrow-lock">' + icon("lock") + 'Academy level ' + need + '</div>') +
+        '<div class="rcards">' + list.map(function (r) {
         var lv = E.researchLevel(state, r.id), av = E.researchAvailable(state, r.id), busy = rj && rj.research === r.id;
         var cls = lv >= r.max ? "done" : busy ? "busy" : av ? "avail" : "locked";
-        var pips = ""; for (var i = 0; i < r.max; i++) pips += '<i class="' + (i < lv ? "on" : "") + '"></i>';
-        return '<button class="rnode ' + cls + (r.id === sel ? " sel" : "") + (r.effect.stat ? "" : " unlock") + '" data-act="research-sel" data-arg="' + r.id + '">' +
-          '<span class="rn-name">' + (cls === "locked" ? icon("lock") : cls === "done" ? icon("check") : busy ? icon("clock") : "") + esc(r.name) + '</span>' +
-          '<span class="rn-eff">' + esc(E.researchEffectText(r.id, r.effect.stat ? Math.max(1, lv) : 1)) + '</span>' +
-          '<span class="rn-pips">' + pips + '</span></button>';
-      }).join("") + '</div></div>';
+        return '<button class="rcard ' + cls + (r.id === sel ? " sel" : "") + (r.effect.stat ? "" : " unlock") + '" data-act="research-sel" data-arg="' + r.id + '">' +
+          '<span class="rc-art">' + icon(r.effect.troop ? TYPE_ICON[r.effect.troop] : r.effect.trap ? "castle" : r.effect.set || r.effect.gearTier ? "anvil" : TR.icon) + (cls === "locked" ? '<i class="rc-lock">' + icon("lock") + '</i>' : busy ? '<i class="rc-lock">' + icon("clock") + '</i>' : "") + '</span>' +
+          '<span class="rc-name">' + esc(r.name) + '</span>' +
+          '<span class="rc-lv"><i style="width:' + (lv / r.max * 100) + '%"></i><b>' + lv + '/' + r.max + '</b></span></button>';
+      }).join("") + '</div>';
     }).join("") + '</div>';
     return html + '</div>';
   };
@@ -6681,12 +6729,22 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       }
       ui.reportId = null;
     }
-    var h2 = head(state.unread + " unread", "Mail") + '<div class="p-body">';
-    if (!state.reports.length) return h2 + '<p class="muted">No mail. Send a march from the world map.</p></div>';
-    h2 += '<button class="btn ghost tiny" data-act="read-all" style="justify-self:start">Mark all as read</button><ul class="reports">' + state.reports.map(function (r) {
-      var win = r.kind === "info" ? null : r.win;
-      return '<li><button class="report' + (r.read ? "" : " unread") + '" data-act="report" data-arg="' + r.id + '"><span class="r-ico ' + (win === null ? "" : win ? "win" : "loss") + '">' + icon(r.kind === "defense" ? "castle" : r.kind === "info" ? "scroll" : "sword") + '</span><span><span class="r-title">' + esc(reportTitle(r)) + '</span><br><span class="r-sub">' + F.ago(r.at) + (r.loot && Object.keys(r.loot).length ? " · loot" : "") + '</span></span><span></span></button></li>';
-    }).join("") + '</ul>';
+    var MT = { inbox: function (r) { return r.kind === "info"; }, reports: function (r) { return r.kind !== "info"; }, saved: function (r) { return r.saved; } };
+    var tab = ui.mailTab || "inbox", unreadIn = function (k) { return state.reports.filter(function (r) { return MT[k](r) && !r.read; }).length; };
+    var h2 = head(state.unread + " unread", "Mail") + '<div class="p-body mail"><div class="mail-tabs">' + [["inbox", "Inbox", "mail"], ["reports", "Reports", "scroll"], ["saved", "Saved", "crown"]].map(function (x) {
+      var n = unreadIn(x[0]);
+      return '<button class="mtab' + (tab === x[0] ? " on" : "") + '" data-act="mail-tab" data-arg="' + x[0] + '">' + icon(x[2]) + x[1] + (n ? '<i class="badge">' + n + '</i>' : "") + '</button>';
+    }).join("") + '</div>';
+    var list = state.reports.filter(MT[tab]);
+    if (!list.length) h2 += '<p class="mail-empty">' + (tab === "saved" ? "Tap the star on a message to keep it here." : tab === "reports" ? "No reports yet. Send a march from the world map." : "No messages.") + '</p>';
+    h2 += '<div class="mail-list">' + list.map(function (r) {
+      var win = r.kind === "info" || r.kind === "spy" ? null : r.win, prev = r.kind === "info" ? (r.text || "") : r.kind === "spy" ? "Scout report" : (r.win ? "Victory" : "Defeat") + (r.lord ? " · " + r.lord : "");
+      return '<div class="mrow' + (r.read ? "" : " unread") + '"><button class="mrow-main" data-act="report" data-arg="' + r.id + '"><span class="r-ico ' + (win === null ? "" : win ? "win" : "loss") + '">' + icon(r.kind === "defense" ? "castle" : r.kind === "info" ? "scroll" : r.kind === "spy" ? "globe" : "sword") + '</span>' +
+        '<span class="mrow-txt"><span class="mrow-from">' + (r.kind === "info" ? "Rise &amp; Conquer" : "War council") + '</span><b class="r-title">' + esc(reportTitle(r)) + '</b><span class="r-sub">' + esc(prev).slice(0, 90) + '</span></span><span class="mrow-date">' + F.ago(r.at) + '</span></button>' +
+        '<button class="mstar' + (r.saved ? " on" : "") + '" data-act="mail-star" data-arg="' + r.id + '" aria-label="Save">★</button></div>';
+    }).join("") + '</div>';
+    if (list.length) h2 += '<div class="row mail-foot"><button class="btn tiny ghost" data-act="read-all">Mark all as read</button>' + (tab !== "saved" ? '<button class="btn tiny ghost" data-act="mail-clean">Delete read</button>' : "") + '</div>';
+    h2 += '</div>';
     return h2 + '</div>';
   };
 
@@ -6747,7 +6805,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     } else html += '<p class="pill green">' + icon("crown") + 'Maximum VIP level reached</p>';
     html += '<div class="viplist">' + D.VIP.levels.map(function (lv, i) {
       if (!i) return "";
-      return '<div class="viprow' + (i === L ? " cur" : i < L ? " done" : "") + '"><b class="vipn">VIP ' + i + '</b><span class="muted small">' + F.num(lv.pts) + ' pts</span><div class="vbs">' + bonusList(lv.bonus) + '</div></div>';
+      return '<div class="viprow' + (i === L ? " cur" : i < L ? " done" : "") + '"><b class="vipn">VIP ' + i + '</b><span class="muted small">' + F.num(lv.pts) + ' pts</span><div class="vbs"><span class="vb">Free finish under ' + F.duration(D.VIP.freeFinish[i]) + '</span>' + bonusList(lv.bonus) + '</div></div>';
     }).join("") + '</div>';
     return html + '</div>';
   };
@@ -7098,7 +7156,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "trap-type": function (arg) { ui.trapType = arg; renderPanel(true); },
     "trap-max": function () { ui.trapCount = Math.max(1, E.maxTraps(state, ui.trapType)); renderPanel(true); },
     "build-traps": function () { result(E.buildTraps(state, ui.trapType, ui.trapCount || 1, now())); },
-    "research-open": function (arg) { ui.researchTree = arg; openPanel("research"); },
+    "research-open": function (arg) { ui.researchTree = arg; ui.researchView = arg; openPanel("research"); },
     fullscreen: function () { toggleFullscreen(); setTimeout(function () { renderPanel(true); }, 300); },
     "welcome-email": function () { welcomeSignedIn(S.signIn({ email: ($("wEmail").value || "").trim(), password: $("wPass").value || "" })); },
     "set-password": function () {
@@ -7167,8 +7225,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     buy: function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.buyItem(state, arg, 1), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b> (" + it.price + " gold).</span>"); },
     "use-item": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "boost" ? "is active." : "added to your city.") + "</span>"); },
     "use-speed": function (arg) { var p = arg.split(":"); result(E.useItem(state, p[0], { jobId: p[1] }, now()), icon("clock") + "<span>Sped up by <b>" + esc(F.duration(D.SHOP_BY_ID[p[0]].seconds)) + "</b>.</span>"); },
-    "research-tree": function (arg) { ui.researchTree = arg; renderPanel(true); },
-    "research-sel": function (arg) { var r = D.RESEARCH_BY_ID[arg]; if (r) { ui.researchSel[r.tree] = arg; renderPanel(true); var d = document.querySelector(".rdetail"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "nearest", behavior: "smooth" }); } },
+    "research-tree": function (arg) { ui.researchView = arg; ui.researchTree = arg; renderPanel(true); $("panelBody").scrollTop = 0; },
+    "research-back": function () { ui.researchView = null; renderPanel(true); $("panelBody").scrollTop = 0; },
+    "research-sel": function (arg) { var r = D.RESEARCH_BY_ID[arg]; if (r) { ui.researchSel[r.tree] = ui.researchSel[r.tree] === arg ? null : arg; renderPanel(true); var d = document.querySelector(".rdetail"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "nearest", behavior: "smooth" }); } },
     research: function (arg) { result(E.research(state, arg, now())); },
     "forge-tier": function (arg) { ui.forgeTier = +arg; renderPanel(true); },
     "forge-slot": function (arg) { ui.forgeSlot = arg; renderPanel(true); },
@@ -7178,6 +7237,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "exec-confirm": function (arg) { ui.confirm = null; result(E.executePrisoner(state, arg, now()), icon("sword") + "<span>Your troops are fired up.</span>"); },
     report: function (arg) { ui.reportId = arg; E.markRead(state, arg); renderPanel(true); updateHud(); $("panelBody").scrollTop = 0; },
     "report-back": function () { ui.reportId = null; renderPanel(true); },
+    "mail-tab": function (arg) { ui.mailTab = arg; renderPanel(true); },
+    "mail-star": function (arg) { state.reports.forEach(function (r) { if (r.id === arg) r.saved = !r.saved; }); persist(); renderPanel(true); },
+    "mail-clean": function () { var tab = ui.mailTab || "inbox"; state.reports = state.reports.filter(function (r) { return r.saved || !r.read || (tab === "inbox" ? r.kind !== "info" : r.kind === "info"); }); persist(); renderPanel(true); },
     "read-all": function () { E.markRead(state); renderPanel(true); updateHud(); },
     "toggle-view": function () { setView(ui.view === "city" ? "world" : "city"); },
     "goto-march": function (arg) { var m = E.findMarch(state, arg); if (!m) return; setView("world"); WV.centerOn(m.tx, m.ty); openPanel("tile", { x: m.tx, y: m.ty }); },
