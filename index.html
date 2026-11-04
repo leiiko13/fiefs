@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042052";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042102";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2279,7 +2279,6 @@ Medieval.Engine = (function (D) {
       if (E.researchLevel(s, k) < r.req[k]) reasons.push("Requires " + D.RESEARCH_BY_ID[k].name + (D.RESEARCH_BY_ID[k].max > 1 ? " level " + r.req[k] : "") + ".");
     });
     if (E.researchJob(s)) reasons.push("The academy is already researching.");
-    if (E.jobFor(s, a.id, ["build", "upgrade"])) reasons.push("The academy is being upgraded.");
     var cost = E.researchCost(s, id, to);
     if (!E.canAfford(s, cost)) reasons.push("Not enough resources.");
     var cap = E.capacity(s);
@@ -2584,6 +2583,25 @@ Medieval.Engine = (function (D) {
     return { ok: true };
   };
   E.leaveAlliance = function (s) { s.alliance = null; return { ok: true }; };
+  /** Alliance entre vrais joueurs (carte commune) : infos venant du serveur. */
+  E.setRealAlliance = function (s, info, now, rank) {
+    var old = s.alliance && s.alliance.id === info.id ? s.alliance : null;
+    s.alliance = { id: info.id, real: true, name: info.name, tag: info.tag, motto: info.motto || "", own: rank >= 5, rank: rank || 1,
+      members: [], honor: old ? old.honor : 0, helps: old ? old.helps : {}, nextGift: old ? old.nextGift : now + A.giftEveryHours * HOUR,
+      gifts: old ? old.gifts : 0, helped: old ? old.helped : 0, joinedAt: old ? old.joinedAt : now };
+    return s.alliance;
+  };
+  /** Aides reçues d'alliés réels sur une tâche. */
+  E.applyAllyHelps = function (s, jobId, n, now) {
+    var al = E.alliance(s), j = E.findJob(s, jobId), h = al && al.helps[jobId];
+    if (!j || n <= 0) return 0;
+    for (var i = 0; i < n; i++) {
+      var cut = Math.max(A.helpSeconds(E.castleLevel(s)) * 1000, (j.end - now) * A.helpPct);
+      j.end = Math.max(now, j.end - cut);
+    }
+    if (h) { h.left = Math.max(0, h.left - n); if (h.left <= 0) delete al.helps[jobId]; }
+    return n;
+  };
 
   /** Demande d'aide sur une tâche (chantier, recherche, soins…). */
   E.askHelp = function (s, jobId, now) {
@@ -2591,13 +2609,14 @@ Medieval.Engine = (function (D) {
     if (!al) return { ok: false, reasons: ["Join an alliance to ask for help."] };
     if (!j) return { ok: false, reasons: ["This task is already finished."] };
     if (al.helps[jobId]) return { ok: false, reasons: ["Help already requested."] };
-    var max = Math.min(A.helpsPerJob, al.members.length);
-    al.helps[jobId] = { left: max, total: max, next: now + 20000 };
+    var max = Math.max(1, Math.min(A.helpsPerJob, al.members.length));
+    al.helps[jobId] = { left: max, total: max, next: al.real ? Infinity : now + 20000 };
+    if (al.real) E.netEmit(s, { op: "helpRequest", jobId: jobId, max: max });
     return { ok: true };
   };
   E.helpState = function (s, jobId) { var al = E.alliance(s); return al && al.helps[jobId] || null; };
   function runHelps(s, t, events) {
-    var al = E.alliance(s); if (!al) return;
+    var al = E.alliance(s); if (!al || al.real) return;
     Object.keys(al.helps).forEach(function (jid) {
       var h = al.helps[jid], j = E.findJob(s, jid);
       if (!j) { delete al.helps[jid]; return; }
@@ -2626,12 +2645,14 @@ Medieval.Engine = (function (D) {
   /** Aider ses alliés (robots) : honneur. Une fois par heure, autant d'aides que de demandes ouvertes. */
   E.allyRequests = function (s, now) {
     var al = E.alliance(s); if (!al) return 0;
+    if (al.real) return al.openRequests || 0;
     var since = now - (al.lastHelpAll || al.joinedAt);
     return Math.min(al.members.length, Math.floor(since / (20 * 60000)));
   };
   E.helpAllies = function (s, now) {
     var al = E.alliance(s), n = E.allyRequests(s, now);
     if (!n) return { ok: false, reasons: ["No ally needs help right now."] };
+    if (al.real) E.netEmit(s, { op: "helpAll" });
     al.honor += n * A.honorPerHelp; al.lastHelpAll = now;
     return { ok: true, count: n, honor: n * A.honorPerHelp };
   };
@@ -2644,7 +2665,7 @@ Medieval.Engine = (function (D) {
   };
   /** Les châteaux robots d'une alliance robot ne pillent pas ses membres. */
   E.isAllyBot = function (s, bot) {
-    var al = E.alliance(s); if (!al || al.own) return false;
+    var al = E.alliance(s); if (!al || al.own || al.real) return false;
     var i = parseInt(String(bot.id).slice(1), 10) || 0;
     return D.ALLIANCE.npc[i % D.ALLIANCE.npc.length].id === al.id;
   };
@@ -5693,6 +5714,40 @@ Medieval.Online = (function (D, E, S) {
       });
     }).then(function () { api.onEvents([E.crowned(s, { uid: me, name: name }, now)]); }, function () {}).then(function () { crowning = false; });
   }
+  // ------------------------------------------------------------ alliances entre joueurs
+  function alliancesRef() { return db().collection("world").doc(WORLD_DOC).collection("alliances"); }
+  var allianceList = [], unAlliances = null, unMyAlliance = null, unRequests = null, myAllianceId = null;
+  function watchMyAlliance(id) {
+    if (myAllianceId === id) return;
+    if (unMyAlliance) unMyAlliance(); if (unRequests) unRequests();
+    unMyAlliance = unRequests = null; myAllianceId = id;
+    if (!id) return;
+    var me = S.uid();
+    unMyAlliance = alliancesRef().doc(id).onSnapshot(function (d) {
+      var st = api && api.state(); if (!st) return;
+      var v = d.exists ? d.data() : null;
+      if (!v || !v.members || !v.members[me]) { if (st.alliance && st.alliance.id === id) { st.alliance = null; api.refresh(); api.persist(); } watchMyAlliance(null); return; }
+      var al = E.setRealAlliance(st, { id: id, name: v.name, tag: v.tag, motto: v.motto }, api.now(), v.members[me].rank || 1);
+      al.members = Object.keys(v.members).filter(function (u) { return u !== me; }).map(function (u) { var m = v.members[u]; return { id: u, name: m.name || "?", city: m.city || "", level: m.level || 1, rank: m.rank || 1 }; });
+      api.refresh();
+    }, function () {});
+    unRequests = alliancesRef().doc(id).collection("requests").onSnapshot(function (q) {
+      var st = api && api.state(), al = st && st.alliance; if (!al || al.id !== id) return;
+      var open = 0, now = api.now();
+      q.forEach(function (d) {
+        var v = d.data(), helpers = v.helpers || [];
+        if (v.uid === me) {
+          var h = al.helps[v.jobId];
+          if (!E.findJob(st, v.jobId) || !h) { d.ref.delete().catch(function () {}); return; }
+          var applied = h.total - h.left, fresh = helpers.length - applied;
+          if (fresh > 0) { E.applyAllyHelps(st, v.jobId, fresh, now); api.persist(); }
+          if (helpers.length >= v.max) d.ref.delete().catch(function () {});
+        } else if (helpers.indexOf(me) < 0 && helpers.length < v.max) open++;
+      });
+      al.openRequests = open; api.refresh();
+    }, function () {});
+  }
+  function memberCard(s) { return { name: (s.hero && s.hero.name) || "Lord", city: s.name || "", level: E.castleLevel(s), at: Date.now() }; }
   function hitsRef() { return db().collection("world").doc(WORLD_DOC).collection("hits"); }
   function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
@@ -5744,7 +5799,23 @@ Medieval.Online = (function (D, E, S) {
     sending = true;
     var ev = s.netOut[0], me = S.uid(), name = (s.name || "City") + " (" + ((s.hero && s.hero.name) || "") + ")";
     var p;
-    if (ev.op === "wonderOccupy") {
+    if (ev.op === "helpRequest") {
+      var al = s.alliance, j = E.findJob(s, ev.jobId);
+      p = al && al.real && j ? alliancesRef().doc(al.id).collection("requests").doc(me + "_" + ev.jobId).set({ uid: me, name: name, jobId: ev.jobId, max: ev.max, helpers: [], at: Date.now() }) : Promise.resolve();
+    } else if (ev.op === "helpAll") {
+      var al2 = s.alliance;
+      p = !(al2 && al2.real) ? Promise.resolve() : alliancesRef().doc(al2.id).collection("requests").get().then(function (q) {
+        var jobs = [];
+        q.forEach(function (d) {
+          var v = d.data();
+          if (v.uid === me || (v.helpers || []).indexOf(me) >= 0 || (v.helpers || []).length >= v.max) return;
+          jobs.push(db().runTransaction(function (tx) {
+            return tx.get(d.ref).then(function (x) { if (!x.exists) return; var h = x.data().helpers || []; if (h.indexOf(me) < 0 && h.length < x.data().max) tx.update(d.ref, { helpers: h.concat([me]) }); });
+          }).catch(function () {}));
+        });
+        return Promise.all(jobs);
+      });
+    } else if (ev.op === "wonderOccupy") {
       p = wonderRef().set({ uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, since: ev.since }, { merge: true });
     } else if (ev.op === "wonderRelease") {
       p = db().runTransaction(function (tx) {
@@ -5789,6 +5860,12 @@ Medieval.Online = (function (D, E, S) {
           var docs = []; q.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
           applyTiles(st, docs, api.now()); api.refresh();
         }, function () {});
+        if (unAlliances) unAlliances();
+        unAlliances = alliancesRef().onSnapshot(function (q) {
+          var out = []; q.forEach(function (d) { var v = d.data(); out.push({ id: d.id, name: v.name, tag: v.tag, motto: v.motto || "", members: Object.keys(v.members || {}).length, real: true }); });
+          allianceList = out; api.refresh();
+        }, function () {});
+        var cur = api.state().alliance; watchMyAlliance(cur && cur.real ? cur.id : null);
         if (unWonder) unWonder();
         unWonder = wonderRef().onSnapshot(function (d) {
           var st = api.state(); if (!st || !st.world || st.world.shared !== seed) return;
@@ -5806,6 +5883,44 @@ Medieval.Online = (function (D, E, S) {
       });
     },
     flush: function () { if (api) send(api.state()); },
+    alliances: function () { return allianceList; },
+    createAlliance: function (name, tag, motto) {
+      var st = api.state(), me = S.uid(), ref = alliancesRef().doc(), members = {};
+      members[me] = Object.assign(memberCard(st), { rank: 5 });
+      return ref.set({ name: name, tag: tag, motto: motto || "", leader: me, createdAt: Date.now(), members: members }).then(function () {
+        E.setRealAlliance(st, { id: ref.id, name: name, tag: tag, motto: motto }, api.now(), 5); watchMyAlliance(ref.id); return ref.id;
+      });
+    },
+    joinAlliance: function (id) {
+      var st = api.state(), me = S.uid(), ref = alliancesRef().doc(id);
+      return db().runTransaction(function (tx) {
+        return tx.get(ref).then(function (d) {
+          if (!d.exists) throw new Error("This alliance no longer exists.");
+          var v = d.data(), m = v.members || {};
+          if (Object.keys(m).length >= D.ALLIANCE.maxMembers) throw new Error("This alliance is full.");
+          m[me] = Object.assign(memberCard(st), { rank: 1 });
+          tx.update(ref, { members: m });
+          return v;
+        });
+      }).then(function (v) { E.setRealAlliance(st, { id: id, name: v.name, tag: v.tag, motto: v.motto }, api.now(), 1); watchMyAlliance(id); });
+    },
+    leaveAlliance: function () {
+      var st = api.state(), me = S.uid(), al = st.alliance;
+      if (!al || !al.real) return Promise.resolve();
+      var ref = alliancesRef().doc(al.id);
+      watchMyAlliance(null);
+      return db().runTransaction(function (tx) {
+        return tx.get(ref).then(function (d) {
+          if (!d.exists) return;
+          var v = d.data(), m = v.members || {}; delete m[me];
+          var left = Object.keys(m);
+          if (!left.length) { tx.delete(ref); return; }
+          var upd = { members: m };
+          if (v.leader === me) { var heir = left.sort(function (a, b) { return (m[b].rank || 1) - (m[a].rank || 1); })[0]; m[heir].rank = 5; upd.leader = heir; }
+          tx.update(ref, upd);
+        });
+      }).then(function () { st.alliance = null; });
+    },
     tick: function () { if (api) checkCrown(api.state(), api.now()); },
     stop: function () { if (unTiles) unTiles(); if (unHits) unHits(); if (unWonder) unWonder(); unTiles = unHits = unWonder = null; api = null; }
   };
@@ -5898,6 +6013,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   // ------------------------------------------------------------ carte commune (version web)
   var SHARED_SEED = 900003;   // carte commune 44×44, une seule forêt autour de la Merveille
+  /** Alliances entre joueurs (version en ligne), ou null hors ligne. */
+  function onlineAlliances() { return S.uid() && state && state.world && state.world.shared && Medieval.Online && Medieval.Online.alliances ? Medieval.Online.alliances() : null; }
   function uidSalt() { var h = 7, u = String(S.uid() || ""); for (var i = 0; i < u.length; i++) h = (h * 31 + u.charCodeAt(i)) | 0; return Math.abs(h); }
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
@@ -6618,13 +6735,15 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var al = E.alliance(state), t = now();
     if (!al) {
       var html = head("Join forces", "Alliance") + '<div class="p-body"><p class="small">Allies speed up your buildings and research, send gifts every few hours, and their castles never raid you.</p>';
-      html += E.allianceList(state).map(function (a) {
-        return '<section class="card"><div class="jb-top"><b>[' + a.tag + '] ' + esc(a.name) + '</b><span class="muted small">' + a.members + ' members · power ' + F.compact(a.power) + '</span></div><p class="small muted">' + esc(a.motto) + '</p>' +
-          '<button class="btn primary" data-act="ally-join" data-arg="' + a.id + '">Join</button></section>';
+      var online = onlineAlliances(), list = online ? online : E.allianceList(state);
+      if (online && !online.length) html += '<p class="muted small">No alliance yet on this map: found the first one!</p>';
+      html += list.map(function (a) {
+        return '<section class="card"><div class="jb-top"><b>[' + esc(a.tag) + '] ' + esc(a.name) + '</b><span class="muted small">' + a.members + ' member' + (a.members > 1 ? "s" : "") + (a.power ? ' · power ' + F.compact(a.power) : "") + '</span></div>' + (a.motto ? '<p class="small muted">' + esc(a.motto) + '</p>' : "") +
+          '<button class="btn primary" data-act="ally-join" data-arg="' + esc(a.id) + '">Join</button></section>';
       }).join("");
       html += '<section class="card"><h3>Found your own alliance</h3><input id="alName" maxlength="24" placeholder="Alliance name"><input id="alTag" maxlength="4" placeholder="Tag (2-4 letters)" style="margin-top:6px">' +
         '<button class="btn gold" data-act="ally-create">' + icon("gold") + D.ALLIANCE.createCost.gold + ' · Create</button></section>';
-      return html + '<p class="muted small">Alliances with other real players will come with the shared world map.</p></div>';
+      return html + (online ? "" : '<p class="muted small">Sign in on the online version to join alliances with real players.</p>') + '</div>';
     }
     var h2 = head(al.members.length + 1 + " members · honor " + F.num(al.honor), "[" + al.tag + "] " + esc(al.name)) + '<div class="p-body">';
     if (al.motto) h2 += '<p class="small muted">' + esc(al.motto) + '</p>';
@@ -6992,10 +7111,28 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       }, authError);
     },
     signout: function () { ui.reloading = true; S.clearLocal(); $("loading").hidden = false; S.signOut().then(function () { S.clearLocal(); location.reload(); }, function () { location.reload(); }); },
-    "ally-join": function (arg) { result(E.joinAlliance(state, arg, now()), icon("crown") + "<span>Welcome to the alliance!</span>"); },
-    "ally-create": function () { result(E.createAlliance(state, $("alName").value, $("alTag").value, now()), icon("crown") + "<span>Your alliance is founded.</span>"); },
+    "ally-join": function (arg) {
+      if (onlineAlliances()) { Medieval.Online.joinAlliance(arg).then(function () { result({ ok: true }, icon("crown") + "<span>Welcome to the alliance!</span>"); S.publishPlayer(state); }, authError); return; }
+      result(E.joinAlliance(state, arg, now()), icon("crown") + "<span>Welcome to the alliance!</span>");
+    },
+    "ally-create": function () {
+      if (onlineAlliances()) {
+        var name = ($("alName").value || "").trim().slice(0, 24), tag = ($("alTag").value || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4), r = [];
+        if (name.length < 3) r.push("Alliance name: 3 characters minimum."); if (tag.length < 2) r.push("Tag: 2 to 4 letters.");
+        if (!E.canAfford(state, D.ALLIANCE.createCost)) r.push("Not enough gold (" + D.ALLIANCE.createCost.gold + ").");
+        if (r.length) { result({ ok: false, reasons: r }); return; }
+        E.pay(state, D.ALLIANCE.createCost);
+        Medieval.Online.createAlliance(name, tag, "").then(function () { result({ ok: true }, icon("crown") + "<span>Your alliance is founded. Other lords can now join it.</span>"); S.publishPlayer(state); }, function (e) { E.grant(state, D.ALLIANCE.createCost); authError(e); });
+        return;
+      }
+      result(E.createAlliance(state, $("alName").value, $("alTag").value, now()), icon("crown") + "<span>Your alliance is founded.</span>");
+    },
     "ally-leave": function () { ui.confirm = "leave-ally"; renderPanel(true); },
-    "ally-leave-confirm": function () { ui.confirm = null; result(E.leaveAlliance(state), icon("dot") + "<span>You left the alliance.</span>"); },
+    "ally-leave-confirm": function () {
+      ui.confirm = null;
+      if (state.alliance && state.alliance.real && Medieval.Online) { Medieval.Online.leaveAlliance().then(function () { result({ ok: true }, icon("dot") + "<span>You left the alliance.</span>"); S.publishPlayer(state); }, authError); return; }
+      result(E.leaveAlliance(state), icon("dot") + "<span>You left the alliance.</span>");
+    },
     "ally-gift": function () { var r = E.claimAllianceGift(state, now()); result(r, r.ok ? icon("crown") + "<span>Gift: " + esc(E.giftText(r.gift)) + ".</span>" : null); },
     "ally-help": function () { var r = E.helpAllies(state, now()); result(r, r.ok ? icon("check") + "<span>You helped " + r.count + " allies: +" + r.honor + " honor.</span>" : null); },
     "ask-help": function (arg) { result(E.askHelp(state, arg, now()), icon("check") + "<span>Help requested from your alliance.</span>"); },
