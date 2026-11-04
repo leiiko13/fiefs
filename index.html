@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042247";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042312";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -703,6 +703,33 @@ body.has-quest .questbar.done .q-tag { background: var(--img-qplate) center / 10
 #panelBody input, #panelBody textarea { box-sizing: border-box; max-width: 100%; }
 #panelBody .p-body > .table, #panelBody .p-body > table { background: linear-gradient(180deg, #efe4cb, #dccba5); color: #2a1a0c; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 0 rgba(0,0,0,.28); }
 #panelBody .p-body > .table th { color: #6b5638; } #panelBody .p-body > .table td { border-bottom-color: rgba(60,35,10,.15); }
+/* ---- recherche : fiche en fenêtre (ne défile plus par-dessus l'arbre) ---- */
+.rdetail-wrap { position: static; }
+.rpop { position: absolute; inset: 0; z-index: 5; display: grid; align-items: end; justify-items: center; padding: 10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(10,6,4,.55); animation: rpopIn .15s ease-out; }
+@keyframes rpopIn { from { opacity: 0; } to { opacity: 1; } }
+.rpop-card { position: relative; width: min(100%, 440px); max-height: 92%; overflow-y: auto; display: grid; gap: 8px; padding: 46px 14px 14px; border-radius: 12px; color: #2a1a0c;
+  --vellum: #2a1a0c; --muted: #6b5638; --ok: #1d6a2a; --bad: #b0281c; --warn: #8a4f00; --gilt: #7a4e0c;
+  background: linear-gradient(180deg, #f7efdc, #e2d2ae); border: 3px solid #a8873f; box-shadow: 0 10px 30px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.4); }
+.rpop-x { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 6px; border: 1px solid #000; background: linear-gradient(180deg, #c74a40, #7e231d); color: #fff; cursor: pointer; }
+.rpop-x .ico { width: 16px; height: 16px; }
+.rpop-art { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); width: 64px; height: 64px; display: grid; place-items: center; border-radius: 10px; border: 3px solid #1a120a; background: radial-gradient(circle at 50% 40%, #ffb35c, #b8401c); box-shadow: 0 3px 8px rgba(0,0,0,.5); }
+.rpop-art.done { background: radial-gradient(circle at 50% 40%, #a9e08c, #2e6b2a); }
+.rpop-art .ico { width: 38px; height: 38px; color: #fff4d8; filter: drop-shadow(0 2px 2px rgba(0,0,0,.5)); }
+.rpop-card { overflow: visible; } .rpop { overflow: hidden; }
+.rpop-card .rdetail { display: grid; gap: 8px; } .rpop-card .rdetail .jb-top b { font: 700 18px var(--f-display); }
+.rpop-card .rreq li { color: #6b5638; } .rpop-card .rreq li.met { color: #1d6a2a; }
+/* cartes de l'arbre un peu plus nettes */
+.rcard { transition: transform .1s; } .rcard:active { transform: scale(.96); }
+.rcard.avail .rc-art { box-shadow: inset 0 0 18px rgba(255,240,180,.55); }
+.rcard.avail { box-shadow: 0 3px 0 rgba(0,0,0,.35), 0 0 0 2px rgba(242,192,105,.55); }
+.rc-name { background: linear-gradient(180deg, #f7efdc, #e8dabb); }
+/* ---- panneaux de menu : hauteur fixe sur téléphone (le bandeau ne bouge plus) ---- */
+@media (max-width: 760px) { .panel.tall { height: 76%; } }
+/* ---- monstres dans les rapports ---- */
+.mon-hp { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 8px; background: #fff8e8; border: 1px solid rgba(0,0,0,.2); }
+.mon-emo { font-size: 38px; line-height: 1; text-align: center; } .mon-hp b { display: block; margin-bottom: 4px; }
+.icard .ic-art .itimg { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+.rpop-card .rdetail { background: none; border: 0; box-shadow: none; padding: 0; color: #2a1a0c; }
 
 </style>
 
@@ -993,6 +1020,8 @@ Medieval.Data = (function () {
     craft_speed: "Forging speed", craft_cost: "Forging cost reduction", forge_luck: "Forge luck",
     heal_speed: "Healing speed", beds: "Hospital beds", marches: "Extra march",
     trap_dmg: "Trap damage", trap_capacity: "Trap capacity", trap_speed: "Trap building speed", trap_keep: "Traps saved after a battle",
+    hero_speed: "Hero march speed", hero_atk: "Attack (with the hero)", hero_def: "Defense (with the hero)", hero_hp: "Health (with the hero)",
+    monster_atk: "Attack against monsters", monster_loot: "Monster loot", hero_xp: "Hero experience",
     enemy_atk: "Enemy attack", enemy_def: "Enemy defense", enemy_hp: "Enemy health",
     wall_enemy_atk: "Attackers' attack (when defending)", wall_enemy_def: "Attackers' defense (when defending)", wall_enemy_hp: "Attackers' health (when defending)"
   };
@@ -1118,6 +1147,8 @@ Medieval.Data = (function () {
               desc: "Lead your legions: more and bigger marches, field hospitals, faster columns." },
     defense:{ name: "Wall Defense", icon: "castle", mix: { wood: 1, stone: 1, ore: 0.6 }, rows: [1, 3, 5, 7, 9, 11, 13, 15],
               desc: "Arm your walls: wall traps, special traps against each kind of attacker, and penalties for those who besiege you." },
+    hero:   { name: "Hero", icon: "helm", mix: { food: 1, ore: 0.7, silver: 0.9 }, rows: [1, 2, 4, 6, 9, 12],
+              desc: "Train your hero to hunt monsters: faster marches, stronger attacks, tougher troops at his side, richer trophies." },
     tech:   { name: "Technology", icon: "anvil", mix: { wood: 0.8, ore: 1, silver: 0.7 }, rows: [1, 3, 5, 8, 11, 14, 17, 20],
               desc: "Master new materials and crafts: forge sets and tiers, better smithing, faster study." }
   };
@@ -1197,6 +1228,16 @@ Medieval.Data = (function () {
     R("columns",    "mil", 3, "Marching Columns",  2, { stat: "marches", per: 1 }, { logistics: 3 }, "Officers to lead one more march per level."),
     R("siegesup",   "mil", 4, "Siege Supply",      5, { stat: "sie_hp", per: 3 }, { testudo: 3 }, "Spare parts and engineers keep the engines standing."),
     R("legates",    "mil", 5, "Legates",           5, { stat: "march_size", per: 4 }, { columns: 2 }, "Seasoned commanders lead larger armies."),
+    // --- héros (chasse aux monstres)
+    R("herospeed",  "hero", 0, "Swift Steeds",     10, { stat: "hero_speed", per: 3 }, null, "Marches led by your hero travel faster."),
+    R("heroatk",    "hero", 1, "Hero's Blade",     10, { stat: "hero_atk", per: 1.5 }, { herospeed: 1 }, "When the hero leads the march, all troops gain attack."),
+    R("herodef",    "hero", 1, "Hero's Shield",    10, { stat: "hero_def", per: 1.5 }, { herospeed: 1 }, "When the hero leads the march, all troops gain defense."),
+    R("herohp",     "hero", 2, "Hero's Vigor",     10, { stat: "hero_hp", per: 1.5 }, { heroatk: 2, herodef: 2 }, "When the hero leads the march, all troops gain health."),
+    R("hunting",    "hero", 2, "Monster Hunting",  10, { stat: "monster_atk", per: 3 }, { heroatk: 2 }, "Know where to strike: more attack against monsters."),
+    R("trophies",   "hero", 3, "Trophy Hunters",    5, { stat: "monster_loot", per: 10 }, { hunting: 3 }, "Hides, fangs and hoards: more loot from every monster."),
+    R("herotrain",  "hero", 3, "Heroic Training",   5, { stat: "hero_xp", per: 6 }, { herohp: 3 }, "Your hero learns more from every fight."),
+    R("slayer",     "hero", 4, "Monster Slayer",    5, { stat: "monster_atk", per: 5 }, { hunting: 6, trophies: 2 }, "Legendary hunters: much more attack against monsters."),
+    R("legend",     "hero", 5, "Living Legend",     5, { stat: "hero_atk", per: 3 }, { slayer: 3, herotrain: 3 }, "Soldiers fight harder under a famous hero."),
     // --- technologie
     R("scribes",    "tech", 0, "Scribes",          5, { stat: "research_speed", per: 4 }, null, "Copyists and libraries speed up every research."),
     R("bellows",    "tech", 0, "Bellows",          5, { stat: "craft_speed", per: 6 }, null, "Hotter fires: the forge works faster."),
@@ -1250,6 +1291,17 @@ Medieval.Data = (function () {
     { id: "shield3d", kind: "shield", name: "Peace Shield (3 days)", seconds: 72 * 3600, price: 480 }
   );
   var SHOP_BY_ID = {}; SHOP.forEach(function (x) { SHOP_BY_ID[x.id] = x; });
+
+  // ------------------------------------------------------------ monstres (remplacent les camps de barbares)
+  var MONSTERS = [
+    { key: "wolves",   name: "Dire Wolves", icon: "🐺", from: 1, desc: "A pack of giant wolves with eyes like embers. They hunt travellers on the roads." },
+    { key: "harpy",    name: "Harpies",     icon: "🦅", from: 3, desc: "Shrieking bird-women nest in the rocks and swoop on anything that moves." },
+    { key: "minotaur", name: "Minotaur",    icon: "🐂", from: 5, desc: "A bull-headed giant guards a labyrinth of stone. His axe splits shields in two." },
+    { key: "cyclops",  name: "Cyclops",     icon: "👁️", from: 7, desc: "A one-eyed giant who hurls boulders. His cave hides a shepherd's fortune." },
+    { key: "griffin",  name: "Griffin",     icon: "🦁", from: 9, desc: "Half eagle, half lion, it guards a nest of gold on the high crags." },
+    { key: "hydra",    name: "Hydra",       icon: "🐉", from: 10, desc: "Cut one head, two grow back. Only the bravest heroes come back from its marsh." }
+  ];
+  function monsterOf(level) { var m = MONSTERS[0]; MONSTERS.forEach(function (x) { if (level >= x.from) m = x; }); return m; }
 
   // ------------------------------------------------------------ royaume, roi et titres
   var KINGDOM = {
@@ -1349,7 +1401,7 @@ Medieval.Data = (function () {
     Q("Complete a research at the academy", { t: "researched", n: 1 }, { food: 1000, wood: 1000, gold: 10 }),
     Q("Build barracks", { t: "count", b: "barracks", n: 1 }, { food: 800, wood: 400 }),
     Q("Train 100 soldiers", { t: "trained", n: 100 }, { food: 1000, silver: 400 }),
-    Q("Defeat a barbarian camp", { t: "bandits", n: 1 }, { gold: 20, silver: 800 }),
+    Q("Slay a monster", { t: "bandits", n: 1 }, { gold: 20, silver: 800 }),
     Q("Gather 3,000 resources on the world map", { t: "gathered", n: 3000 }, { food: 1500, wood: 1500 }),
     Q("Upgrade the Stronghold to level 3", { t: "castle", n: 3 }, { wood: 1000, stone: 1000, gold: 15 }),
     Q("Build the forge", { t: "count", b: "forge", n: 1 }, { silver: 800, stone: 800 }),
@@ -1365,7 +1417,7 @@ Medieval.Data = (function () {
     Q("Win an attack on an enemy castle", { t: "wins", n: 1 }, { gold: 40, silver: 3000 }),
     Q("Upgrade the Stronghold to level 5", { t: "castle", n: 5 }, { wood: 5000, stone: 5000, food: 5000, gold: 30 }),
     Q("Build the prison", { t: "count", b: "prison", n: 1 }, { silver: 4000 }),
-    Q("Defeat 5 barbarian camps", { t: "bandits", n: 5 }, { gold: 50 }),
+    Q("Slay 5 monsters", { t: "bandits", n: 5 }, { gold: 50 }),
     Q("Gather 50,000 resources on the world map", { t: "gathered", n: 50000 }, { gold: 40, silver: 5000 }),
     Q("Complete 10 research levels", { t: "researched", n: 10 }, { gold: 40, silver: 4000 }),
     Q("Upgrade the Stronghold to level 6", { t: "castle", n: 6 }, { wood: 10000, stone: 10000, gold: 40 }),
@@ -1376,7 +1428,7 @@ Medieval.Data = (function () {
     Q("Win 10 attacks", { t: "wins", n: 10 }, { gold: 100 }),
     Q("Hero level 20", { t: "hero", n: 20 }, { gold: 100 }),
     Q("Upgrade the Stronghold to level 10", { t: "castle", n: 10 }, { wood: 80000, stone: 80000, gold: 100 }),
-    Q("Defeat 30 barbarian camps", { t: "bandits", n: 30 }, { gold: 150 }),
+    Q("Slay 30 monsters", { t: "bandits", n: 30 }, { gold: 150 }),
     Q("Upgrade the Stronghold to level 13", { t: "castle", n: 13 }, { gold: 150 }),
     Q("Have 20,000 soldiers", { t: "army", n: 20000 }, { gold: 150 }),
     Q("Upgrade the Stronghold to level 16", { t: "castle", n: 16 }, { gold: 200 }),
@@ -1402,7 +1454,7 @@ Medieval.Data = (function () {
   var TEST_PACK2 = { shield24h: 2, tpAdvanced: 2 };
 
   return {
-    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2,
+    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2, MONSTERS: MONSTERS, monsterOf: monsterOf,
     PACE: PACE, RESOURCES: RESOURCES, BUILDINGS: BUILDINGS, CASTLE_MAX: CASTLE_MAX, CASTLE_REQUIREMENTS: CASTLE_REQUIREMENTS,
     INNER_ORDER: INNER_ORDER, OUTER_ORDER: OUTER_ORDER, INNER_PLOTS: INNER_PLOTS, OUTER_PLOTS: OUTER_PLOTS,
     BUILDERS: BUILDERS, MARCHES: MARCHES, marchSize: marchSize, BASE_STORAGE: BASE_STORAGE, BASE_PROTECT: BASE_PROTECT,
@@ -1511,7 +1563,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -1959,10 +2011,10 @@ Medieval.Engine = (function (D) {
   };
   E.power = function (s) {
     var p = 0;
-    E.listBuildings(s).forEach(function (b) { p += Math.round(D.BUILDINGS[b.type].power * Math.pow(b.level, 1.35)); });
+    E.listBuildings(s).forEach(function (b) { p += Math.round(D.BUILDINGS[b.type].power * 2.5 * Math.pow(b.level, 1.6)); });
     p += E.troopPower(s.army);
     if (s.world) s.world.marches.forEach(function (m) { p += E.troopPower(m.troops); });
-    if (s.hero) p += s.hero.level * 40;
+    if (s.hero) p += s.hero.level * 150;
     if (E.researchPower) p += E.researchPower(s);
     return p;
   };
@@ -2063,6 +2115,10 @@ Medieval.Engine = (function (D) {
     if (o.version < 6) s.bag = JSON.parse(JSON.stringify(D.START_BAG));
     if (!s.bag || typeof s.bag !== "object") s.bag = {};
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
+    if (!s.testPack3) {
+      s.testPack3 = true; s.resources.gold = (s.resources.gold || 0) + 5000;
+      if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "5,000 gold for the test", text: "The treasury sends you 5,000 gold to try the game: speed up, buy shields, teleports and resources in the Items shop." });
+    }
     if (!s.testPack2) {
       s.testPack2 = true; for (var tp2 in D.TEST_PACK2) s.bag[tp2] = (s.bag[tp2] || 0) + D.TEST_PACK2[tp2];
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "A gift from the Senate", text: "2 Peace Shields (24 h) and 2 Advanced Teleports have been added to your Items. Shields and teleports are also cheaper in the shop now." });
@@ -2299,6 +2355,7 @@ Medieval.Engine = (function (D) {
     if (s.royal && s.royal.king) add(out, D.KINGDOM.kingBonus);
     if (s.royal && s.royal.title && D.TITLE_BY_ID[s.royal.title]) add(out, D.TITLE_BY_ID[s.royal.title].bonus);
     if (s.boosts) for (var bk in s.boosts) { var b = s.boosts[bk]; if (b && b.until > t) out[bk] = (out[bk] || 0) + b.pct; }
+    if (opts.combat && h && h.status !== "captured") { out.all_atk = (out.all_atk || 0) + (out.hero_atk || 0); out.all_def = (out.all_def || 0) + (out.hero_def || 0); out.all_hp = (out.all_hp || 0) + (out.hero_hp || 0); }
     return out;
   };
 
@@ -2306,7 +2363,7 @@ Medieval.Engine = (function (D) {
   E.heroXpNeeded = function (s) { return D.HERO.xpFor(s.hero.level); };
   E.heroGainXp = function (s, xp, events, at) {
     var h = s.hero; if (!h || xp <= 0) return;
-    h.xp += Math.round(xp);
+    h.xp += Math.round(xp * (1 + (E.bonus ? E.bonus(s, "hero_xp") : 0) / 100));
     while (h.level < D.HERO.maxLevel && h.xp >= D.HERO.xpFor(h.level)) {
       h.xp -= D.HERO.xpFor(h.level); h.level++; h.points++;
       if (events) events.push({ type: "heroLevel", level: h.level, at: at });
@@ -3173,9 +3230,11 @@ Medieval.Engine = (function (D) {
     for (var i = 1; i < n; i++) { var x = Math.round(a.x + (b.x - a.x) * i / n), y = Math.round(a.y + (b.y - a.y) * i / n); if (E.terrainAt(s.world, x, y) === "f") f++; }
     return f / Math.max(1, n - 1);
   };
-  E.travelSeconds = function (s, troops, target, from) {
+  E.monsterOf = function (level) { return D.monsterOf(level); };
+  E.travelSeconds = function (s, troops, target, from, hero) {
     var a = from || HOME(s), d = dist(a, target), slow = 1 + W.forestSlow * E.forestShare(s, a, target);
-    return Math.max(5, Math.round(d * slow * W.secondsPerTile / E.marchSpeed(troops, s) / (1 + E.bonus(s, "march_speed") / 100)));
+    var sp = E.bonus(s, "march_speed") + (hero ? E.bonus(s, "hero_speed") : 0);
+    return Math.max(5, Math.round(d * slow * W.secondsPerTile / E.marchSpeed(troops, s) / (1 + sp / 100)));
   };
   E.findTile = function (s, id) {
     var t = s.world.tiles; for (var i = 0; i < t.length; i++) if (t[i].id === id) return t[i];
@@ -3211,7 +3270,7 @@ Medieval.Engine = (function (D) {
       if (!E.wonderOpen(s, s.lastTick)) reasons.push("The Wonder is closed until the next contest.");
       if (s.world.marches.some(function (x) { return x.kind === "wonder"; })) reasons.push("You already have a march at the Wonder.");
     }
-    return { ok: reasons.length === 0, reasons: reasons, troops: t, time: E.travelSeconds(s, t, tg), target: tg };
+    return { ok: reasons.length === 0, reasons: reasons, troops: t, time: E.travelSeconds(s, t, tg, null, withHero), target: tg };
   };
 
   E.sendMarch = function (s, kind, targetId, troops, withHero, now) {
@@ -3231,7 +3290,7 @@ Medieval.Engine = (function (D) {
   function targetLabel(s, kind, tg) {
     if (kind === "wonder") return "the Wonder";
     if (kind === "attack") return tg.name + " (lv. " + tg.level + ")";
-    if (kind === "bandit") return "Barbarian camp lv. " + tg.level;
+    if (kind === "bandit") return D.monsterOf(tg.level).name + " lv. " + tg.level;
     return E.resTileName(tg.res) + " lv. " + tg.level;
   }
   E.resTileName = function (res) {
@@ -3327,17 +3386,19 @@ Medieval.Engine = (function (D) {
 
   function resolveCamp(s, m, camp, t, events) {
     var heroIn = m.hero;
-    var res = E.battle({ troops: m.troops, bonus: E.bonuses(s, { combat: heroIn, t: t }), siege: "field" }, { troops: camp.troops, bonus: {} });
+    var bo = E.bonuses(s, { combat: heroIn, t: t }), ma = bo.monster_atk || 0;
+    if (ma) bo.all_atk = (bo.all_atk || 0) + ma;
+    var res = E.battle({ troops: m.troops, bonus: bo, siege: "field" }, { troops: camp.troops, bonus: {} });
     camp.troops = clean(res.def.left);
     var cas = E.addCasualties(s, res.att.lost, 0.6);
     m.troops = clean(res.att.left);
     var rep = { kind: "camp", at: t, win: res.win, level: camp.level, x: camp.x, y: camp.y, hero: heroIn, rounds: res.rounds,
       att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
     var xp = heroXpFrom(res.def.lost) + (res.win ? 40 * Math.pow(camp.level, 1.6) : 0);
-    if (heroIn) E.heroGainXp(s, xp * 1.5, events, t); else E.heroGainXp(s, xp * 0.5, events, t);
+    if (heroIn) E.heroGainXp(s, xp * 3, events, t); else E.heroGainXp(s, xp * 0.5, events, t);
     if (res.win) {
       s.stats.bandits++;
-      var amount = Math.round(1500 * Math.pow(camp.level, 1.5)), keys = ["wood", "stone", "ore", "food", "silver"];
+      var amount = Math.round(1500 * Math.pow(camp.level, 1.5) * (1 + (bo.monster_loot || 0) / 100)), keys = ["wood", "stone", "ore", "food", "silver"];
       var k1 = keys[Math.floor(E.rand(s) * keys.length)], k2 = keys[Math.floor(E.rand(s) * keys.length)];
       rep.loot[k1] = (rep.loot[k1] || 0) + amount; rep.loot[k2] = (rep.loot[k2] || 0) + Math.round(amount / 2);
       rep.loot.gold = camp.level * 2;
@@ -3350,7 +3411,7 @@ Medieval.Engine = (function (D) {
       removeTile(s, camp);
     }
     E.report(s, rep);
-    events.push({ type: "battle", win: res.win, label: "Barbarian camp lv. " + camp.level, at: t });
+    events.push({ type: "battle", win: res.win, label: D.monsterOf(camp.level).name + " lv. " + camp.level, at: t });
   }
 
   function arrive(s, m, t, events) {
@@ -3386,7 +3447,7 @@ Medieval.Engine = (function (D) {
     } else if (m.kind === "bandit") {
       var camp = E.findTile(s, m.targetId);
       if (camp) resolveCamp(s, m, camp, t, events);
-      else E.report(s, { kind: "info", at: t, title: "Camp deserted", text: "The barbarian camp was already gone. Your march is heading home." });
+      else E.report(s, { kind: "info", at: t, title: "Monster gone", text: "The monster was already slain or had fled. Your march is heading home." });
     }
     goHome(m, t);
   }
@@ -5347,6 +5408,20 @@ Medieval.WorldView = (function (D, E, G) {
     g.fillStyle = "#ffe08a"; g.beginPath(); g.arc(x - 2, y - 1, 2, 0, 6.3); g.fill();
     g.fillStyle = "#3a2a1a"; g.fillRect(x + 18, y - 26, 1.5, 24); g.fillStyle = "#1c1c1c"; g.fillRect(x + 19.5, y - 26, 10, 7);
   }
+  /** Repaire de monstre : image « mon-<clé> » si elle existe, sinon une grotte et l'emoji du monstre. */
+  function monsterIcon(g, x, y, t, level) {
+    var mo = D.monsterOf(level), img = G.asset("mon-" + mo.key, 1), bob = Math.sin(t * 2.2 + x) * 1.5;
+    if (img) { G.drawAsset(g, img, x, y + bob * 0.3, TW * 1.05); return; }
+    // grotte
+    poly(g, [[x - 24, y + 6], [x - 16, y - 14], [x - 2, y - 22], [x + 14, y - 16], [x + 24, y + 4], [x + 6, y + 10], [x - 12, y + 10]], "#7d7368", "rgba(0,0,0,.35)");
+    poly(g, [[x - 2, y - 22], [x + 14, y - 16], [x + 24, y + 4], [x + 6, y + 10]], "#5f574e");
+    g.fillStyle = "#1a1210"; g.beginPath(); g.ellipse(x - 2, y + 2, 9, 7, 0, Math.PI, 0); g.lineTo(x + 7, y + 6); g.lineTo(x - 11, y + 6); g.fill();
+    var f = 0.6 + 0.4 * Math.sin(t * 3 + y);
+    g.fillStyle = "rgba(255,60,40," + f + ")"; g.beginPath(); g.arc(x - 5, y, 1.6, 0, 6.3); g.arc(x + 1, y, 1.6, 0, 6.3); g.fill();
+    // le monstre devant sa grotte
+    g.save(); g.font = "26px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.shadowColor = "rgba(0,0,0,.6)"; g.shadowBlur = 4; g.fillText(mo.icon, x + 12, y - 4 + bob); g.restore();
+  }
   function plate(g, x, y, text, sub, col, s, textCol) {
     g.save(); g.translate(x, y); g.scale(s, s);
     g.font = "700 12px 'Alegreya Sans', sans-serif";
@@ -5393,7 +5468,7 @@ Medieval.WorldView = (function (D, E, G) {
         if (it.o.by || it.o.occ) { ctx.fillStyle = it.o.by ? "#4fa3e0" : "#e0463c"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x + 18, p.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); }
         labels.push(function () { lvlBadge(ctx, p.x - 20, p.y + 12, it.o.level, ui * 0.8, "#2b3a24"); });
       } else if (it.k === "camp") {
-        campIcon(ctx, p.x, p.y, t);
+        monsterIcon(ctx, p.x, p.y, t, it.o.level);
         labels.push(function () { lvlBadge(ctx, p.x - 22, p.y + 12, it.o.level, ui * 0.85, "#4a1a12"); });
       } else if (it.k === "bot") {
         var b = it.o;
@@ -6777,7 +6852,6 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     html += '<div class="rt-head"><button class="btn tiny ghost" data-act="research-back">‹ All trees</button><b>' + icon(TR.icon) + ' ' + TR.name + '</b><span class="muted small">' + pct(tree).toFixed(1) + '%</span></div>';
     var nodes = D.RESEARCH.filter(function (r) { return r.tree === tree; });
     var sel = ui.researchSel[tree] && D.RESEARCH_BY_ID[ui.researchSel[tree]] ? ui.researchSel[tree] : null;
-    if (sel) html += '<div class="rdetail-wrap">' + researchDetail(sel, a, rj) + '</div>';
     var rows = [];
     nodes.forEach(function (r) { (rows[r.row] = rows[r.row] || []).push(r); });
     html += '<div class="rtree2">' + rows.map(function (list, ri) {
@@ -6789,13 +6863,27 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         var lv = E.researchLevel(state, r.id), av = E.researchAvailable(state, r.id), busy = rj && rj.research === r.id;
         var cls = lv >= r.max ? "done" : busy ? "busy" : av ? "avail" : "locked";
         return '<button class="rcard ' + cls + (r.id === sel ? " sel" : "") + (r.effect.stat ? "" : " unlock") + '" data-act="research-sel" data-arg="' + r.id + '">' +
-          '<span class="rc-art">' + icon(r.effect.troop ? TYPE_ICON[r.effect.troop] : r.effect.trap ? "castle" : r.effect.set || r.effect.gearTier ? "anvil" : TR.icon) + (cls === "locked" ? '<i class="rc-lock">' + icon("lock") + '</i>' : busy ? '<i class="rc-lock">' + icon("clock") + '</i>' : "") + '</span>' +
+          '<span class="rc-art">' + icon(researchIcon(r)) + (cls === "locked" ? '<i class="rc-lock">' + icon("lock") + '</i>' : busy ? '<i class="rc-lock">' + icon("clock") + '</i>' : "") + '</span>' +
           '<span class="rc-name">' + esc(r.name) + '</span>' +
           '<span class="rc-lv"><i style="width:' + (lv / r.max * 100) + '%"></i><b>' + lv + '/' + r.max + '</b></span></button>';
       }).join("") + '</div>';
     }).join("") + '</div>';
+    if (sel) html += '<div class="rpop" data-act="research-sel" data-arg="' + sel + '"><div class="rpop-card" data-act="noop"><button class="rpop-x" data-act="research-sel" data-arg="' + sel + '" aria-label="Close">' + icon("close") + '</button><span class="rpop-art ' + (E.researchLevel(state, sel) >= D.RESEARCH_BY_ID[sel].max ? "done" : "") + '">' + icon(researchIcon(D.RESEARCH_BY_ID[sel])) + '</span>' + researchDetail(sel, a, rj) + '</div></div>';
     return html + '</div>';
   };
+  var STAT_ICON = { prod_food: "food", prod_wood: "wood", prod_stone: "stone", prod_ore: "ore", prod_silver: "silver", build_speed: "hammer", storage: "bag", protect: "lock",
+    gather_speed: "march", load: "army", production: "gold", train_speed: "clock", all_atk: "sword", all_def: "castle", all_hp: "heal", scouting: "globe", research_speed: "book",
+    march_speed: "march", march_size: "army", marches: "march", heal_speed: "heal", beds: "heal", craft_speed: "anvil", craft_cost: "anvil", forge_luck: "anvil",
+    hero_speed: "march", hero_atk: "sword", hero_def: "castle", hero_hp: "heal", monster_atk: "alert", monster_loot: "bag", hero_xp: "helm",
+    inf_atk: "inf", inf_def: "inf", inf_hp: "inf", cav_atk: "cav", cav_def: "cav", cav_hp: "cav", arc_atk: "arc", arc_def: "arc", arc_hp: "arc", sie_atk: "sie", sie_def: "sie", sie_hp: "sie",
+    inf_speed: "inf", cav_speed: "cav", arc_speed: "arc", sie_speed: "sie", trap_dmg: "castle", trap_capacity: "castle", trap_speed: "clock", trap_keep: "castle", enemy_atk: "alert", enemy_def: "alert", enemy_hp: "alert" };
+  function researchIcon(r) {
+    var e = r.effect;
+    if (e.troop) return TYPE_ICON[e.troop];
+    if (e.trap) return "castle";
+    if (e.set || e.gearTier) return "anvil";
+    return STAT_ICON[e.stat] || D.RESEARCH_TREES[r.tree].icon;
+  }
   function researchDetail(id, a, rj) {
     var r = D.RESEARCH_BY_ID[id], lv = E.researchLevel(state, id), c = E.checkResearch(state, id);
     var html = '<div class="rdetail"><div class="jb-top"><b>' + esc(r.name) + '</b><span class="pill soft">' + (r.max > 1 ? "Level " + lv + " / " + r.max : lv ? "Researched" : "Not researched") + '</span></div>' +
@@ -6962,7 +7050,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         var ok = E.canEquip(state, it);
         return itemRow(it, ok.ok ? '<button class="btn tiny teal" data-act="equip" data-arg="' + it.id + '">Equip</button>' : '<span class="muted small">Lv. ' + D.GEAR_TIERS[it.tier - 1].hero + '</span>');
       }).join("") + '</div>';
-      else html += '<p class="muted small">No piece of this type in your inventory. Craft one at the forge or defeat barbarian camps.</p>';
+      else html += '<p class="muted small">No piece of this type in your inventory. Craft one at the forge or hunt monsters on the world map.</p>';
       html += '</section>';
       var sc = E.setCounts(state);
       html += '<section class="card"><h3>Sets worn</h3>' + (Object.keys(sc).length ? Object.keys(sc).map(function (k) {
@@ -7017,9 +7105,14 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   };
 
   // --- rapports
+  function monsterLine(r) {
+    var mo = E.monsterOf(r.level), b = E.troopTotal(r.def.before || {}), l = E.troopTotal(r.def.lost || {});
+    var pct = b ? Math.min(100, Math.round(l / b * 100)) : 0;
+    return '<div class="mon-hp"><span class="mon-emo">' + mo.icon + '</span><div><b>' + esc(mo.name) + ' lv. ' + r.level + '</b><span class="qr-bar"><i style="width:' + (100 - pct) + '%;background:linear-gradient(90deg,#8a1f19,#e0463c)"></i><em>' + (r.win ? "Slain" : "Wounds: " + pct + "%") + '</em></span></div></div>';
+  }
   function reportTitle(r) {
     if (r.kind === "attack") return (r.win ? "Victory over " : "Defeat against ") + r.target;
-    if (r.kind === "camp") return (r.win ? "Barbarian camp lv. " + r.level + " destroyed" : "Repelled by barbarians lv. " + r.level);
+    if (r.kind === "camp") { var mo = E.monsterOf(r.level); return (r.win ? mo.name + " lv. " + r.level + " slain" : "Repelled by the " + mo.name + " lv. " + r.level); }
     if (r.kind === "defense") return (r.win ? "Attack from " + r.target + " repelled" : "Raided by " + r.target);
     if (r.kind === "tile") return (r.win ? "Took the " : "Failed to take the ") + r.target + " from " + r.lord;
     if (r.kind === "tiledef") return "Driven off the " + r.target + " by " + r.lord;
@@ -7066,7 +7159,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         html += '<div class="verdict ' + (won ? "win" : "loss") + '">' + (won ? "Victory" : "Defeat") + '</div>';
         if (r.kind !== "camp" && r.lord) html += '<p class="small" style="text-align:center">' + esc(r.lord) + ' · ' + esc(r.target) + (r.level ? " (lv. " + r.level + ")" : "") + '</p>';
         html += '<p class="small muted" style="text-align:center">' + r.rounds + ' round' + (r.rounds > 1 ? 's' : '') + ' · hero ' + (r.hero ? "present" : "absent") + '</p>';
-        html += sideTable(mine, "Your troops") + sideTable(theirs, r.kind === "camp" ? "Barbarians" : "Enemies");
+        html += sideTable(mine, "Your troops") + (r.kind === "camp" ? monsterLine(r) : sideTable(theirs, "Enemies"));
         html += '<dl class="stats"><dt>Wounded (hospital)</dt><dd>' + F.num(E.troopTotal(r.wounded || {})) + '</dd><dt>Dead</dt><dd>' + F.num(E.troopTotal(r.dead || {})) + '</dd><dt>' + (r.kind === "defense" ? "Resources lost" : "Loot") + '</dt><dd>' + resList(r.loot) + '</dd></dl>';
         if (r.item) html += itemRow(r.item, "");
         if (r.traps) html += '<p class="small">' + icon("castle") + '<b>Wall traps:</b> ' + F.num(r.traps.fired) + ' traps killed ' + F.num(E.troopTotal(r.traps.killed)) + ' attackers before the battle' + (E.trapsLine(r.traps.lost) ? '; destroyed: ' + esc(E.trapsLine(r.traps.lost)) : "") + '.</p>';
@@ -7117,7 +7210,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var n = D.SHOP.filter(c[3]).reduce(function (a, it) { return a + E.bagCount(state, it.id); }, 0);
       return '<button class="itab' + (cat === c[0] ? " on" : "") + '" data-act="items-cat" data-arg="' + c[0] + '">' + icon(c[2]) + '<span>' + c[1] + '</span>' + (mode === "bag" && n ? '<i class="badge">' + n + '</i>' : "") + '</button>';
     }).join("") + '</div>';
-    var tileIcon = function (it) { return it.kind === "speedup" ? icon("clock") : it.kind === "shield" ? icon("castle") : it.kind === "xp" ? icon("helm") : it.kind === "vip" ? icon("crown") : it.kind === "teleport" ? icon("globe") : it.kind === "boost" ? icon(/enemy/.test(it.stat) ? "alert" : "sword") : icon(it.res); };
+    var tileIcon = function (it) { var im = UI_SRC["item-" + it.id] || UI_SRC["item-" + it.kind]; if (im) return '<img class="itimg" src="' + im + '" alt="">'; return it.kind === "speedup" ? icon("clock") : it.kind === "shield" ? icon("castle") : it.kind === "xp" ? icon("helm") : it.kind === "vip" ? icon("crown") : it.kind === "teleport" ? icon("globe") : it.kind === "boost" ? icon(/enemy/.test(it.stat) ? "alert" : "sword") : icon(it.res); };
     var C = ITEM_CATS.filter(function (c) { return c[0] === cat; })[0] || ITEM_CATS[0];
     var list = D.SHOP.filter(C[3]);
     if (cat === "shield" && E.shielded(state, now())) html += '<section class="card"><div class="jb-top"><span>' + icon("castle") + 'Peace Shield active</span><span class="num" data-live-until="' + state.shieldUntil + '"></span></div></section>';
@@ -7295,8 +7388,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     }
     if (o.kind === "camp") {
       var c = o.tile;
-      return head(coord + " · level " + c.level, "Barbarian camp") + '<div class="p-body"><p class="desc">Raiders are camping here. Destroy the camp for loot, hero experience and sometimes a piece of gear.</p>' +
-        '<p class="small"><b>Scouts report:</b> ' + esc(troopsLine(c.troops)) + '</p><button class="btn primary wide" data-act="march" data-arg="bandit:' + c.id + '">' + icon("sword") + 'Attack</button></div>';
+      var mo = E.monsterOf(c.level);
+      return head(coord + " · level " + c.level, mo.icon + " " + esc(mo.name)) + '<div class="p-body"><section class="card"><p class="desc">' + esc(mo.desc) + '</p>' +
+        '<dl class="stats"><dt>Strength</dt><dd>' + F.compact(E.troopPower(c.troops)) + ' power · ' + F.num(E.troopTotal(c.troops)) + ' hit points</dd><dt>Reward</dt><dd>Resources, gold, hero XP, sometimes gear</dd></dl>' +
+        '<p class="small muted">Send your hero with the march: monsters give him ×3 experience, and the Hero research tree makes him a better hunter.</p></section>' +
+        '<button class="btn primary wide" data-act="march" data-arg="bandit:' + c.id + '">' + icon("sword") + 'Hunt the ' + esc(mo.name) + '</button></div>';
     }
     var b = o.bot, doc = D.WORLD.doctrines[b.doctrine], wl = watch(), sc = E.bonus(state, "scouting"), exact = wl >= 10 || sc >= 5;
     var mixTxt = function () { var tot = {}, n = E.troopTotal(b.troops) || 1; for (var id in b.troops) tot[D.TROOPS[id].type] = (tot[D.TROOPS[id].type] || 0) + b.troops[id];
@@ -7358,7 +7454,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   PANELS.march = function () {
     var m = ui.march, tg = marchTarget(m);
     if (!tg) return head("March", "Target gone") + '<div class="p-body"><p>This target no longer exists.</p></div>';
-    var title = m.kind === "gather" ? "Gather" : m.kind === "wonder" ? "Take the Wonder" : "Attack", sub = m.kind === "wonder" ? "The Wonder" : m.kind === "attack" ? tg.name + " · lv. " + tg.level : m.kind === "bandit" ? "Barbarian camp lv. " + tg.level : E.resTileName(tg.res) + " lv. " + tg.level;
+    var title = m.kind === "gather" ? "Gather" : m.kind === "wonder" ? "Take the Wonder" : "Attack", sub = m.kind === "wonder" ? "The Wonder" : m.kind === "attack" ? tg.name + " · lv. " + tg.level : m.kind === "bandit" ? E.monsterOf(tg.level).name + " lv. " + tg.level : E.resTileName(tg.res) + " lv. " + tg.level;
     var html = head(esc(sub) + " · X:" + tg.x + " Y:" + tg.y, title) + '<div class="p-body">';
     var ids = D.TROOP_IDS.filter(function (id) { return state.army[id] > 0; });
     if (!ids.length) return html + '<p>No troops at home. Train soldiers at the barracks.</p></div>';
@@ -7396,7 +7492,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (kind === "reports" && arg !== "keep") ui.reportId = null;
     if (ui.view === "city") M.setSelection(kind === "building" ? { kind: "building", id: arg } : kind === "plot" ? { kind: "plot", plot: arg } : kind === "locked" ? { kind: "locked", plot: arg } : null);
     if (kind === "tile") WV.setSelection(arg);
-    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); document.body.classList.add("panel-open");
+    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming)$/.test(kind)); document.body.classList.add("panel-open");
     renderPanel(true); $("panelBody").scrollTop = 0;
     document.querySelectorAll(".nav button[data-arg]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-arg") === kind); });
   }
@@ -7630,7 +7726,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "use-speed": function (arg) { var p = arg.split(":"); result(E.useItem(state, p[0], { jobId: p[1] }, now()), icon("clock") + "<span>Sped up by <b>" + esc(F.duration(D.SHOP_BY_ID[p[0]].seconds)) + "</b>.</span>"); },
     "research-tree": function (arg) { ui.researchView = arg; ui.researchTree = arg; renderPanel(true); $("panelBody").scrollTop = 0; },
     "research-back": function () { ui.researchView = null; renderPanel(true); $("panelBody").scrollTop = 0; },
-    "research-sel": function (arg) { var r = D.RESEARCH_BY_ID[arg]; if (r) { ui.researchSel[r.tree] = ui.researchSel[r.tree] === arg ? null : arg; renderPanel(true); var d = document.querySelector(".rdetail"); if (d && d.scrollIntoView) d.scrollIntoView({ block: "nearest", behavior: "smooth" }); } },
+    "research-sel": function (arg) { var r = D.RESEARCH_BY_ID[arg]; if (r) { ui.researchSel[r.tree] = ui.researchSel[r.tree] === arg ? null : arg; renderPanel(true); } },
+    noop: function () {},
     research: function (arg) { result(E.research(state, arg, now())); },
     "forge-tier": function (arg) { ui.forgeTier = +arg; renderPanel(true); },
     "forge-slot": function (arg) { ui.forgeSlot = arg; renderPanel(true); },
@@ -7743,7 +7840,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     $("modal").innerHTML = '<div class="dialog" role="dialog" aria-labelledby="wTitle"><span class="eyebrow">Rise &amp; Conquer</span><h2 id="wTitle">Found your city</h2>' +
       '<p>The emperor grants you a walled city, a farm, a sawmill and a small band of soldiers. Make it a stronghold.</p>' +
       '<ul class="howto"><li>' + icon("hammer") + '<span>Tap an <b>empty plot</b> to build: barracks, forge and prison inside the walls, farms and mines in the countryside.</span></li>' +
-      '<li>' + icon("globe") + '<span>The <b>World</b> button opens the map: gather resources, destroy barbarian camps, attack nearby castles.</span></li>' +
+      '<li>' + icon("globe") + '<span>The <b>World</b> button opens the map: gather resources, hunt monsters, attack nearby castles.</span></li>' +
       '<li>' + icon("helm") + '<span>Equip your <b>hero</b> with 7 pieces and pick the right troops: infantry beats cavalry, cavalry beats ranged, ranged beat infantry, siege engines crush castles.</span></li></ul>' +
       (S.accountsAvailable() ? '<details class="small" id="welcomeAcc"><summary>I already have a city</summary>' +
         '<input id="wEmail" type="email" autocomplete="email" placeholder="E-mail"><input id="wPass" type="password" autocomplete="current-password" placeholder="Password" style="margin-top:6px">' +
