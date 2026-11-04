@@ -2643,6 +2643,24 @@ Medieval.Engine = (function (D) {
   };
   E.botAllianceTag = function (bot) { var i = parseInt(String(bot.id).slice(1), 10) || 0; return i % 2 ? D.ALLIANCE.npc[i % D.ALLIANCE.npc.length].tag : null; };
 
+  // ------------------------------------------------------------ espionnage d'un joueur
+  E.spyCost = function (p) { return { silver: 100 * Math.max(1, p.stronghold || 1) }; };
+  /** p : fiche publique d'un joueur (army, traps, wall, loot…). Le détail dépend de la recherche Scouting. */
+  E.spyPlayer = function (s, p, now) {
+    var cost = E.spyCost(p);
+    if (!E.canAfford(s, cost)) return { ok: false, reasons: ["Not enough silver (" + cost.silver + ")."] };
+    E.pay(s, cost);
+    var sc = E.bonus(s, "scouting"), army = p.army || {}, total = E.troopTotal(army), types = {};
+    for (var id in army) if (D.TROOPS[id]) types[D.TROOPS[id].type] = (types[D.TROOPS[id].type] || 0) + army[id];
+    var round = function (n) { return n < 100 ? n : Math.round(n / 50) * 50; };
+    var rep = { kind: "spy", at: now, title: "Scout report: " + (p.name || "a city"), target: p.name || "City", lord: p.lord || "", x: p.x, y: p.y,
+      stronghold: p.stronghold || 1, power: p.power || 0, wall: p.wall || 1, scouting: sc, loot: p.loot || {},
+      armyTotal: sc >= 1 ? total : round(total), types: sc >= 1 ? types : null, troops: sc >= 5 ? army : null, traps: sc >= 3 ? (p.traps || 0) : null,
+      marches: p.marches || 0, hero: p.hero || 1, read: false };
+    E.report(s, rep);
+    return { ok: true, report: rep };
+  };
+
   E.registerSystem({
     next: function (s) {
       var al = E.alliance(s); if (!al) return Infinity;
@@ -2662,7 +2680,7 @@ Medieval.Engine = (function (D) {
   "use strict";
   var W = D.WORLD, HOUR = 3600000;
   var RES_TILE_KINDS = ["wood", "stone", "ore", "food", "silver", "gold"];
-  var RES_TILE_WEIGHTS = [20, 16, 16, 20, 14, 14];
+  var RES_TILE_WEIGHTS = [24, 19, 18, 24, 12, 3];   // l'or est rare
 
   // ------------------------------------------------------------ génération
   function noiseField(s, size, cells) {
@@ -2859,6 +2877,7 @@ Medieval.Engine = (function (D) {
     if (n > E.marchSizeMax(s)) reasons.push("Maximum march size: " + E.marchSizeMax(s) + ".");
     if (withHero && s.hero.status !== "home") reasons.push(s.hero.status === "captured" ? "Your hero is a prisoner." : "Your hero is already marching.");
     if (kind === "gather" && tg.by) reasons.push("One of your marches is already gathering here.");
+    if (kind === "gather" && s.world.marches.some(function (x) { return x.kind === "gather" && x.targetId === targetId && x.phase === "out"; })) reasons.push("One of your marches is already on its way there.");
     if (kind === "gather" && tg.res === "gold" && E.castleLevel(s) < 3) reasons.push("Requires Stronghold level 3 to mine gold.");
     return { ok: reasons.length === 0, reasons: reasons, troops: t, time: E.travelSeconds(s, t, tg), target: tg };
   };
@@ -2903,6 +2922,7 @@ Medieval.Engine = (function (D) {
       var tile = E.findTile(s, m.targetId), got = gatheredSoFar(s, m, now);
       if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
       if (got > 0) m.load[m.gatherRes] = got;
+      E.netEmit(s, { op: "release", tileId: m.targetId, got: got });
       goHome(m, now);
     }
     return { ok: true };
@@ -3002,10 +3022,14 @@ Medieval.Engine = (function (D) {
         E.report(s, { kind: "info", at: t, title: "Resource tile gone", text: "The resource tile is gone. Your march is heading home." });
         goHome(m, t); return;
       }
+      if (tile.occ) {                                    // un autre joueur récolte ici : on l'attaque
+        if (!fightOccupant(s, m, tile, t, events)) { goHome(m, t); return; }
+      }
       var cap = E.loadCapacity(s, m.troops), amount = Math.min(tile.amount, Math.floor(cap / W.weight[tile.res]));
       tile.by = m.id;
       m.phase = "gather"; m.gatherRes = tile.res; m.gatherAmount = amount; m.gatherRate = gatherRate(s, tile.res);
       m.gatherStart = t; m.gatherEnd = t + Math.max(10000, Math.round(amount / m.gatherRate * HOUR)); m.next = m.gatherEnd;
+      E.netEmit(s, { op: "occupy", tileId: tile.id, troops: clean(m.troops), bonus: combatBonus(s, m.hero), hero: m.hero, start: t, end: m.gatherEnd, amount: amount, rate: m.gatherRate });
       return;
     }
     if (m.kind === "attack") {
@@ -3024,8 +3048,52 @@ Medieval.Engine = (function (D) {
     var got = m.gatherAmount;
     if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
     m.load[m.gatherRes] = (m.load[m.gatherRes] || 0) + got;
+    E.netEmit(s, { op: "release", tileId: m.targetId, got: got });
     goHome(m, t);
   }
+  function combatBonus(s, hero) {
+    var b = E.bonuses(s, { combat: !!hero }), o = {};
+    D.COMBAT_STATS.concat(["enemy_atk", "enemy_def", "enemy_hp"]).forEach(function (k) { if (b[k]) o[k] = b[k]; });
+    return o;
+  }
+  /** Combat contre la marche d'un autre joueur sur une case ressource. Renvoie true si la case est prise. */
+  function fightOccupant(s, m, tile, t, events) {
+    var occ = tile.occ, res = E.battle({ troops: m.troops, bonus: E.bonuses(s, { combat: m.hero, t: t }) }, { troops: occ.troops, bonus: occ.bonus || {} });
+    var cas = E.addCasualties(s, res.att.lost, 0.5);
+    m.troops = clean(res.att.left);
+    var rep = { kind: "tile", at: t, win: res.win, target: E.resTileName(tile.res) + " lv. " + tile.level, lord: occ.name || "Another lord", x: tile.x, y: tile.y,
+      hero: m.hero, rounds: res.rounds, att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
+    if (m.hero) E.heroGainXp(s, heroXpFrom(res.def.lost), events, t);
+    if (res.win) {
+      s.stats.wins++;
+      rep.events.push("You drove " + (occ.name || "them") + " off the tile. Your troops start gathering.");
+      E.netEmit(s, { op: "dislodge", tileId: tile.id, victim: occ.uid, lost: res.def.lost, before: res.def.before, rounds: res.rounds, atk: res.att.before, atkLost: res.att.lost });
+      tile.occ = null;
+    } else s.stats.losses++;
+    E.report(s, rep);
+    events.push({ type: "battle", win: res.win, label: occ.name || "a gathering army", at: t });
+    return res.win && E.troopTotal(m.troops) > 0;
+  }
+  /** Un autre joueur nous a chassés d'une case ressource (message reçu du serveur). */
+  E.dislodged = function (s, hit, now) {
+    var m = s.world.marches.filter(function (x) { return x.kind === "gather" && x.targetId === hit.tileId && x.phase === "gather"; })[0];
+    var lost = {}, k;
+    if (m) {
+      var got = gatheredSoFar(s, m, now);
+      for (k in hit.lost || {}) { var n = Math.min(m.troops[k] || 0, hit.lost[k]); if (n > 0) { lost[k] = n; m.troops[k] -= n; } }
+      m.troops = clean(m.troops);
+      if (got > 0) m.load[m.gatherRes] = (m.load[m.gatherRes] || 0) + got;
+      var tile = E.findTile(s, m.targetId); if (tile) tile.by = null;
+      goHome(m, now);
+    }
+    var cas = E.addCasualties(s, lost, 0.5);
+    E.report(s, { kind: "tiledef", at: now, win: false, target: hit.tileName || "Resource tile", lord: hit.by || "Another lord", hero: false, rounds: hit.rounds || 1,
+      att: { before: hit.atk || {}, lost: hit.atkLost || {}, left: {} }, def: { before: hit.before || {}, lost: lost, left: m ? m.troops : {} },
+      wounded: cas.wounded, dead: cas.dead, loot: {}, events: [(hit.by || "Another lord") + " drove your gatherers off the tile."] });
+    return { type: "battle", win: false, label: hit.by || "another lord", at: now };
+  };
+  /** File des messages à envoyer au serveur (carte commune). */
+  E.netEmit = function (s, ev) { if (s.world && s.world.shared) { if (!s.netOut) s.netOut = []; s.netOut.push(ev); } };
 
   function returnHome(s, m, t, events) {
     var w = s.world;
@@ -3103,7 +3171,7 @@ Medieval.Engine = (function (D) {
     if (L >= W.raidFromCastle && w.incoming.length === 0 && E.rand(s) < W.raidChancePerHour) launchRaid(s, t);
     var resN = w.tiles.filter(function (x) { return x.kind === "res"; }).length;
     var campN = w.tiles.length - resN;
-    for (var i = 0; i < 3 && resN < W.resTiles; i++, resN++) spawnRes(s);
+    if (!w.shared) for (var i = 0; i < 3 && resN < W.resTiles; i++, resN++) spawnRes(s);
     for (var j = 0; j < 2 && campN < W.camps; j++, campN++) spawnCamp(s);
     w.nextTick += W.tickMs;
   }
@@ -4812,7 +4880,7 @@ Medieval.WorldView = (function (D, E, G) {
       var p = tileXY(it.o.x, it.o.y);
       if (it.k === "res") {
         resIcon(ctx, p.x, p.y, it.o.res, it.o.level);
-        if (it.o.by) { ctx.fillStyle = "#4fa3e0"; ctx.beginPath(); ctx.arc(p.x + 18, p.y - 18, 5, 0, 6.3); ctx.fill(); }
+        if (it.o.by || it.o.occ) { ctx.fillStyle = it.o.by ? "#4fa3e0" : "#e0463c"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x + 18, p.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); }
         labels.push(function () { lvlBadge(ctx, p.x - 20, p.y + 12, it.o.level, ui * 0.8, "#2b3a24"); });
       } else if (it.k === "camp") {
         campIcon(ctx, p.x, p.y, t);
@@ -5278,6 +5346,11 @@ Medieval.Save = (function (E) {
       var rec = { name: state.name || "", lord: (state.hero && state.hero.name) || status.user.name, stronghold: E.castleLevel(state), power: E.power(state),
         hero: state.hero ? state.hero.level : 1, tag: al ? al.tag : "", alliance: al ? al.name : "", updatedAt: Date.now() };
       if (w.shared && w.home) { rec.x = w.home.x; rec.y = w.home.y; rec.world = w.shared; }
+      var army = {}; for (var id in state.army) if (state.army[id] > 0) army[id] = state.army[id];
+      var prot = E.protectedAmount(state), loot = {};
+      ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { loot[k] = Math.max(0, Math.floor(state.resources[k] - prot)); });
+      rec.army = army; rec.loot = loot; rec.wall = state.buildings.wall.level; rec.traps = E.trapCount ? E.trapCount(state) : 0;
+      rec.marches = w.marches ? w.marches.length : 0;
       fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).catch(function () { /* hors ligne */ });
     } catch (e) { /* ignore */ }
   }
@@ -5346,11 +5419,138 @@ Medieval.Save = (function (E) {
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
     listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
     uid: function () { return fbUser ? fbUser.uid : null; },
+    db: function () { return fb && fbUser ? fb.db : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
     status: status, encode: encode, decode: decode
   };
 })(Medieval.Engine);
+
+/* ---- online.js ---- */
+/* =========================================================================
+ * online.js — Carte du monde commune (version web, Firebase/Firestore).
+ *
+ *   world/main/tiles/{id}  cases ressources partagées : quantité restante,
+ *                          joueur qui récolte (uid, nom, troupes, fin).
+ *   world/main/hits/{id}   « vous avez été chassé de cette case » : lu par
+ *                          le joueur visé à sa prochaine connexion.
+ *
+ * Le moteur reste hors ligne : il place ses messages dans s.netOut
+ * (occupy / release / dislodge) ; ce module les envoie et applique en
+ * retour l'état du serveur (cases, coups reçus).
+ * ========================================================================= */
+var Medieval = (typeof Medieval !== "undefined") ? Medieval : {};
+
+Medieval.Online = (function (D, E, S) {
+  "use strict";
+  var api = null, unTiles = null, unHits = null, sending = false;
+
+  function db() { return S.db && S.db(); }
+  function tilesRef() { return db().collection("world").doc("main").collection("tiles"); }
+  function hitsRef() { return db().collection("world").doc("main").collection("hits"); }
+  function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+  /** Première connexion d'un joueur au monde vide : on y dépose les gisements de départ. */
+  function seedIfEmpty(seed, now) {
+    return tilesRef().limit(1).get().then(function (q) {
+      if (!q.empty) return;
+      var w = E.sharedWorld(seed, now), batch = db().batch();
+      w.tiles.filter(function (t) { return t.kind === "res"; }).forEach(function (t) {
+        batch.set(tilesRef().doc("t" + t.x + "_" + t.y), { res: t.res, level: t.level, amount: t.amount, max: t.max, x: t.x, y: t.y });
+      });
+      return batch.commit();
+    });
+  }
+
+  /** Nouvel emplacement pour un gisement épuisé. */
+  var KINDS = ["wood", "stone", "ore", "food", "silver", "gold"], WEIGHTS = [24, 19, 18, 24, 12, 3];
+  function respawn(tx, s, existing) {
+    var w = s.world, taken = existing.concat(E.OTHERS).concat([E.homeOf(s)]).concat(w.bots);
+    for (var k = 0; k < 300; k++) {
+      var x = 1 + Math.floor(Math.random() * (w.size - 2)), y = 1 + Math.floor(Math.random() * (w.size - 2)), t = E.terrainAt(w, x, y);
+      if (t !== "g" && t !== "f") continue;
+      var p = { x: x, y: y };
+      if (taken.some(function (o) { return dist(o, p) < 1.5; })) continue;
+      if (w.tiles.some(function (o) { return o.x === x && o.y === y; })) continue;
+      var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
+      var res = KINDS[i], d = dist(p, { x: D.WORLD.home.x, y: D.WORLD.home.y });
+      var level = Math.max(1, Math.min(5, Math.round(d / 3.2 + Math.random() * 1.6 - 0.6))), amount = D.WORLD.resAmount(res, level);
+      tx.set(tilesRef().doc("t" + x + "_" + y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: x, y: y });
+      return;
+    }
+  }
+
+  /** Applique l'état du serveur aux cases ressources locales. */
+  function applyTiles(s, docs, now) {
+    var me = S.uid(), w = s.world, keep = w.tiles.filter(function (t) { return t.kind !== "res"; });
+    var mine = {}; w.marches.forEach(function (m) { if (m.kind === "gather" && m.phase === "gather") mine[m.targetId] = m.id; });
+    docs.forEach(function (d) {
+      var v = d.data, t = { id: d.id, kind: "res", res: v.res, level: v.level, amount: v.amount, max: v.max, x: v.x, y: v.y, by: mine[d.id] || null, occ: null };
+      if (v.uid && v.uid !== me && v.end > now) t.occ = { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, end: v.end, start: v.start, rate: v.rate, amount: v.gather };
+      keep.push(t);
+    });
+    w.tiles = keep;
+  }
+
+  function send(s) {
+    if (sending || !s.netOut || !s.netOut.length || !db()) return;
+    sending = true;
+    var ev = s.netOut[0], me = S.uid(), name = (s.name || "City") + " (" + ((s.hero && s.hero.name) || "") + ")";
+    var p;
+    if (ev.op === "occupy") {
+      p = tilesRef().doc(ev.tileId).update({ uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, start: ev.start, end: ev.end, gather: ev.amount, rate: ev.rate });
+    } else if (ev.op === "release") {
+      p = db().runTransaction(function (tx) {
+        var ref = tilesRef().doc(ev.tileId);
+        return tx.get(ref).then(function (doc) {
+          if (!doc.exists) return;
+          var v = doc.data(), left = Math.max(0, (v.amount || 0) - (ev.got || 0)), upd = { amount: left };
+          if (v.uid === me) { upd.uid = null; upd.name = null; upd.troops = null; upd.end = 0; }
+          if (left <= Math.max(50, v.max * 0.02)) {
+            tx.delete(ref);
+            respawn(tx, s, s.world.tiles.filter(function (t) { return t.kind === "res"; }));
+          } else tx.update(ref, upd);
+        });
+      });
+    } else if (ev.op === "dislodge") {
+      var tile = E.findTile(s, ev.tileId);
+      p = ev.victim ? hitsRef().add({ target: ev.victim, tileId: ev.tileId, tileName: tile ? E.resTileName(tile.res) + " lv. " + tile.level : "Resource tile",
+        by: name, lost: ev.lost || {}, before: ev.before || {}, atk: ev.atk || {}, atkLost: ev.atkLost || {}, rounds: ev.rounds || 1, at: Date.now() }) : Promise.resolve();
+    } else p = Promise.resolve();
+    p.then(function () { s.netOut.shift(); }, function (e) {
+      // case disparue : on abandonne ce message ; autre erreur (hors ligne) : on réessaiera
+      if (e && (e.code === "not-found" || e.code === "permission-denied")) s.netOut.shift();
+    }).then(function () { sending = false; if (api && api.persist) api.persist(); if (s.netOut.length) setTimeout(function () { send(api.state()); }, 50); });
+  }
+
+  return {
+    /** hooks : { state(), now(), onEvents(events), persist(), refresh() } */
+    start: function (seed, hooks) {
+      if (!db()) return Promise.resolve(false);
+      api = hooks;
+      var s = hooks.state();
+      return seedIfEmpty(seed, hooks.now()).catch(function () {}).then(function () {
+        if (unTiles) unTiles();
+        unTiles = tilesRef().onSnapshot(function (q) {
+          var st = api.state(); if (!st || !st.world || st.world.shared !== seed) return;
+          var docs = []; q.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
+          applyTiles(st, docs, api.now()); api.refresh();
+        }, function () {});
+        if (unHits) unHits();
+        unHits = hitsRef().where("target", "==", S.uid()).onSnapshot(function (q) {
+          var st = api.state(); if (!st) return;
+          var evs = [];
+          q.forEach(function (d) { E.advance(st, api.now()); evs.push(E.dislodged(st, d.data(), api.now())); d.ref.delete().catch(function () {}); });
+          if (evs.length) api.onEvents(evs);
+        }, function () {});
+        void s;
+        return true;
+      });
+    },
+    flush: function () { if (api) send(api.state()); },
+    stop: function () { if (unTiles) unTiles(); if (unHits) unHits(); unTiles = unHits = null; api = null; }
+  };
+})(Medieval.Data, Medieval.Engine, Medieval.Save);
 
 /* ---- ui.js ---- */
 /* =========================================================================
@@ -5444,6 +5644,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         toast(icon("globe") + "<span>You joined the <b>shared world map</b> at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
       }
       S.publishPlayer(state);
+      if (Medieval.Online) Medieval.Online.start(SHARED_SEED, { state: function () { return state; }, now: now, persist: function () { persist(); },
+        onEvents: function (evs) { handleEvents(evs); renderChrome(); }, refresh: function () { WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true); } });
       S.watchPlayers(function (ps) {
         E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x); });
         WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true);
@@ -6012,7 +6214,16 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (r.kind === "attack") return (r.win ? "Victory over " : "Defeat against ") + r.target;
     if (r.kind === "camp") return (r.win ? "Barbarian camp lv. " + r.level + " destroyed" : "Repelled by barbarians lv. " + r.level);
     if (r.kind === "defense") return (r.win ? "Attack from " + r.target + " repelled" : "Raided by " + r.target);
+    if (r.kind === "tile") return (r.win ? "Took the " : "Failed to take the ") + r.target + " from " + r.lord;
+    if (r.kind === "tiledef") return "Driven off the " + r.target + " by " + r.lord;
     return r.title || "Report";
+  }
+  function spyHtml(r) {
+    var h = '<dl class="stats"><dt>Lord</dt><dd>' + esc(r.lord) + '</dd><dt>Stronghold</dt><dd>' + r.stronghold + '</dd><dt>Power</dt><dd>' + F.num(r.power) + '</dd><dt>City wall</dt><dd>level ' + r.wall + '</dd>' +
+      '<dt>Army at home</dt><dd>' + (r.troops ? esc(troopsLine(r.troops)) : (r.types ? Object.keys(r.types).map(function (k) { return F.num(r.types[k]) + " " + D.TROOP_TYPES[k].name.toLowerCase(); }).join(", ") || "none" : "≈ " + F.num(r.armyTotal) + " soldiers")) + '</dd>' +
+      '<dt>Wall traps</dt><dd>' + (r.traps === null ? '<span class="muted">Scouting 3</span>' : F.num(r.traps)) + '</dd><dt>Marches out</dt><dd>' + r.marches + '</dd>' +
+      '<dt>Resources to plunder</dt><dd>' + resList(r.loot) + '</dd></dl>';
+    return h + '<p class="muted small">Report at X:' + r.x + ' Y:' + r.y + ' · your Scouting level ' + r.scouting + '.</p>';
   }
   function sideTable(side, title) {
     var ids = Object.keys(side.before || {}).filter(function (id) { return side.before[id] > 0; });
@@ -6027,7 +6238,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         var html = '<header class="p-head"><div class="p-title"><span class="eyebrow">' + new Date(r.at).toLocaleString("en-GB") + '</span><h2>' + esc(reportTitle(r)) + '</h2></div></header><div class="p-body">';
         html += '<button class="btn ghost tiny" data-act="report-back" style="justify-self:start">← All mail</button>';
         if (r.kind === "info") return html + '<p>' + esc(r.text) + '</p></div>';
-        var mine = r.kind === "defense" ? r.def : r.att, theirs = r.kind === "defense" ? r.att : r.def, won = r.win;
+        if (r.kind === "spy") return html + spyHtml(r) + '</div>';
+        var isDef = r.kind === "defense" || r.kind === "tiledef";
+        var mine = isDef ? r.def : r.att, theirs = isDef ? r.att : r.def, won = r.win;
         html += '<div class="verdict ' + (won ? "win" : "loss") + '">' + (won ? "Victory" : "Defeat") + '</div>';
         if (r.kind !== "camp" && r.lord) html += '<p class="small" style="text-align:center">' + esc(r.lord) + ' · ' + esc(r.target) + (r.level ? " (lv. " + r.level + ")" : "") + '</p>';
         html += '<p class="small muted" style="text-align:center">' + r.rounds + ' round' + (r.rounds > 1 ? 's' : '') + ' · hero ' + (r.hero ? "present" : "absent") + '</p>';
@@ -6188,13 +6401,22 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var pl = o.player;
       return head(coord + " · Stronghold " + (pl.stronghold || 1), (pl.tag ? "[" + esc(pl.tag) + "] " : "") + esc(pl.name || "City")) + '<div class="p-body"><dl class="stats"><dt>Lord</dt><dd>' + esc(pl.lord || "") + '</dd>' +
         '<dt>Power</dt><dd>' + F.num(pl.power || 0) + '</dd><dt>Hero</dt><dd>level ' + (pl.hero || 1) + '</dd>' + (pl.alliance ? '<dt>Alliance</dt><dd>' + esc(pl.alliance) + '</dd>' : "") +
-        '<dt>Last seen</dt><dd>' + (pl.updatedAt ? F.ago(pl.updatedAt) : "—") + '</dd></dl><p class="muted small">Another player. Attacks, scouting and reinforcements between players are the next step.</p></div>';
+        '<dt>Last seen</dt><dd>' + (pl.updatedAt ? F.ago(pl.updatedAt) : "—") + '</dd></dl>' +
+        '<button class="btn teal wide" data-act="spy" data-arg="' + esc(pl.uid) + '">' + icon("globe") + 'Scout · ' + icon("silver") + F.num(E.spyCost(pl).silver) + '</button>' +
+        '<p class="muted small">Scouting research shows more: level 1 troop types, level 3 traps, level 5 the exact army.</p></div>';
     }
     if (o.kind === "res") {
       var t = o.tile, mine = t.by ? E.findMarch(state, t.by) : null;
-      var html = head(coord + " · level " + t.level, E.resTileName(t.res)) + '<div class="p-body"><dl class="stats"><dt>Left</dt><dd>' + icon(t.res) + F.num(t.amount) + ' ' + RES_NAME[t.res].toLowerCase() + '</dd><dt>Gathering speed</dt><dd>' + F.num(D.WORLD.gatherRate[t.res] * (1 + E.bonus(state, "gather_speed") / 100)) + ' /h</dd><dt>Distance</dt><dd>' + E.worldDistance(t, D.WORLD.home).toFixed(1) + ' tiles</dd></dl>';
+      var html = head(coord + " · level " + t.level, E.resTileName(t.res)) + '<div class="p-body"><dl class="stats"><dt>Left</dt><dd>' + icon(t.res) + F.num(t.amount) + ' ' + RES_NAME[t.res].toLowerCase() + '</dd><dt>Gathering speed</dt><dd>' + F.num(D.WORLD.gatherRate[t.res] * (1 + E.bonus(state, "gather_speed") / 100)) + ' /h</dd><dt>Distance</dt><dd>' + E.worldDistance(t, E.homeOf(state)).toFixed(1) + ' tiles</dd></dl>';
       if (mine) return html + '<p class="small">One of your marches is gathering here: ' + F.num(E.gatherProgress(state, mine, now())) + ' / ' + F.num(mine.gatherAmount || 0) + ' gathered.</p><button class="btn" data-act="recall" data-arg="' + mine.id + '">Recall</button></div>';
-      return html + '<p class="muted small">Each soldier carries a load; gold is heavy (×' + D.WORLD.weight.gold + ').</p><button class="btn teal wide" data-act="march" data-arg="gather:' + t.id + '">' + icon("march") + 'Gather</button></div>';
+      if (t.occ) {
+        var on = E.troopTotal(t.occ.troops), sc = E.bonus(state, "scouting");
+        return html + '<section class="card"><p class="small">' + icon("alert") + '<b>' + esc(t.occ.name || "Another lord") + '</b> is gathering here until <span data-live-until="' + t.occ.end + '"></span>.</p>' +
+          '<p class="small">' + (sc >= 5 ? esc(troopsLine(t.occ.troops)) : "About " + F.num(Math.max(50, Math.round(on / 50) * 50)) + " soldiers" + (sc >= 1 ? "" : ' <span class="muted">(research Scouting to see more)</span>')) + '</p>' +
+          '<p class="muted small">Attack them: if you win, your march drives them off and starts gathering.</p></section>' +
+          '<button class="btn primary wide" data-act="march" data-arg="gather:' + t.id + '">' + icon("sword") + 'Attack and take the tile</button></div>';
+      }
+      return html + '<p class="muted small">Each soldier carries a load; gold is heavy (×' + D.WORLD.weight.gold + '). This tile is shared: other lords see the same amount.</p><button class="btn teal wide" data-act="march" data-arg="gather:' + t.id + '">' + icon("march") + 'Gather</button></div>';
     }
     if (o.kind === "camp") {
       var c = o.tile;
@@ -6459,6 +6681,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "ally-help": function () { var r = E.helpAllies(state, now()); result(r, r.ok ? icon("check") + "<span>You helped " + r.count + " allies: +" + r.honor + " honor.</span>" : null); },
     "ask-help": function (arg) { result(E.askHelp(state, arg, now()), icon("check") + "<span>Help requested from your alliance.</span>"); },
     "honor-buy": function (arg) { result(E.buyWithHonor(state, arg), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b>.</span>"); },
+    spy: function (arg) {
+      var p = E.OTHERS.filter(function (x) { return x.uid === arg; })[0];
+      if (!p) return;
+      var r = E.spyPlayer(state, p, now());
+      if (result(r, icon("globe") + "<span>Scout report on <b>" + esc(p.name || "the city") + "</b> in your mail.</span>")) { ui.reportId = r.report.id; E.markRead(state, r.report.id); openPanel("reports", "keep"); }
+    },
     "items-tab": function (arg) { ui.itemsTab = arg; renderPanel(true); },
     buy: function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.buyItem(state, arg, 1), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b> (" + it.price + " gold).</span>"); },
     "use-item": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "boost" ? "is active." : "added to your city.") + "</span>"); },
@@ -6575,6 +6803,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (events.length) handleEvents(events);
     updateHud(); renderChrome(); renderPanel(false); updateLive();
     if (ui.persistPending) persist();
+    if (state.netOut && state.netOut.length && Medieval.Online) Medieval.Online.flush();
   }
 
   function bindDom() {
