@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041508";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041516";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5326,6 +5326,7 @@ Medieval.Save = (function (E) {
     try {
       if (!window.firebase.apps.length) window.firebase.initializeApp(window.RC_FIREBASE);
       fb = { auth: window.firebase.auth(), db: window.firebase.firestore() };
+      try { fb.db.settings({ ignoreUndefinedProperties: true, merge: true }); } catch (e) { /* déjà configuré */ }
       try { fb.auth.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL); } catch (e) { /* défaut */ }
     } catch (e) { status.cloudError = e.message; fb = null; }
     return fb;
@@ -5357,13 +5358,13 @@ Medieval.Save = (function (E) {
   function diagnose() {
     if (!fb || !fbUser) return Promise.resolve({ ok: false, text: "Not signed in." });
     var out = { uid: fbUser.uid };
-    return fb.db.collection("saves").doc(fbUser.uid).get().then(function (snap) {
+    return Promise.resolve(diagnose.state ? publishPlayer(diagnose.state) : null).then(function () { return fb.db.collection("saves"); }).then(function (c) { return c.doc(fbUser.uid).get(); }).then(function (snap) {
       out.save = snap.exists ? "found (" + new Date(snap.data().savedAt || 0).toLocaleString("en-GB") + ")" : "none yet";
       return fb.db.collection("players").get();
     }).then(function (q) {
       var list = [];
       q.forEach(function (d) { var v = d.data(); list.push((d.id === fbUser.uid ? "YOU " : "") + (v.name || "?") + " [" + d.id.slice(0, 6) + "]" + (isFinite(v.x) ? " at X:" + v.x + " Y:" + v.y : " (not on the shared map)")); });
-      return { ok: true, text: "Account: " + (fbUser.email || fbUser.displayName || "?") + " · id " + fbUser.uid.slice(0, 6) + ". Online save: " + out.save + ". Players (" + q.size + "): " + list.join(" · ") + "." };
+      return { ok: true, text: (status.playerError ? "PLAYER CARD ERROR: " + status.playerError + " · " : "") + "Account: " + (fbUser.email || fbUser.displayName || "?") + " · id " + fbUser.uid.slice(0, 6) + ". Online save: " + out.save + ". Players (" + q.size + "): " + list.join(" · ") + "." };
     }).catch(function (e) { return { ok: false, text: describe(e) }; });
   }
   function initFirebase() {
@@ -5431,8 +5432,9 @@ Medieval.Save = (function (E) {
       ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { loot[k] = Math.max(0, Math.floor(state.resources[k] - prot)); });
       rec.army = army; rec.loot = loot; rec.wall = state.buildings.wall.level; rec.traps = E.trapCount ? E.trapCount(state) : 0;
       rec.marches = w.marches ? w.marches.length : 0;
-      fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).then(function () { status.playerError = null; }, function (e) { status.playerError = describe(e); });
-    } catch (e) { /* ignore */ }
+      rec = JSON.parse(JSON.stringify(rec, function (k, v) { return typeof v === "number" && !isFinite(v) ? 0 : v; })); // Firestore refuse undefined / NaN
+      return fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).then(function () { status.playerError = null; return true; }, function (e) { status.playerError = describe(e); return false; });
+    } catch (e) { status.playerError = "Player card: " + ((e && e.message) || e); return Promise.resolve(false); }
   }
 
   /** Prépare la sauvegarde sur le compte. Résout le document distant (ou null). */
@@ -6758,6 +6760,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "signup-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "", create: true }).then(afterSignIn, authError); },
     diagnose: function () {
       ui.diag = "Checking…"; renderPanel(true);
+      S.diagnose.state = state;
       S.writeCloud(state).then(function () { return S.diagnose(); }).then(function (r) { ui.diag = r.text + (S.status.cloudError ? " · Save error: " + S.status.cloudError : ""); renderPanel(true); if (r.ok) ensureShared(); });
     },
     signout: function () { S.signOut().then(function () { renderPanel(true); toast(icon("check") + "<span>Signed out. Your game stays on this device.</span>"); }); },
