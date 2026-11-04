@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;</script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4878,8 +4878,9 @@ Medieval.HeroArt = (function (D, E) {
  *   1. Navigateur (localStorage) : immédiat, sur cet appareil.
  *   2. Compte Claude (capacité `db`, si disponible) : la même partie
  *      sur tous vos appareils. Données privées dans data/users/<id>/.
- * Pour le multijoueur, ce module sera remplacé par un client serveur
- * exposant la même interface (load / save / onRemoteNewer).
+ *   3. Version web (GitHub Pages) : compte Google / e-mail via Firebase,
+ *      sauvegarde dans Firestore (saves/<uid>) et fiche publique
+ *      (players/<uid>) pour la future carte du monde commune.
  * ========================================================================= */
 var Medieval = (typeof Medieval !== "undefined") ? Medieval : {};
 
@@ -4911,8 +4912,84 @@ Medieval.Save = (function (E) {
 
   function clearLocal() { try { localStorage.removeItem(KEY); } catch (e) { /* stockage indisponible */ } }
 
+  // ------------------------------------------------------------ Firebase (version web)
+  var fb = null, fbUser = null;
+  function fbReady() {
+    if (fb) return fb;
+    if (typeof window === "undefined" || !window.firebase || !window.RC_FIREBASE) return null;
+    try {
+      if (!window.firebase.apps.length) window.firebase.initializeApp(window.RC_FIREBASE);
+      fb = { auth: window.firebase.auth(), db: window.firebase.firestore() };
+      try { fb.auth.setPersistence(window.firebase.auth.Auth.Persistence.LOCAL); } catch (e) { /* défaut */ }
+    } catch (e) { status.cloudError = e.message; fb = null; }
+    return fb;
+  }
+  function fbDoc(ref) {
+    return {
+      get: function () { return ref.get().then(function (snap) { return { exists: snap.exists, data: function () { return snap.data(); } }; }); },
+      set: function (v) { return ref.set(v); }
+    };
+  }
+  function attachUser(user) {
+    fbUser = user;
+    status.user = { name: user.displayName || user.email || "Player", email: user.email || "" };
+    doc = fbDoc(fb.db.collection("saves").doc(user.uid));
+    status.cloudAvailable = true;
+    return doc.get().then(function (snap) {
+      var d = snap && snap.exists ? snap.data() : null;
+      return d && typeof d.data === "string" ? d : null;
+    }).catch(function (e) { status.cloudError = e.message; return null; });
+  }
+  function initFirebase() {
+    if (!fbReady()) return Promise.resolve(null);
+    return new Promise(function (resolve) {
+      var done = false, finish = function (v) { if (!done) { done = true; resolve(v); } };
+      fb.auth.getRedirectResult().catch(function (e) { status.cloudError = e.message; });
+      var un = fb.auth.onAuthStateChanged(function (user) {
+        un();
+        if (!user) { finish(null); return; }
+        attachUser(user).then(finish);
+      });
+      setTimeout(function () { finish(null); }, 8000);
+    });
+  }
+  /** Connexion. method : "google" ou { email, password, create }. Résout la sauvegarde distante (ou null). */
+  function signIn(method) {
+    if (!fbReady()) return Promise.reject(new Error("Online accounts are not available here."));
+    var p;
+    if (method === "google") {
+      var prov = new window.firebase.auth.GoogleAuthProvider();
+      p = fb.auth.signInWithPopup(prov).catch(function (e) {
+        if (e && /popup|operation-not-supported|web-storage/.test(e.code || "")) return fb.auth.signInWithRedirect(prov).then(function () { return null; });
+        throw e;
+      });
+    } else {
+      p = method.create ? fb.auth.createUserWithEmailAndPassword(method.email, method.password)
+                        : fb.auth.signInWithEmailAndPassword(method.email, method.password);
+    }
+    return p.then(function (cred) {
+      var user = (cred && cred.user) || fb.auth.currentUser;
+      if (!user) return null;
+      return attachUser(user);
+    });
+  }
+  function signOut() {
+    doc = null; fbUser = null; status.user = null; status.cloud = null;
+    return fb ? fb.auth.signOut() : Promise.resolve();
+  }
+  function publishPlayer(state) {
+    if (!fb || !fbUser || !state) return;
+    try {
+      fb.db.collection("players").doc(fbUser.uid).set({
+        name: state.name || "", lord: status.user.name, stronghold: E.castleLevel(state), power: E.power(state),
+        hero: state.hero ? state.hero.level : 1, updatedAt: Date.now()
+      }, { merge: true }).catch(function () { /* hors ligne */ });
+    } catch (e) { /* ignore */ }
+  }
+
   /** Prépare la sauvegarde sur le compte. Résout le document distant (ou null). */
   function initCloud() {
+    if (typeof window !== "undefined" && window.MEDIEVAL_WEB) return initFirebase();
     if (typeof window === "undefined" || !window.claude || typeof window.claude.use !== "function") return Promise.resolve(null);
     return Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function (r) {
       var db = r[0], user = r[1];
@@ -4935,7 +5012,7 @@ Medieval.Save = (function (E) {
     writing = true; cloudDirty = false;
     var savedAt = Date.now();
     return doc.set({ savedAt: savedAt, data: E.serialize(state) }).then(function () {
-      status.cloud = savedAt; status.cloudError = null; lastCloudWrite = savedAt; return true;
+      status.cloud = savedAt; status.cloudError = null; lastCloudWrite = savedAt; publishPlayer(state); return true;
     }, function (e) {
       status.cloudError = (e && e.code === "invalid_argument") ? "read-only" : ((e && e.message) || "failed");
       if (e && e.code === "invalid_argument") doc = null; // ce lecteur ne peut pas écrire
@@ -4971,6 +5048,8 @@ Medieval.Save = (function (E) {
     readLocal: readLocal, writeLocal: writeLocal, clearLocal: clearLocal,
     initCloud: initCloud, writeCloud: writeCloud, save: save,
     hasCloud: function () { return !!doc; },
+    accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
+    user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
     status: status, encode: encode, decode: decode
   };
@@ -5041,6 +5120,32 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       if (document.fullscreenElement || document.webkitFullscreenElement) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
       else { var r = (d.requestFullscreen || d.webkitRequestFullscreen).call(d); if (r && r.catch) r.catch(function () {}); }
     } catch (e) { /* refusé par le navigateur */ }
+  }
+  // ------------------------------------------------------------ compte en ligne (version web)
+  function accountCard() {
+    if (!S.accountsAvailable()) return "";
+    var u = S.user(), html = '<section class="card"><h3>Account</h3>';
+    if (u) return html + '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(u.name) + '</b>' + (u.email && u.email !== u.name ? ' <span class="muted">(' + esc(u.email) + ')</span>' : "") + '. Your game is saved online and follows you on every device.</p>' +
+      '<div class="row"><button class="btn ghost" data-act="signout">Sign out</button></div></section>';
+    return html + '<p class="small">Sign in to save your game online and play it on any device.</p>' +
+      '<button class="btn primary wide" data-act="signin-google">' + icon("globe") + 'Sign in with Google</button>' +
+      '<label class="lbl" for="accEmail">Or with an e-mail address</label><input id="accEmail" type="email" autocomplete="email" placeholder="you@example.com">' +
+      '<input id="accPass" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" style="margin-top:6px">' +
+      '<div class="row"><button class="btn" data-act="signin-email">Sign in</button><button class="btn ghost" data-act="signup-email">Create account</button></div></section>';
+  }
+  function afterSignIn(remote) {
+    if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
+    if (remote && remote.savedAt > (state.savedAt || 0) + 2000) {
+      try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); toast(icon("check") + "<span>Welcome back! Your online game is loaded.</span>", "big"); }
+      catch (e) { toast(icon("dot") + "<span>Your online save could not be read.</span>", "bad"); }
+    } else { S.writeCloud(state); toast(icon("check") + "<span>Signed in. This game is now saved online.</span>", "big"); }
+    M.refreshStatic(); renderPanel(true); renderChrome(); updateHud();
+  }
+  function authError(e) {
+    var c = (e && e.code) || "", m = { "auth/invalid-credential": "Wrong e-mail or password.", "auth/wrong-password": "Wrong e-mail or password.", "auth/user-not-found": "No account with this e-mail: create one.",
+      "auth/email-already-in-use": "This e-mail already has an account: sign in.", "auth/weak-password": "Password too short (6 characters minimum).", "auth/invalid-email": "Invalid e-mail address.",
+      "auth/operation-not-allowed": "This sign-in method is not enabled in Firebase yet.", "auth/unauthorized-domain": "This web address is not authorised in Firebase (Authentication → Settings → Authorized domains)." }[c];
+    toast(icon("dot") + "<span>" + esc(m || (e && e.message) || "Sign-in failed.") + "</span>", "bad");
   }
   function applyUiImages() {
     var root = document.documentElement;
@@ -5672,6 +5777,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   // --- royaume
   PANELS.realm = function () {
     var st = S.status, html = head("Founded " + new Date(state.createdAt).toLocaleDateString("en-GB"), "Kingdom") + '<div class="p-body">';
+    html += accountCard();
     if (fsSupported()) html += '<div class="row"><button class="btn" data-act="fullscreen">' + icon("fit") + (document.fullscreenElement ? "Exit full screen" : "Full screen") + '</button></div>';
     html += '<div class="row"><button class="btn" data-act="panel" data-arg="army">' + icon("army") + 'Army</button><button class="btn" data-act="panel" data-arg="hero">' + icon("helm") + 'Hero</button><button class="btn" data-act="panel" data-arg="research">' + icon("book") + 'Research</button><button class="btn" data-act="panel" data-arg="items">' + icon("bag") + 'Items</button></div>';
     html += '<section><label class="lbl" for="fiefName">City name</label><div class="row"><input id="fiefName" maxlength="28" value="' + esc(state.name || "") + '" style="flex:1"><button class="btn" data-act="rename">Rename</button></div></section>';
@@ -5951,6 +6057,15 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "build-traps": function () { result(E.buildTraps(state, ui.trapType, ui.trapCount || 1, now())); },
     "research-open": function (arg) { ui.researchTree = arg; openPanel("research"); },
     fullscreen: function () { toggleFullscreen(); setTimeout(function () { renderPanel(true); }, 300); },
+    "welcome-signin": function () {
+      S.signIn("google").then(function (remote) {
+        if (remote) { $("modal").hidden = true; afterSignIn(remote); } else if (S.user()) toast(icon("check") + "<span>Signed in. Found your city to begin.</span>");
+      }, authError);
+    },
+    "signin-google": function () { S.signIn("google").then(afterSignIn, authError); },
+    "signin-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "" }).then(afterSignIn, authError); },
+    "signup-email": function () { S.signIn({ email: ($("accEmail").value || "").trim(), password: $("accPass").value || "", create: true }).then(afterSignIn, authError); },
+    signout: function () { S.signOut().then(function () { renderPanel(true); toast(icon("check") + "<span>Signed out. Your game stays on this device.</span>"); }); },
     "items-tab": function (arg) { ui.itemsTab = arg; renderPanel(true); },
     buy: function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.buyItem(state, arg, 1), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b> (" + it.price + " gold).</span>"); },
     "use-item": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res || "check") + "<span><b>" + esc(E.itemLabel(arg)) + "</b> " + (it.kind === "boost" ? "is active." : "added to your city.") + "</span>"); },
@@ -6045,6 +6160,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       '<ul class="howto"><li>' + icon("hammer") + '<span>Tap an <b>empty plot</b> to build: barracks, forge and prison inside the walls, farms and mines in the countryside.</span></li>' +
       '<li>' + icon("globe") + '<span>The <b>World</b> button opens the map: gather resources, destroy barbarian camps, attack nearby castles.</span></li>' +
       '<li>' + icon("helm") + '<span>Equip your <b>hero</b> with 7 pieces and pick the right troops: infantry beats cavalry, cavalry beats ranged, ranged beat infantry, siege engines crush castles.</span></li></ul>' +
+      (S.accountsAvailable() ? '<button class="btn wide" data-act="welcome-signin">' + icon("globe") + 'Already playing? Sign in with Google</button>' : "") +
       '<label class="lbl" for="welcomeName">City name</label><input id="welcomeName" maxlength="28" placeholder="Valombre">' +
       '<label class="lbl" for="welcomeHero">Hero name</label><input id="welcomeHero" maxlength="20" placeholder="' + esc(state.hero.name) + '">' +
       '<button class="btn primary wide" data-act="found" style="margin-top:8px">Found my city</button></div>';
