@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042046";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042052";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5419,6 +5419,14 @@ Medieval.Save = (function (E) {
       set: function (v) { return ref.set(v); }
     };
   }
+  function googleProvider() { var p = new window.firebase.auth.GoogleAuthProvider(); p.setCustomParameters({ prompt: "select_account" }); return p; }
+  /** On quitte un compte invité pour un vrai compte : l'invité (et sa ville) disparaissent de la carte. */
+  function dropGuest() {
+    var u = fbUser;
+    if (!u || !u.isAnonymous) return Promise.resolve();
+    return Promise.all([fb.db.collection("players").doc(u.uid).delete().catch(function () {}), fb.db.collection("saves").doc(u.uid).delete().catch(function () {})])
+      .then(function () { return u.delete().catch(function () {}); });
+  }
   function attachUser(user) {
     fbUser = user;
     status.user = { name: user.displayName || user.email || "Guest", email: user.email || "", guest: !!user.isAnonymous };
@@ -5469,9 +5477,9 @@ Medieval.Save = (function (E) {
   /** Connexion. method : "google" ou { email, password, create }. Résout la sauvegarde distante (ou null). */
   function signIn(method) {
     if (!fbReady()) return Promise.reject(new Error("Online accounts are not available here."));
-    var p;
+    var p, guest = fbUser && fbUser.isAnonymous ? fbUser : null;
     if (method === "google") {
-      var prov = new window.firebase.auth.GoogleAuthProvider();
+      var prov = googleProvider();
       p = fb.auth.signInWithPopup(prov).catch(function (e) {
         if (e && /popup|operation-not-supported|web-storage/.test(e.code || "")) return fb.auth.signInWithRedirect(prov).then(function () { return null; });
         throw e;
@@ -5483,6 +5491,10 @@ Medieval.Save = (function (E) {
     return p.then(function (cred) {
       var user = (cred && cred.user) || fb.auth.currentUser;
       if (!user) return null;
+      if (guest && guest.uid !== user.uid) {   // l'ancien invité ne reste pas sur la carte
+        fb.db.collection("players").doc(guest.uid).delete().catch(function () {});
+        fb.db.collection("saves").doc(guest.uid).delete().catch(function () {});
+      }
       return attachUser(user);
     });
   }
@@ -5511,7 +5523,7 @@ Medieval.Save = (function (E) {
   /** Protège un compte invité avec Google. Si ce Google a déjà une ville, on bascule dessus. */
   function protectGoogle() {
     if (!fbUser) return Promise.reject(new Error("Not signed in."));
-    var prov = new window.firebase.auth.GoogleAuthProvider();
+    var prov = googleProvider();
     return fbUser.linkWithPopup(prov).then(function (r) { return attachUser(r.user).then(function () { return { switched: false }; }); }, function (e) {
       if (e && e.code === "auth/credential-already-in-use" && e.credential)
         return fb.auth.signInWithCredential(e.credential).then(function (r) { return attachUser(r.user); }).then(function (remote) { return { switched: true, remote: remote }; });
@@ -5534,7 +5546,7 @@ Medieval.Save = (function (E) {
     var u = fbUser, google = (u.providerData || []).some(function (p) { return p.providerId === "google.com"; });
     var reauth = u.isAnonymous ? Promise.resolve()
       : hasPassword() ? u.reauthenticateWithCredential(window.firebase.auth.EmailAuthProvider.credential(u.email, pw || ""))
-      : google ? u.reauthenticateWithPopup(new window.firebase.auth.GoogleAuthProvider()) : Promise.resolve();
+      : google ? u.reauthenticateWithPopup(googleProvider()) : Promise.resolve();
     return reauth.then(function () {
       return Promise.all([fb.db.collection("saves").doc(u.uid).delete().catch(function () {}), fb.db.collection("players").doc(u.uid).delete().catch(function () {})]);
     }).then(function () { return u.delete(); })
@@ -5902,7 +5914,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       if (Medieval.Online) Medieval.Online.start(SHARED_SEED, { state: function () { return state; }, now: now, persist: function () { persist(); },
         onEvents: function (evs) { handleEvents(evs); renderChrome(); }, refresh: function () { WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true); } });
       S.watchPlayers(function (ps) {
-        E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x); });
+        var fresh = now() - 14 * 86400000;   // les seigneurs absents depuis 2 semaines disparaissent de la carte
+        E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x) && (p.updatedAt || 0) > fresh; });
         // deux cités au même endroit : celle dont l'identifiant est le plus grand déménage
         var h = state.world && state.world.home, clash = h && E.OTHERS.filter(function (o) { return Math.hypot(o.x - h.x, o.y - h.y) < 2 && o.uid < S.uid(); })[0];
         if (clash) {
