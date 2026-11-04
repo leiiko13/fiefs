@@ -2683,9 +2683,15 @@ Medieval.Engine = (function (D) {
     if (x < 0 || y < 0 || x >= w.size || y >= w.size) return "x";
     return w.terrain.charAt(y * w.size + x);
   };
+  /** Position de votre cité (carte commune : chaque joueur a la sienne). */
+  function HOME(s) { return (s && s.world && s.world.home) || W.home; }
+  E.homeOf = HOME;
+  /** Autres joueurs visibles sur la carte commune (mis à jour par l'interface). */
+  E.OTHERS = [];
   E.objectAt = function (s, x, y) {
-    var w = s.world;
-    if (x === W.home.x && y === W.home.y) return { kind: "home", x: x, y: y };
+    var w = s.world, h = HOME(s);
+    if (x === h.x && y === h.y) return { kind: "home", x: x, y: y };
+    for (var p = 0; p < E.OTHERS.length; p++) if (E.OTHERS[p].x === x && E.OTHERS[p].y === y) return { kind: "player", player: E.OTHERS[p], x: x, y: y };
     for (var i = 0; i < w.bots.length; i++) if (w.bots[i].x === x && w.bots[i].y === y) return { kind: "bot", bot: w.bots[i], x: x, y: y };
     for (var j = 0; j < w.tiles.length; j++) if (w.tiles[j].x === x && w.tiles[j].y === y) return { kind: w.tiles[j].kind, tile: w.tiles[j], x: x, y: y };
     return null;
@@ -2693,14 +2699,14 @@ Medieval.Engine = (function (D) {
   function free(s, x, y, spacing) {
     var w = s.world, t = E.terrainAt(w, x, y);
     if (t !== "g" && t !== "f") return false;
-    if (dist({ x: x, y: y }, W.home) < 2.5) return false;
+    if (dist({ x: x, y: y }, HOME(s)) < 2.5) return false;
     if (E.objectAt(s, x, y)) return false;
     if (spacing) for (var i = 0; i < w.bots.length; i++) if (dist(w.bots[i], { x: x, y: y }) < spacing) return false;
     return true;
   }
   function randomFree(s, minD, maxD, spacing) {
     for (var k = 0; k < 400; k++) {
-      var x = E.randInt(s, 1, W.size - 2), y = E.randInt(s, 1, W.size - 2), d = dist({ x: x, y: y }, W.home);
+      var x = E.randInt(s, 1, W.size - 2), y = E.randInt(s, 1, W.size - 2), d = dist({ x: x, y: y }, HOME(s));
       if (d >= minD && d <= maxD && free(s, x, y, spacing)) return { x: x, y: y };
     }
     return null;
@@ -2733,7 +2739,7 @@ Medieval.Engine = (function (D) {
     while (r > RES_TILE_WEIGHTS[k]) { r -= RES_TILE_WEIGHTS[k]; k++; }
     var res = RES_TILE_KINDS[k], pos = randomFree(s, 3, 16);
     if (!pos) return;
-    var d = dist(pos, W.home), level = Math.max(1, Math.min(5, Math.round(d / 3.2 + E.rand(s) * 1.6 - 0.6)));
+    var d = dist(pos, HOME(s)), level = Math.max(1, Math.min(5, Math.round(d / 3.2 + E.rand(s) * 1.6 - 0.6)));
     var amount = W.resAmount(res, level);
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "res", res: res, level: level, amount: amount, max: amount, x: pos.x, y: pos.y, by: null });
   }
@@ -2746,7 +2752,7 @@ Medieval.Engine = (function (D) {
   function spawnCamp(s) {
     var pos = randomFree(s, 3, 16);
     if (!pos) return;
-    var d = dist(pos, W.home), level = Math.max(1, Math.min(10, Math.round(d / 1.6 + E.rand(s) * 3 - 2)));
+    var d = dist(pos, HOME(s)), level = Math.max(1, Math.min(10, Math.round(d / 1.6 + E.rand(s) * 3 - 2)));
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: level, troops: E.campTroops(s, level), x: pos.x, y: pos.y, by: null });
   }
 
@@ -2773,6 +2779,40 @@ Medieval.Engine = (function (D) {
     return s.world;
   };
 
+  // ------------------------------------------------------------ carte commune
+  /** Génère le monde commun (même graine pour tous) et y place votre cité. */
+  E.sharedWorld = function (seed, now) {
+    var tmp = { seed: seed | 0, nextId: 1, world: null };
+    tmp.world = null;
+    return E.generateWorld(tmp, now);
+  };
+  /** Choisit une place libre, loin des autres cités. taken : [{x,y}] */
+  E.findHomeSpot = function (world, taken, salt) {
+    var c = W.home, best = null, bestScore = Infinity;
+    for (var y = 2; y < world.size - 2; y++) for (var x = 2; x < world.size - 2; x++) {
+      var t = E.terrainAt(world, x, y); if (t !== "g") continue;
+      var d = dist({ x: x, y: y }, c); if (d > 11) continue;
+      if (taken.some(function (p) { return dist(p, { x: x, y: y }) < 3.5; })) continue;
+      if (world.bots.some(function (b) { return dist(b, { x: x, y: y }) < 2.5; })) continue;
+      var score = d + (((x * 73856093) ^ (y * 19349663) ^ (salt | 0)) >>> 0) % 1000 / 400;
+      if (score < bestScore) { bestScore = score; best = { x: x, y: y }; }
+    }
+    return best || { x: c.x, y: c.y };
+  };
+  /** Passe votre partie sur la carte commune : les marches rentrent, le monde est remplacé. */
+  E.joinSharedWorld = function (s, seed, home, now) {
+    var old = s.world;
+    if (old) old.marches.forEach(function (m) { for (var id in m.troops) s.army[id] = (s.army[id] || 0) + m.troops[id]; if (m.hero && s.hero.status === "march") s.hero.status = "home"; });
+    var w = E.sharedWorld(seed, now);
+    w.home = { x: home.x, y: home.y }; w.shared = seed;
+    w.tiles = w.tiles.filter(function (t) { return dist(t, home) >= 1.5; });
+    // les identifiants des cases doivent venir de votre partie
+    w.tiles.forEach(function (t) { t.id = E.uid(s, "t"); });
+    w.nextTick = now + W.tickMs;
+    s.world = w;
+    return w;
+  };
+
   // ------------------------------------------------------------ marches
   E.maxMarches = function (s) { return D.MARCHES(E.castleLevel(s)) + E.bonus(s, "marches"); };
   E.marchSizeMax = function (s) { return Math.round(D.marchSize(E.castleLevel(s)) * (1 + E.bonus(s, "march_size") / 100)); };
@@ -2789,7 +2829,7 @@ Medieval.Engine = (function (D) {
     return sp === Infinity ? 1 : sp;
   };
   E.travelSeconds = function (s, troops, target, from) {
-    var d = dist(from || W.home, target);
+    var d = dist(from || HOME(s), target);
     return Math.max(5, Math.round(d * W.secondsPerTile / E.marchSpeed(troops, s) / (1 + E.bonus(s, "march_speed") / 100)));
   };
   E.findTile = function (s, id) {
@@ -3005,11 +3045,11 @@ Medieval.Engine = (function (D) {
     var w = s.world, L = E.castleLevel(s);
     var cands = w.bots.filter(function (b) {
       return !(E.isAllyBot && E.isAllyBot(s, b)) && b.level >= Math.max(1, L - 4) && E.troopTotal(b.troops) > W.botTroops(b.level) * 0.5;
-    }).sort(function (a, b) { return dist(a, W.home) - dist(b, W.home); }).slice(0, 4);
+    }).sort(function (a, b) { return dist(a, HOME(s)) - dist(b, HOME(s)); }).slice(0, 4);
     if (!cands.length) return;
     var bot = cands[Math.floor(E.rand(s) * cands.length)], share = 0.35 + E.rand(s) * 0.25, troops = {};
     for (var id in bot.troops) { var n = Math.floor(bot.troops[id] * share); if (n > 0) { troops[id] = n; bot.troops[id] -= n; } }
-    var secs = Math.max(600, Math.round(dist(bot, W.home) * W.secondsPerTile * 6 / E.marchSpeed(troops)));
+    var secs = Math.max(600, Math.round(dist(bot, HOME(s)) * W.secondsPerTile * 6 / E.marchSpeed(troops)));
     w.incoming.push({ id: E.uid(s, "a"), botId: bot.id, name: bot.name, lord: bot.lord, troops: troops, launched: t, arrive: t + secs * 1000 });
   }
 
@@ -4764,7 +4804,8 @@ Medieval.WorldView = (function (D, E, G) {
     var objs = [];
     w.tiles.forEach(function (o) { objs.push({ o: o, k: o.kind }); });
     w.bots.forEach(function (b) { objs.push({ o: b, k: "bot" }); });
-    objs.push({ o: D.WORLD.home, k: "home" });
+    objs.push({ o: E.homeOf(state), k: "home" });
+    E.OTHERS.forEach(function (o) { objs.push({ o: o, k: "player" }); });
     objs.sort(function (a, b) { return (a.o.x + a.o.y) - (b.o.x + b.o.y) || a.o.x - b.o.x; });
     var labels = [];
     objs.forEach(function (it) {
@@ -4780,6 +4821,10 @@ Medieval.WorldView = (function (D, E, G) {
         var b = it.o;
         miniCastle(ctx, p.x, p.y, b.level, "#4a5f8a", false, t);
         labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, b.name, "lv. " + b.level, "#8aa0c8", ui * 0.85); });
+      } else if (it.k === "player") {
+        var op = it.o, oimg = G.asset("castle", op.stronghold || 1);
+        if (oimg) G.drawAsset(ctx, oimg, p.x, p.y, TW * 1.3); else miniCastle(ctx, p.x, p.y, op.stronghold || 1, "#3d7a4a", true, t);
+        labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, (op.tag ? "[" + op.tag + "] " : "") + (op.name || "City"), op.lord + " · lv. " + (op.stronghold || 1), "#8fd18f", ui * 0.88); });
       } else {
         var himg = G.asset("castle", E.castleLevel(state));
         if (himg) G.drawAsset(ctx, himg, p.x, p.y, TW * 1.5); else miniCastle(ctx, p.x, p.y, E.castleLevel(state), "#b9472c", true, t);
@@ -4788,7 +4833,7 @@ Medieval.WorldView = (function (D, E, G) {
     });
 
     // marches
-    var home = tileXY(D.WORLD.home.x, D.WORLD.home.y);
+    var hm = E.homeOf(state), home = tileXY(hm.x, hm.y);
     w.marches.forEach(function (m) {
       var tp = tileXY(m.tx, m.ty), pos;
       ctx.setLineDash([8, 6]); ctx.strokeStyle = m.kind === "gather" ? "rgba(120,200,255,.85)" : "rgba(255,210,110,.9)"; ctx.lineWidth = 2.5;
@@ -4921,12 +4966,12 @@ Medieval.WorldView = (function (D, E, G) {
     },
     setActive: function (v, first) {
       active = v;
-      if (v) { resize(); if (first) { cam.s = W < 700 ? 0.8 : 1; centerOnTile(D.WORLD.home.x, D.WORLD.home.y); } clamp(); dirty = true; }
+      if (v) { resize(); if (first) { cam.s = W < 700 ? 0.8 : 1; var hh = E.homeOf(state); centerOnTile(hh.x, hh.y); } clamp(); dirty = true; }
     },
     setState: function (s) { state = s; staticLayer = null; dirty = true; },
     setSelection: function (t) { selection = t; dirty = true; },
     markDirty: function () { dirty = true; },
-    centerOn: centerOnTile, home: function () { centerOnTile(D.WORLD.home.x, D.WORLD.home.y); },
+    centerOn: centerOnTile, home: function () { var hh = E.homeOf(state); centerOnTile(hh.x, hh.y); },
     zoomIn: function () { cam.s = Math.min(2.2, cam.s * 1.25); var c = centerTile(); centerOnTile(c.x, c.y); },
     zoomOut: function () { cam.s = Math.max(0.35, cam.s * 0.8); var c = centerTile(); centerOnTile(c.x, c.y); },
     screenPos: function (x, y) { var p = tileXY(x, y); return { x: p.x * cam.s + cam.x, y: p.y * cam.s + cam.y }; }
@@ -5206,17 +5251,34 @@ Medieval.Save = (function (E) {
       return attachUser(user);
     });
   }
+  /** Fiches publiques des joueurs (carte commune). */
+  function listPlayers() {
+    if (!fb || !fbUser) return Promise.resolve([]);
+    return fb.db.collection("players").get().then(function (q) {
+      var out = []; q.forEach(function (d) { var v = d.data(); v.uid = d.id; out.push(v); }); return out;
+    }).catch(function () { return []; });
+  }
+  var unwatch = null;
+  function watchPlayers(cb) {
+    if (unwatch) { unwatch(); unwatch = null; }
+    if (!fb || !fbUser) return;
+    unwatch = fb.db.collection("players").onSnapshot(function (q) {
+      var out = []; q.forEach(function (d) { if (d.id !== fbUser.uid) { var v = d.data(); v.uid = d.id; out.push(v); } }); cb(out);
+    }, function () { /* hors ligne */ });
+  }
   function signOut() {
+    if (unwatch) { unwatch(); unwatch = null; }
     doc = null; fbUser = null; status.user = null; status.cloud = null;
     return fb ? fb.auth.signOut() : Promise.resolve();
   }
   function publishPlayer(state) {
     if (!fb || !fbUser || !state) return;
     try {
-      fb.db.collection("players").doc(fbUser.uid).set({
-        name: state.name || "", lord: status.user.name, stronghold: E.castleLevel(state), power: E.power(state),
-        hero: state.hero ? state.hero.level : 1, updatedAt: Date.now()
-      }, { merge: true }).catch(function () { /* hors ligne */ });
+      var w = state.world || {}, al = state.alliance;
+      var rec = { name: state.name || "", lord: (state.hero && state.hero.name) || status.user.name, stronghold: E.castleLevel(state), power: E.power(state),
+        hero: state.hero ? state.hero.level : 1, tag: al ? al.tag : "", alliance: al ? al.name : "", updatedAt: Date.now() };
+      if (w.shared && w.home) { rec.x = w.home.x; rec.y = w.home.y; rec.world = w.shared; }
+      fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).catch(function () { /* hors ligne */ });
     } catch (e) { /* ignore */ }
   }
 
@@ -5282,6 +5344,8 @@ Medieval.Save = (function (E) {
     initCloud: initCloud, writeCloud: writeCloud, save: save,
     hasCloud: function () { return !!doc; },
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
+    listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
+    uid: function () { return fbUser ? fbUser.uid : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
     status: status, encode: encode, decode: decode
@@ -5366,6 +5430,26 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       '<input id="accPass" type="password" autocomplete="current-password" placeholder="Password (6+ characters)" style="margin-top:6px">' +
       '<div class="row"><button class="btn" data-act="signin-email">Sign in</button><button class="btn ghost" data-act="signup-email">Create account</button></div></section>';
   }
+  // ------------------------------------------------------------ carte commune (version web)
+  var SHARED_SEED = 777001;
+  function ensureShared() {
+    if (!S.uid() || !state) return Promise.resolve();
+    return S.listPlayers().then(function (list) {
+      var me = list.filter(function (p) { return p.uid === S.uid(); })[0], others = list.filter(function (p) { return p.uid !== S.uid() && p.world === SHARED_SEED && isFinite(p.x); });
+      if (!(state.world && state.world.shared === SHARED_SEED)) {
+        var world = E.sharedWorld(SHARED_SEED, now());
+        var spot = me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, parseInt(String(S.uid()).replace(/\D/g, "").slice(0, 8) || "7", 10));
+        E.joinSharedWorld(state, SHARED_SEED, spot, now());
+        WV.setState(state); persist(true); S.writeCloud(state);
+        toast(icon("globe") + "<span>You joined the <b>shared world map</b> at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
+      }
+      S.publishPlayer(state);
+      S.watchPlayers(function (ps) {
+        E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x); });
+        WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true);
+      });
+    });
+  }
   function afterSignIn(remote) {
     if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
     if (remote && remote.savedAt > (state.savedAt || 0) + 2000) {
@@ -5373,6 +5457,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       catch (e) { toast(icon("dot") + "<span>Your online save could not be read.</span>", "bad"); }
     } else { S.writeCloud(state); toast(icon("check") + "<span>Signed in. This game is now saved online.</span>", "big"); }
     M.refreshStatic(); renderPanel(true); renderChrome(); updateHud();
+    ensureShared();
   }
   function authError(e) {
     var c = (e && e.code) || "", m = { "auth/invalid-credential": "Wrong e-mail or password.", "auth/wrong-password": "Wrong e-mail or password.", "auth/user-not-found": "No account with this e-mail: create one.",
@@ -6099,6 +6184,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var o = E.objectAt(state, pos.x, pos.y), coord = "X:" + pos.x + " Y:" + pos.y;
     if (!o) return head(coord, TERRAIN[E.terrainAt(state.world, pos.x, pos.y)] || "Terrain") + '<div class="p-body"><p class="muted">Nothing of interest here.</p></div>';
     if (o.kind === "home") return head(coord, esc(state.name || "My city")) + '<div class="p-body"><p>Your city, Stronghold level ' + E.castleLevel(state) + '.</p><button class="btn primary" data-act="toggle-view">' + icon("castle") + 'Enter the city</button></div>';
+    if (o.kind === "player") {
+      var pl = o.player;
+      return head(coord + " · Stronghold " + (pl.stronghold || 1), (pl.tag ? "[" + esc(pl.tag) + "] " : "") + esc(pl.name || "City")) + '<div class="p-body"><dl class="stats"><dt>Lord</dt><dd>' + esc(pl.lord || "") + '</dd>' +
+        '<dt>Power</dt><dd>' + F.num(pl.power || 0) + '</dd><dt>Hero</dt><dd>level ' + (pl.hero || 1) + '</dd>' + (pl.alliance ? '<dt>Alliance</dt><dd>' + esc(pl.alliance) + '</dd>' : "") +
+        '<dt>Last seen</dt><dd>' + (pl.updatedAt ? F.ago(pl.updatedAt) : "—") + '</dd></dl><p class="muted small">Another player. Attacks, scouting and reinforcements between players are the next step.</p></div>';
+    }
     if (o.kind === "res") {
       var t = o.tile, mine = t.by ? E.findMarch(state, t.by) : null;
       var html = head(coord + " · level " + t.level, E.resTileName(t.res)) + '<div class="p-body"><dl class="stats"><dt>Left</dt><dd>' + icon(t.res) + F.num(t.amount) + ' ' + RES_NAME[t.res].toLowerCase() + '</dd><dt>Gathering speed</dt><dd>' + F.num(D.WORLD.gatherRate[t.res] * (1 + E.bonus(state, "gather_speed") / 100)) + ' /h</dd><dt>Distance</dt><dd>' + E.worldDistance(t, D.WORLD.home).toFixed(1) + ' tiles</dd></dl>';
@@ -6344,7 +6435,16 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     fullscreen: function () { toggleFullscreen(); setTimeout(function () { renderPanel(true); }, 300); },
     "welcome-signin": function () {
       S.signIn("google").then(function (remote) {
-        if (remote) { $("modal").hidden = true; afterSignIn(remote); } else if (S.user()) toast(icon("check") + "<span>Signed in. Found your city to begin.</span>");
+        if (!S.user()) { toast(icon("globe") + "<span>Opening Google sign-in…</span>"); return; }
+        if (remote) {
+          $("modal").hidden = true;
+          try { setState(E.deserialize(remote.data)); handleEvents(E.advance(state, now())); S.writeLocal(state); } catch (e) { authError(e); return; }
+          M.refreshStatic(); renderChrome(); updateHud(); ensureShared();
+          toast(icon("check") + "<span>Welcome back, lord of <b>" + esc(state.name || "") + "</b>!</span>", "big");
+        } else {
+          var b = document.querySelector("[data-act=welcome-signin]");
+          if (b) b.outerHTML = '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(S.user().name) + '</b>. No city on this account yet: name your city below to found it.</p>';
+        }
       }, authError);
     },
     "signin-google": function () { S.signIn("google").then(afterSignIn, authError); },
@@ -6417,6 +6517,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     fit: function () { if (ui.view === "city") M.fit(); else WV.home(); },
     found: function () {
       state.name = (($("welcomeName").value || "").trim().slice(0, 28)) || "Valombre";
+      setTimeout(function () { if (S.uid()) { S.writeCloud(state); ensureShared(); } }, 300);
       var hn = ($("welcomeHero").value || "").trim(); if (hn) E.renameHero(state, hn);
       $("modal").hidden = true; persist(true); updateHud(); WV.markDirty();
       toast(icon("crown") + "<span>Welcome, lord of <b>" + esc(state.name) + "</b>.</span>", "big");
@@ -6554,7 +6655,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       });
     } else {
       var settled = false;
-      var timer = setTimeout(function () { if (!settled) { settled = true; begin(E.create(now()), true); } }, 3500);
+      var timer = setTimeout(function () { if (!settled) { settled = true; begin(E.create(now()), true); } }, S.accountsAvailable() ? 9000 : 3500);
       cloudP.then(function (remote) {
         if (settled) { if (S.hasCloud() && !remote) S.writeCloud(state); return; }
         settled = true; clearTimeout(timer);
@@ -6562,6 +6663,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         if (s) { begin(s, false); toast(icon("check") + "<span>Game found on your account.</span>", "big"); } else begin(E.create(now()), true);
       });
     }
+    cloudP.then(function () { setTimeout(function () { if (S.uid() && state && state.name) ensureShared(); }, 500); });
     setInterval(tick, 250);
     setInterval(function () { if (state && S.hasCloud() && S.isCloudDirty()) S.save(state, { force: true }); }, 30000);
     if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
