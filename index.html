@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042037";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042046";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -5391,12 +5391,13 @@ Medieval.Save = (function (E) {
     try {
       var savedAt = Date.now();
       state.savedAt = savedAt;
-      localStorage.setItem(KEY, JSON.stringify({ savedAt: savedAt, data: E.serialize(state) }));
+      localStorage.setItem(KEY, JSON.stringify({ savedAt: savedAt, owner: fbUser ? fbUser.uid : (readOwner() || null), data: E.serialize(state) }));
       status.local = savedAt;
       return true;
     } catch (e) { return false; }
   }
 
+  function readOwner() { try { var o = JSON.parse(localStorage.getItem(KEY) || "null"); return o && o.owner; } catch (e) { return null; } }
   function clearLocal() { try { localStorage.removeItem(KEY); } catch (e) { /* stockage indisponible */ } }
 
   // ------------------------------------------------------------ Firebase (version web)
@@ -7156,7 +7157,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     document.addEventListener("visibilitychange", function () {
       if (document.hidden && state && !ui.reloading) { E.advance(state, now()); S.save(state, { force: true }); } else tick();
     });
-    window.addEventListener("pagehide", function () { if (state) S.writeLocal(state); });
+    window.addEventListener("pagehide", function () { if (state && !ui.reloading) S.writeLocal(state); });
   }
   function syncPair(t, attr, id, v) {
     document.querySelectorAll("[" + attr + '="' + id + '"]').forEach(function (el) { if (el !== t) el.value = v; });
@@ -7199,7 +7200,19 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       persist(true); $("loading").hidden = true;
     }
     var cloudP = S.initCloud();
-    if (loaded) {
+    if (S.accountsAvailable()) {
+      // Version en ligne : on attend de savoir QUI joue, puis on prend la ville de CE compte.
+      var done = false, startWeb = function (remote) {
+        if (done) return; done = true;
+        var uid = S.uid(), s = null, mineLocal = local && loaded && (!local.owner || local.owner === uid);
+        try { if (remote) s = E.deserialize(remote.data); } catch (e) { s = null; }
+        if (s && mineLocal && (local.savedAt || 0) > (remote.savedAt || 0) + 2000) s = loaded;
+        if (!s && mineLocal && loaded.name) s = loaded;
+        if (s) { begin(s, false); if (S.hasCloud()) S.writeCloud(state); } else { S.clearLocal(); begin(E.create(now()), true); }
+      };
+      cloudP.then(startWeb);
+      setTimeout(function () { startWeb(null); }, 12000);
+    } else if (loaded) {
       begin(loaded, false);
       cloudP.then(function (remote) {
         if (remote && (!state.name || remote.savedAt > (state.savedAt || 0) + 2000)) {
