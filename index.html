@@ -480,6 +480,35 @@ body.has-vip .vip-l { font-size: 11px; } body.has-vip .vipbox b { font-size: 13p
   body.has-vip .vip-l { font-size: 7.5px; } body.has-vip .vipbox b { font-size: 9.5px; }
 }
 
+/* ---- encoche (iPhone) et zones sûres ---- */
+:root { --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px); }
+.topbar { padding-top: var(--sat); height: calc(64px + var(--sat)); box-sizing: border-box; }
+body.has-power .powerplate { top: calc(5px + var(--sat)); }
+.resrow { top: calc(64px + var(--sat)); }
+.timers, .rightcol { top: calc(112px + var(--sat)); }
+.coords { top: calc(106px + var(--sat)); }
+.panel { top: calc(106px + var(--sat)); }
+.toasts { top: calc(110px + var(--sat)); }
+@media (max-width: 760px) {
+  .topbar { height: calc(56px + var(--sat)); }
+  body.has-power .powerplate { top: calc(6px + var(--sat)); }
+  .resrow { top: calc(56px + var(--sat)); padding-left: 6px; padding-right: 6px; justify-content: space-around; }
+  .timers, .rightcol { top: calc(96px + var(--sat)); }
+  .coords { top: calc(94px + var(--sat)); }
+  .toasts { top: calc(136px + var(--sat)); }
+  .panel { top: auto; }
+  /* avatar contenu dans la barre du haut : il ne déborde plus sur les ressources */
+  body.has-avatar .avatar { width: 52px; height: 50px; margin-top: 0; }
+  body.has-avatar .avatar-xp { top: 92%; height: 8%; }
+  /* bas d'écran plus fin : la zone de la barre d'accueil iPhone est réduite */
+  .nav { height: 52px; padding-bottom: calc(var(--sab) * .45); }
+  .nav button { height: 50px; }
+  .nav .viewtoggle { height: 60px; margin-top: -10px; }
+  body.has-nav .nav button .navimg { width: 30px; height: 30px; }
+  .ticker { height: 24px; font-size: 12px; }
+  .questbar, body.has-quest .questbar { margin-bottom: 4px; }
+}
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -670,7 +699,7 @@ Medieval.Data = (function () {
       baseCost: { wood: 120, food: 40 }, costGrowth: 1.44, baseTime: 12, timeGrowth: 1.42, produces: { stone: 720 }, power: 9
     },
     house: {
-      name: "Villa", zone: "inner", unlock: 1, limit: steps([1, 2, 5, 8, 12, 16]),
+      name: "Villa", zone: "inner", unlock: 1, limit: steps([1, 2, 5, 8, 12, 16, 20]),
       desc: "Your citizens live here and pay taxes in silver.",
       baseCost: { wood: 80, stone: 30 }, costGrowth: 1.44, baseTime: 8, timeGrowth: 1.42, produces: { silver: 330 }, power: 8
     },
@@ -683,7 +712,7 @@ Medieval.Data = (function () {
 
   var INNER_ORDER = ["house", "barracks", "academy", "hospital", "warehouse", "forge", "watchtower", "prison"];
   var OUTER_ORDER = ["farm", "sawmill", "quarry", "mine"];
-  var INNER_PLOTS = 23, OUTER_PLOTS = 24;
+  var INNER_PLOTS = 26, OUTER_PLOTS = 24;
 
   // Conditions pour monter le château AU niveau indiqué.
   var CASTLE_REQUIREMENTS = {
