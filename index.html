@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Fiefs"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;</script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Fiefs &amp; Banners</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;</script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6040,11 +6040,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   function showWelcome() {
     $("modal").hidden = false;
-    $("modal").innerHTML = '<div class="dialog" role="dialog" aria-labelledby="wTitle"><span class="eyebrow">A new lordship</span><h2 id="wTitle">Found your city</h2>' +
+    $("modal").innerHTML = '<div class="dialog" role="dialog" aria-labelledby="wTitle"><span class="eyebrow">Rise &amp; Conquer</span><h2 id="wTitle">Found your city</h2>' +
       '<p>The emperor grants you a walled city, a farm, a sawmill and a small band of soldiers. Make it a stronghold.</p>' +
       '<ul class="howto"><li>' + icon("hammer") + '<span>Tap an <b>empty plot</b> to build: barracks, forge and prison inside the walls, farms and mines in the countryside.</span></li>' +
       '<li>' + icon("globe") + '<span>The <b>World</b> button opens the map: gather resources, destroy barbarian camps, attack nearby castles.</span></li>' +
-      '<li>' + icon("helm") + '<span>Equip your <b>hero</b> with 7 pieces and pick the right troops: infantry beats cavalry, cavalry beats archers, archers beat infantry.</span></li></ul>' +
+      '<li>' + icon("helm") + '<span>Equip your <b>hero</b> with 7 pieces and pick the right troops: infantry beats cavalry, cavalry beats ranged, ranged beat infantry, siege engines crush castles.</span></li></ul>' +
       '<label class="lbl" for="welcomeName">City name</label><input id="welcomeName" maxlength="28" placeholder="Valombre">' +
       '<label class="lbl" for="welcomeHero">Hero name</label><input id="welcomeHero" maxlength="20" placeholder="' + esc(state.hero.name) + '">' +
       '<button class="btn primary wide" data-act="found" style="margin-top:8px">Found my city</button></div>';
