@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042023";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042037";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2818,8 +2818,7 @@ Medieval.Engine = (function (D) {
       if (dx <= 6 && dy <= 6) c = dx <= 2 && dy <= 2 ? "g" : "f";             // forêt sacrée, clairière de la Merveille
       else if (e < 0.11) c = "w";
       else if (e > 0.9 || edge === 0 && e > 0.75) c = "m";
-      else if (m > 0.72) c = "f";
-      terrain += c;
+      terrain += c;                                                      // plus d'autres forêts : seule la forêt sacrée
     }
     s.world = { size: size, kingdom: W.kingdom, terrain: terrain, tiles: [], bots: [], marches: [], incoming: [], nextTick: now + W.tickMs,
       center: center, spawnMax: C - 1, wonder: { x: C, y: C, occ: null, king: null, openAt: 0 } };
@@ -5527,11 +5526,17 @@ Medieval.Save = (function (E) {
     return fbUser.linkWithCredential(cred);
   }
   /** Supprime la sauvegarde, la fiche publique et le compte. */
-  function deleteAccount() {
+  function hasPassword() { return !!fbUser && (fbUser.providerData || []).some(function (p) { return p.providerId === "password"; }); }
+  /** Supprime la sauvegarde, la fiche publique et le compte (avec reconnexion si Firebase l'exige). */
+  function deleteAccount(pw) {
     if (!fb || !fbUser) return Promise.reject(new Error("Not signed in."));
-    var u = fbUser;
-    return Promise.all([fb.db.collection("saves").doc(u.uid).delete().catch(function () {}), fb.db.collection("players").doc(u.uid).delete().catch(function () {})])
-      .then(function () { return u.delete(); })
+    var u = fbUser, google = (u.providerData || []).some(function (p) { return p.providerId === "google.com"; });
+    var reauth = u.isAnonymous ? Promise.resolve()
+      : hasPassword() ? u.reauthenticateWithCredential(window.firebase.auth.EmailAuthProvider.credential(u.email, pw || ""))
+      : google ? u.reauthenticateWithPopup(new window.firebase.auth.GoogleAuthProvider()) : Promise.resolve();
+    return reauth.then(function () {
+      return Promise.all([fb.db.collection("saves").doc(u.uid).delete().catch(function () {}), fb.db.collection("players").doc(u.uid).delete().catch(function () {})]);
+    }).then(function () { return u.delete(); })
       .then(function () { if (unwatch) { unwatch(); unwatch = null; } doc = null; fbUser = null; status.user = null; status.cloud = null; });
   }
   function signOut() {
@@ -5619,7 +5624,7 @@ Medieval.Save = (function (E) {
     hasCloud: function () { return !!doc; },
     accountsAvailable: function () { return !!fbReady(); }, signIn: signIn, signOut: signOut,
     listPlayers: listPlayers, watchPlayers: watchPlayers, publishPlayer: publishPlayer,
-    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose, setPassword: setPassword, protect: protect, protectGoogle: protectGoogle, deleteAccount: deleteAccount,
+    uid: function () { return fbUser ? fbUser.uid : null; }, diagnose: diagnose, setPassword: setPassword, protect: protect, protectGoogle: protectGoogle, deleteAccount: deleteAccount, hasPassword: hasPassword,
     db: function () { return fb && fbUser ? fb.db : null; },
     user: function () { return status.user || null; },
     isCloudDirty: function () { return cloudDirty; },
@@ -5874,19 +5879,20 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       '<div class="row"><button class="btn" data-act="signin-email">Sign in</button><button class="btn ghost" data-act="signin-google">Google (in a browser)</button></div>' + foot + '</section>';
     if (u) return html + '<p class="small">' + icon("check") + 'Signed in as <b>' + esc(u.email || u.name) + '</b>. Your city is saved online: sign in with this e-mail on any device to play it.</p>' +
       '<div class="row"><button class="btn" data-act="signout">Sign out</button><button class="btn ghost" data-act="diagnose">Check connection</button></div>' +
-      (ui.confirm === "delete-account" ? '<p class="warn small">Your city, your hero and all your progress will be erased for good.</p><div class="row"><button class="btn danger" data-act="delete-account-confirm">Delete my account</button><button class="btn ghost" data-act="cancel-abort">Keep it</button></div>'
+      (ui.confirm === "delete-account" ? '<p class="warn small">Your city, your hero and all your progress will be erased for good.</p>' + (S.hasPassword() ? '<input id="delPass" type="password" autocomplete="current-password" placeholder="Your password, to confirm">' : "") + '<div class="row"><button class="btn danger" data-act="delete-account-confirm">Delete my account</button><button class="btn ghost" data-act="cancel-abort">Keep it</button></div>'
         : '<button class="btn ghost danger-text" data-act="delete-account">Delete my account</button>') + foot + '</section>';
     return html + '<p class="small muted">Connecting…</p>' + foot + '</section>';
   }
   // ------------------------------------------------------------ carte commune (version web)
-  var SHARED_SEED = 900002;   // carte commune 44×44 avec la Merveille
+  var SHARED_SEED = 900003;   // carte commune 44×44, une seule forêt autour de la Merveille
+  function uidSalt() { var h = 7, u = String(S.uid() || ""); for (var i = 0; i < u.length; i++) h = (h * 31 + u.charCodeAt(i)) | 0; return Math.abs(h); }
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
     return S.listPlayers().then(function (list) {
       var me = list.filter(function (p) { return p.uid === S.uid(); })[0], others = list.filter(function (p) { return p.uid !== S.uid() && p.world === SHARED_SEED && isFinite(p.x); });
       if (!(state.world && state.world.shared === SHARED_SEED)) {
         var world = E.sharedWorld(SHARED_SEED, now());
-        var spot = me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, parseInt(String(S.uid()).replace(/\D/g, "").slice(0, 8) || "7", 10));
+        var spot = me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, uidSalt());
         E.joinSharedWorld(state, SHARED_SEED, spot, now());
         WV.setState(state); persist(true); S.writeCloud(state);
         toast(icon("globe") + "<span>You joined the <b>shared world map</b> at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
@@ -5896,6 +5902,13 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         onEvents: function (evs) { handleEvents(evs); renderChrome(); }, refresh: function () { WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true); } });
       S.watchPlayers(function (ps) {
         E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x); });
+        // deux cités au même endroit : celle dont l'identifiant est le plus grand déménage
+        var h = state.world && state.world.home, clash = h && E.OTHERS.filter(function (o) { return Math.hypot(o.x - h.x, o.y - h.y) < 2 && o.uid < S.uid(); })[0];
+        if (clash) {
+          var spot2 = E.findHomeSpot(state.world, E.OTHERS, uidSalt() + Date.now() % 997);
+          state.world.home = spot2; persist(true); S.publishPlayer(state); WV.markDirty();
+          toast(icon("globe") + "<span>Another lord settled at the same place: your city moved to X:" + spot2.x + " Y:" + spot2.y + ".</span>", "big");
+        }
         WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true);
       });
     });
@@ -6960,11 +6973,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "delete-account": function () { ui.confirm = "delete-account"; renderPanel(true); },
     "delete-account-confirm": function () {
       ui.confirm = null;
-      S.deleteAccount().then(function () {
+      S.deleteAccount($("delPass") ? $("delPass").value : "").then(function () {
         S.clearLocal(); ui.reloading = true; location.reload();
       }, authError);
     },
-    signout: function () { S.signOut().then(function () { S.clearLocal(); ui.reloading = true; location.reload(); }); },
+    signout: function () { ui.reloading = true; S.clearLocal(); $("loading").hidden = false; S.signOut().then(function () { S.clearLocal(); location.reload(); }, function () { location.reload(); }); },
     "ally-join": function (arg) { result(E.joinAlliance(state, arg, now()), icon("crown") + "<span>Welcome to the alliance!</span>"); },
     "ally-create": function () { result(E.createAlliance(state, $("alName").value, $("alTag").value, now()), icon("crown") + "<span>Your alliance is founded.</span>"); },
     "ally-leave": function () { ui.confirm = "leave-ally"; renderPanel(true); },
