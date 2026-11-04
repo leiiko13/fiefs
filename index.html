@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611041459";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6442,6 +6442,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   PANELS.realm = function () {
     var st = S.status, html = head("Founded " + new Date(state.createdAt).toLocaleDateString("en-GB"), "Kingdom") + '<div class="p-body">';
     html += accountCard();
+    if (window.RC_VERSION) html += '<p class="muted small">Game version ' + esc(window.RC_VERSION) + '</p>';
     if (fsSupported()) html += '<div class="row"><button class="btn" data-act="fullscreen">' + icon("fit") + (document.fullscreenElement ? "Exit full screen" : "Full screen") + '</button></div>';
     html += '<div class="row"><button class="btn" data-act="panel" data-arg="army">' + icon("army") + 'Army</button><button class="btn" data-act="panel" data-arg="hero">' + icon("helm") + 'Hero</button><button class="btn" data-act="panel" data-arg="research">' + icon("book") + 'Research</button><button class="btn" data-act="panel" data-arg="items">' + icon("bag") + 'Items</button></div>';
     html += '<section><label class="lbl" for="fiefName">City name</label><div class="row"><input id="fiefName" maxlength="28" value="' + esc(state.name || "") + '" style="flex:1"><button class="btn" data-act="rename">Rename</button></div></section>';
@@ -6942,6 +6943,20 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   function start(hotData) {
     applyUiImages(); buildResRow(); bindDom();
     window.addEventListener("resize", function () { ui.lastHeroKey = ""; });
+    // version web : vérifie s'il existe une version plus récente et recharge
+    if (window.RC_VERSION && window.fetch) {
+      var checkUpdate = function () {
+        fetch("version.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j && j.v && j.v !== window.RC_VERSION && !ui.reloading) {
+            ui.reloading = true; if (state) { S.writeLocal(state); }
+            toast(icon("check") + "<span>New version available: updating…</span>", "big");
+            setTimeout(function () { location.reload(); }, 1200);
+          }
+        }).catch(function () {});
+      };
+      setTimeout(checkUpdate, 3000); setInterval(checkUpdate, 5 * 60000);
+      document.addEventListener("visibilitychange", function () { if (!document.hidden) checkUpdate(); });
+    }
     // version web-app sur téléphone : plein écran dès le premier toucher
     if (window.MEDIEVAL_WEB && fsSupported() && window.matchMedia && matchMedia("(pointer: coarse)").matches)
       document.addEventListener("pointerup", function once() { document.removeEventListener("pointerup", once); if (!document.fullscreenElement) toggleFullscreen(); });
