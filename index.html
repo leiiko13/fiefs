@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050929";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050939";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -873,6 +873,17 @@ body.has-nav .nav button span { font-size: 10px; }
   body.has-nav .nav button .navimg { width: 44px !important; height: 44px !important; }
   body.has-nav .nav button span { font-size: 8.5px; }
 }
+/* barre des ressources cliquable */
+.res[data-act] { cursor: pointer; } .res[data-act]:active { filter: brightness(1.2); }
+/* fenêtre de confirmation (bouclier) */
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(8,5,3,.6); }
+.modal[hidden] { display: none; }
+.modal-card { position: relative; width: min(100%, 380px); display: grid; gap: 10px; padding: 44px 16px 16px; border-radius: 14px; text-align: center; color: #2a1a0c;
+  background: linear-gradient(180deg, #f7efdc, #e2d2ae); border: 3px solid #a8873f; box-shadow: 0 12px 40px rgba(0,0,0,.7); }
+.modal-card h3 { margin: 0; font: 700 19px var(--f-display); color: #5a1410; text-transform: none; letter-spacing: 0; }
+.modal-card p { margin: 0; font-size: 14.5px; }
+.modal-card .rpop-art { background: radial-gradient(circle at 50% 40%, #9fe6ff, #1d5a7a); }
+.modal-card .btn.ghost { color: #3a2410; border-color: rgba(0,0,0,.4); }
 
 </style>
 
@@ -1930,8 +1941,7 @@ Medieval.Engine = (function (D) {
     if (idx >= E.plotsOpen(s, zone)) reasons.push("This land isn't cleared yet: upgrade your Stronghold.");
     if (E.buildingAt(s, plot)) reasons.push("This plot is already taken.");
     if (E.castleLevel(s) < def.unlock) reasons.push("Requires Stronghold level " + def.unlock + ".");
-    else if (E.countType(s, type) >= E.limitOf(s, type))
-      reasons.push(def.unique ? "You already have this building." : "Limit reached (" + E.countType(s, type) + "/" + E.limitOf(s, type) + ") for this Stronghold level.");
+    else if (def.unique && E.countType(s, type) >= 1) reasons.push("You already have this building.");   // plus de limite par type : seule la place compte
     if (E.buildersFree(s) <= 0) reasons.push("All your builders are busy.");
     var cost = E.costFor(type, 1);
     if (!E.canAfford(s, cost)) reasons.push("Not enough resources.");
@@ -3701,6 +3711,7 @@ Medieval.Engine = (function (D) {
     var rep = { kind: "attack", at: t, win: res.win, target: bot.name, lord: bot.lord, level: bot.level, x: bot.x, y: bot.y,
       hero: heroIn, rounds: res.rounds, att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
     if (heroIn) E.heroGainXp(s, heroXpFrom(res.def.lost), events, t);
+    if (res.win) bot.burnUntil = t + D.KINGDOM.burnMs; else bot.smokeUntil = t + 15 * 60000;
     if (res.win) {
       s.stats.wins++;
       rep.loot = takeLoot(bot.stock, E.loadCapacity(s, m.troops), W.botStock(bot.level) * 0.25, ["wood", "stone", "ore", "food", "silver"]);
@@ -3796,7 +3807,8 @@ Medieval.Engine = (function (D) {
         goHome(m, t); return;
       }
       if (tile.occ) {                                    // un autre joueur récolte ici : on l'attaque
-        if (!fightOccupant(s, m, tile, t, events)) { goHome(m, t); return; }
+        m.fightAt = t;
+        if (!fightOccupant(s, m, tile, t, events)) { goHome(m, t + FIGHT_MS); return; }
       }
       var cap = E.loadCapacity(s, m.troops), amount = Math.min(tile.amount, Math.floor(cap / W.weight[tile.res]));
       tile.by = m.id;
@@ -3808,23 +3820,26 @@ Medieval.Engine = (function (D) {
     if (m.kind === "wonder") {
       var wd = s.world.wonder;
       if (!wd || !E.wonderOpen(s, t)) { E.report(s, { kind: "info", at: t, title: "Wonder closed", text: "The Wonder contest is over. Your march is heading home." }); goHome(m, t); return; }
-      if (wd.occ && !fightOccupant(s, m, { id: "wonder", occ: wd.occ, label: "the Wonder", x: wd.x, y: wd.y }, t, events)) { goHome(m, t); return; }
+      if (wd.occ) m.fightAt = t;
+      if (wd.occ && !fightOccupant(s, m, { id: "wonder", occ: wd.occ, label: "the Wonder", x: wd.x, y: wd.y }, t, events)) { goHome(m, t + FIGHT_MS); return; }
       wd.occ = null; wd.mine = m.id; wd.since = t;
       m.phase = "garrison"; m.next = E.NEVER; m.garrisonAt = t;
       E.netEmit(s, { op: "wonderOccupy", troops: clean(m.troops), bonus: combatBonus(s, m.hero), hero: m.hero, since: t });
       E.report(s, { kind: "info", at: t, title: "Your troops hold the Wonder", text: "Hold it for " + Math.round(W.wonderHoldMs / 60000) + " minutes without being driven off and you will be crowned King of the realm." });
       return;
     }
+    var fought = false;
     if (m.kind === "attack") {
       var bot = E.findBot(s, m.targetId);
-      if (bot) resolveAttack(s, m, bot, t, events);
+      if (bot) { resolveAttack(s, m, bot, t, events); fought = true; }
     } else if (m.kind === "bandit") {
       var camp = E.findTile(s, m.targetId);
-      if (camp) resolveCamp(s, m, camp, t, events);
+      if (camp) { resolveCamp(s, m, camp, t, events); fought = true; }
       else E.report(s, { kind: "info", at: t, title: "Monster gone", text: "The monster was already slain or had fled. Your march is heading home." });
     }
-    goHome(m, t);
+    if (fought) { m.fightAt = t; goHome(m, t + FIGHT_MS); } else goHome(m, t);
   }
+  var FIGHT_MS = 2000;   // la bataille se voit 2 s sur la carte avant le retour
 
   function finishGather(s, m, t) {
     var tile = E.findTile(s, m.targetId);
@@ -3958,7 +3973,11 @@ Medieval.Engine = (function (D) {
         var tile = E.findTile(s, m.targetId);
         if (m.phase === "out") {
           if (m.kind === "gather" && tile && !tile.by && !(tile.occ && !tile.occ.bot)) { m.phase = "work"; m.next = m.arrive + m.work; }
-          else { if (m.kind === "hunt" && tile && !tile.by) removeTile(s, tile); botBack(m, m.arrive); }
+          else {
+            if (m.kind === "hunt" && tile && !tile.by) removeTile(s, tile);
+            if (m.kind === "raid") { var vb = E.findBot(s, m.targetId); if (vb) { if (E.rand(s) < 0.5) vb.burnUntil = m.arrive + D.KINGDOM.burnMs; else vb.smokeUntil = m.arrive + 15 * 60000; } }
+            m.fightAt = m.arrive; botBack(m, m.arrive + FIGHT_MS);
+          }
         } else if (m.phase === "work") botBack(m, m.next);
         else { w.botMarches.splice(w.botMarches.indexOf(m), 1); break; }
       }
@@ -4044,6 +4063,7 @@ Medieval.Engine = (function (D) {
         events.push({ type: "heroCaptured", by: inc.lord, at: t });
       }
     } else {
+      s.smokeUntil = t + 15 * 60000;
       s.stats.defended++;
       if (heroHome) E.heroGainXp(s, heroXpFrom(res.att.lost), events, t);
     }
@@ -5821,9 +5841,34 @@ Medieval.WorldView = (function (D, E, G) {
     g.fillStyle = "#fff6c8"; [[-18, -8], [0, -14], [18, -8]].forEach(function (q) { g.beginPath(); g.arc(q[0], q[1], 2.2, 0, 6.3); g.fill(); });
     g.restore();
   }
+  /** Fumée légère : attaque repoussée ou château attaqué sans brûler. */
+  function smokeFx(g, x, y, w, t) {
+    g.save();
+    for (var i = 0; i < 4; i++) for (var p = 0; p < 3; p++) {
+      var ph = (t * 0.35 + i * 0.27 + p * 0.33) % 1, sx = x - w * 0.3 + i * w * 0.2 + Math.sin(t + i * 2 + p) * 6;
+      g.fillStyle = "rgba(70,65,60," + (0.32 * (1 - ph)) + ")"; g.beginPath(); g.arc(sx, y - 18 - ph * 46, 5 + ph * 13, 0, 6.3); g.fill();
+    }
+    g.restore();
+  }
+  /** Mêlée de 2 s sur la cible : éclairs, étincelles et épées qui s'entrechoquent. */
+  function clashFx(g, x, y, k, t) {
+    g.save(); g.globalAlpha = Math.min(1, (1 - k) * 3);
+    for (var i = 0; i < 8; i++) {
+      var a = i * 0.785 + t * 6, r = 10 + ((t * 40 + i * 13) % 22);
+      g.fillStyle = i % 2 ? "rgba(255,230,140,.95)" : "rgba(255,120,60,.9)";
+      g.beginPath(); g.arc(x + Math.cos(a) * r, y - 22 + Math.sin(a) * r * 0.6, 2.2, 0, 6.3); g.fill();
+    }
+    var sw = Math.sin(t * 18) * 0.5;
+    g.translate(x, y - 26); g.strokeStyle = "#f4f4f4"; g.lineWidth = 3; g.lineCap = "round";
+    g.save(); g.rotate(-0.8 + sw); g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -20); g.stroke(); g.restore();
+    g.save(); g.rotate(0.8 - sw); g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -20); g.stroke(); g.restore();
+    var fl = 0.5 + 0.5 * Math.sin(t * 25); g.fillStyle = "rgba(255,240,180," + fl + ")"; g.beginPath(); g.arc(0, -14, 6 + fl * 4, 0, 6.3); g.fill();
+    g.restore();
+  }
   function cityFx(g, x, y, lv, o, t, ui) {
     var w = TW * (1 + Math.min(lv, 21) * 0.025), now = Date.now();
     if ((o.burnUntil || 0) > now) fireFx(g, x, y, w * 0.8, t);
+    else if ((o.smokeUntil || 0) > now) smokeFx(g, x, y, w * 0.8, t);
     if ((o.shieldUntil || 0) > now) shieldFx(g, x, y - 6, w * 0.62, t);
     var cs = Math.max(0.55, Math.min(0.85, ui * 0.6));   // reste à l'échelle du bastion
     if (o.king) crownFx(g, x, y - w * 0.62, cs, t);
@@ -5962,7 +6007,7 @@ Medieval.WorldView = (function (D, E, G) {
         var b = it.o;
         var bimg = G.asset("castle", b.level);
         if (bimg) G.drawAsset(ctx, bimg, p.x, p.y, TW * (1 + Math.min(b.level, 21) * 0.025)); else miniCastle(ctx, p.x, p.y, b.level, "#4a5f8a", false, t);
-        if (b.shieldUntil > now) cityFx(ctx, p.x, p.y, b.level, { shieldUntil: b.shieldUntil }, t, ui);
+        cityFx(ctx, p.x, p.y, b.level, { shieldUntil: b.shieldUntil, burnUntil: b.burnUntil, smokeUntil: b.smokeUntil }, t, ui);
         labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, b.name, "lv. " + b.level, "#8aa0c8", ui * 0.85); });
       } else if (it.k === "wonder") {
         var wd = it.o, wimg = G.asset("wonder", 1) || G.asset("castle", 11), glow = 0.5 + 0.5 * Math.sin(t * 2);
@@ -5977,13 +6022,13 @@ Medieval.WorldView = (function (D, E, G) {
         var op = it.o, oimg = G.asset("castle", op.stronghold || 1);
         if (oimg) G.drawAsset(ctx, oimg, p.x, p.y, TW * (1 + Math.min(op.stronghold || 1, 21) * 0.025)); else miniCastle(ctx, p.x, p.y, op.stronghold || 1, "#3d7a4a", true, t);
         var wk = w.wonder || {}, isKing = wk.king && wk.king.uid === op.uid, ttl = wk.titles && wk.titles[op.uid] && D.TITLE_BY_ID[wk.titles[op.uid]];
-        cityFx(ctx, p.x, p.y, op.stronghold || 1, { burnUntil: op.burnUntil, shieldUntil: op.shieldUntil, king: isKing, title: ttl }, t, ui);
+        cityFx(ctx, p.x, p.y, op.stronghold || 1, { burnUntil: op.burnUntil, smokeUntil: op.smokeUntil, shieldUntil: op.shieldUntil, king: isKing, title: ttl }, t, ui);
         labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, (op.tag ? "[" + op.tag + "] " : "") + (op.name || "City"), (isKing ? "King of " + D.KINGDOM.name : ttl ? ttl.name : op.lord) + " · lv. " + (op.stronghold || 1), isKing ? "#ffd36b" : ttl && !ttl.good ? "#e07a6a" : "#8fd18f", ui * 0.88); });
       } else {
         var himg = G.asset("castle", E.castleLevel(state));
         if (himg) G.drawAsset(ctx, himg, p.x, p.y, TW * (1 + Math.min(E.castleLevel(state), 21) * 0.025)); else miniCastle(ctx, p.x, p.y, E.castleLevel(state), "#b9472c", true, t);
         var myK = !!(state.royal && state.royal.king), myT = state.royal && state.royal.title && D.TITLE_BY_ID[state.royal.title];
-        cityFx(ctx, p.x, p.y, E.castleLevel(state), { burnUntil: state.burnUntil, shieldUntil: state.shieldUntil, king: myK, title: myK ? null : myT }, t, ui);
+        cityFx(ctx, p.x, p.y, E.castleLevel(state), { burnUntil: state.burnUntil, smokeUntil: state.smokeUntil, shieldUntil: state.shieldUntil, king: myK, title: myK ? null : myT }, t, ui);
         labels.push(function () { plate(ctx, p.x, p.y + 32 * ui, (state.alliance && state.alliance.tag ? "[" + state.alliance.tag + "] " : "") + (state.name || "My city"), (myK ? "King of " + D.KINGDOM.name + " · " : myT ? myT.name + " · " : "") + "lv. " + E.castleLevel(state), "#5fe3ff", ui * 0.95, "#7cf0ff"); });
       }
     });
@@ -5998,6 +6043,7 @@ Medieval.WorldView = (function (D, E, G) {
         var out = m.phase === "out", t0 = out ? m.start : m.backStart, t1 = out ? m.arrive : m.next, f = Math.min(1, Math.max(0, (now - t0) / Math.max(1, t1 - t0)));
         var A = out ? a0 : b0, B = out ? b0 : a0; pos2 = { x: A.x + (B.x - A.x) * f, y: A.y + (B.y - A.y) * f };
       }
+      if (m.fightAt && now - m.fightAt < 2200 && now >= m.fightAt) clashFx(ctx, b0.x, b0.y, (now - m.fightAt) / 2200, t);
       if (m.phase === "work") { ctx.fillStyle = "#c0392b"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(b0.x + 18, b0.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); return; }
       var army2 = ARMY_IMG();
       if (army2) {
@@ -6023,6 +6069,7 @@ Medieval.WorldView = (function (D, E, G) {
       }
       var army = ARMY_IMG();
       if (pos.x !== pos.x || pos.y !== pos.y) return;
+      if (m.fightAt && now - m.fightAt < 2200 && now >= m.fightAt) clashFx(ctx, tp.x, tp.y, (now - m.fightAt) / 2200, t);
       if (army && m.phase !== "gather" && m.phase !== "garrison") {
         var goingRight = (m.phase === "out" ? tp.x - home.x : home.x - tp.x) >= 0, aw = 52 * Math.max(1, ui * 0.9) * (m.kind === "scout" ? 0.55 : 1), ah = aw * army.h / army.w;
         ctx.save(); ctx.translate(pos.x, pos.y); if (!goingRight) ctx.scale(-1, 1);
@@ -6560,6 +6607,7 @@ Medieval.Save = (function (E) {
       ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { loot[k] = Math.max(0, Math.floor(state.resources[k] - prot)); });
       rec.army = army; rec.loot = loot; rec.wall = state.buildings.wall.level; rec.traps = E.trapCount ? E.trapCount(state) : 0;
       rec.marches = w.marches ? w.marches.length : 0;
+      rec.smokeUntil = state.smokeUntil || 0;
       rec.shieldUntil = state.shieldUntil || 0; rec.burnUntil = state.burnUntil || 0;
       rec = JSON.parse(JSON.stringify(rec, function (k, v) { return typeof v === "number" && !isFinite(v) ? 0 : v; })); // Firestore refuse undefined / NaN
       return fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).then(function () { status.playerError = null; return true; }, function (e) { status.playerError = describe(e); return false; });
@@ -7130,7 +7178,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   // ------------------------------------------------------------ HUD
   function buildResRow() {
     $("resRow").innerHTML = HUD_RES.map(function (k) {
-      return '<div class="res" id="res-' + k + '">' + icon(k) + '<div class="res-txt"><span class="res-val" id="rv-' + k + '">0</span><span class="res-rate" id="rr-' + k + '"></span></div><div class="res-cap"><i id="rc-' + k + '"></i></div></div>';
+      return '<div class="res" id="res-' + k + '" data-act="res-open" data-arg="' + k + '" role="button">' + icon(k) + '<div class="res-txt"><span class="res-val" id="rv-' + k + '">0</span><span class="res-rate" id="rr-' + k + '"></span></div><div class="res-cap"><i id="rc-' + k + '"></i></div></div>';
     }).join("");
   }
   function updateHud() {
@@ -7270,7 +7318,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var def = D.BUILDINGS[type], c = E.checkBuild(state, plot, type), locked = E.castleLevel(state) < def.unlock;
       var limit = E.limitOf(state, type), count = E.countType(state, type);
       return '<li class="build-item' + (locked ? " locked" : "") + '"><canvas class="pv" data-pv="' + type + '" data-lv="1"></canvas><div class="bi-body"><div class="bi-top"><h3>' + def.name + '</h3>' +
-        (locked ? '<span class="pill">' + icon("lock") + 'Stronghold ' + def.unlock + '</span>' : '<span class="pill soft">' + count + '/' + limit + '</span>') + '</div>' +
+        (locked ? '<span class="pill">' + icon("lock") + 'Stronghold ' + def.unlock + '</span>' : '<span class="pill soft">' + (def.unique ? count + '/1' : "owned " + count) + '</span>') + '</div>' +
         '<p class="muted">' + (prodText(type, 1) || def.desc) + '</p>' +
         (locked ? "" : '<div class="bi-cost">' + costHtml(c.cost) + '<span class="dur">' + icon("clock") + F.duration(c.time) + '</span></div>' +
           (c.ok ? '<button class="btn primary" data-act="build" data-arg="' + plot + ':' + type + '">' + icon("hammer") + 'Build</button>' : reasonsHtml(c))) + '</div></li>';
@@ -7341,8 +7389,6 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var u = [];
     D.INNER_ORDER.concat(D.OUTER_ORDER).forEach(function (t) {
       if (D.BUILDINGS[t].unlock === L + 1) u.push("New building: " + bname(t));
-      var a = E.limitAt(t, L), b2 = E.limitAt(t, L + 1);
-      if (b2 > a && a > 0) u.push(bname(t) + " : " + a + " → " + b2);
     });
     var p1 = E.outerPlotsAt(L), p2 = E.outerPlotsAt(L + 1);
     if (p2 > p1) u.push((p2 - p1) + " countryside plot" + (p2 - p1 > 1 ? "s" : "") + " cleared");
@@ -7902,7 +7948,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var list = E.buildingsOfType(state, type).sort(function (a, b) { return b.level - a.level; }), def = D.BUILDINGS[type];
       var locked = E.castleLevel(state) < def.unlock, limit = E.limitOf(state, type);
       return '<div class="jb-top"><span>' + def.name + '</span><span class="row">' + list.map(function (b) { return '<button class="btn tiny" data-act="open" data-arg="' + b.id + '">' + (b.level || "…") + '</button>'; }).join("") +
-        (locked ? '<span class="muted small">Stronghold ' + def.unlock + '</span>' : !def.unique && list.length < limit ? '<button class="btn tiny ghost" data-act="find-plot" data-arg="' + type + '">' + icon("plus") + '</button>' : "") + '</span></div>';
+        (locked ? '<span class="muted small">Stronghold ' + def.unlock + '</span>' : !def.unique ? '<button class="btn tiny ghost" data-act="find-plot" data-arg="' + type + '">' + icon("plus") + '</button>' : "") + '</span></div>';
     }).join("") + '</section>';
     var g = E.grossRates(state);
     html += '<section class="card"><h3>Production per hour</h3><dl class="stats">' + D.RESOURCES.map(function (r) { return '<dt>' + icon(r.key) + r.name + '</dt><dd>+' + F.num(g[r.key]) + (r.key === "food" ? ' <span class="muted">(−' + F.num(E.upkeep(state)) + ' upkeep)</span>' : "") + '</dd>'; }).join("") +
@@ -7977,7 +8023,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         wcard(castleArt(pl.stronghold), [["Lord", esc(pl.lord || "—")], ["Power", '<b>' + F.num(pl.power || 0) + '</b>'], ["Alliance", pl.alliance ? esc(pl.alliance) + (ally ? ' <span class="pill green">ally</span>' : "") : '<span class="muted">none</span>'],
           ["Stronghold", "level " + (pl.stronghold || 1) + " · hero " + (pl.hero || 1)], ["Seen", pl.updatedAt ? F.ago(pl.updatedAt) : "—"],
           (pl.shieldUntil || 0) > t0 ? ["Shield", '<span class="pill">Peace Shield</span>'] : null]) +
-        wbtns([ally ? wbtn("noop", "", "globe", "Ally: no scouting", "ghost", true) : wbtn("spy", pl.uid, "globe", "Scout · " + F.num(E.spyCost(pl).silver) + " silver", "teal", E.shielded(state, t0)), markBtn(pos, pl.name || "City")]) + grant + '</div>';
+        wbtns([ally ? wbtn("noop", "", "globe", "Ally: no scouting", "ghost", true) : wbtn("spy", pl.uid, "globe", "Scout · " + F.num(E.spyCost(pl).silver) + " silver", "teal"), markBtn(pos, pl.name || "City")]) + grant + '</div>';
     }
     if (o.kind === "res") {
       var t = o.tile, mine = t.by ? E.findMarch(state, t.by) : null;
@@ -8003,10 +8049,39 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       ["Castle", "level " + b.level], ["Character", E.PROFILE_NAMES[prof]],
       ["Army", seen ? esc(troopsLine(b.troops)) : '<span class="muted">unknown — scout first</span>'],
       b.shieldUntil > t0 ? ["Shield", '<span class="pill">Peace Shield</span> <span data-live-until="' + b.shieldUntil + '"></span>'] : null]);
-    if (E.shielded(state, t0)) h2 += '<p class="muted small">' + icon("castle") + 'Your Peace Shield is up: no attacks or scouting until it ends.</p>';
     if (state.hero.status === "captured" && state.hero.captor === b.id) h2 += '<p class="warn">' + icon("alert") + 'Your hero is held here. A victory frees him.</p>';
-    return h2 + wbtns([wbtn("spy-bot", b.id, "globe", "Scout · " + F.num(100 * b.level) + " silver", "teal", E.shielded(state, t0)), wbtn("march", "attack:" + b.id, "sword", "Attack", "primary", b.shieldUntil > t0 || E.shielded(state, t0)), markBtn(pos, b.name)]) + '</div>';
+    return h2 + wbtns([wbtn("spy-bot", b.id, "globe", "Scout · " + F.num(100 * b.level) + " silver", "teal"), wbtn("march", "attack:" + b.id, "sword", "Attack", "primary", b.shieldUntil > t0), markBtn(pos, b.name)]) + '</div>';
   };
+
+  // --- une ressource : stock, production, et comment en obtenir (sac ou boutique)
+  PANELS.resource = function (k) {
+    var cap = E.capacity(state), rate = E.rates(state)[k] || 0, v = state.resources[k], name = RES_NAME[k];
+    var html = head("Resources", name) + '<div class="p-body">' + wcard('<span class="wc-res">' + icon(k) + '</span>', [
+      ["In stock", '<b>' + F.num(Math.floor(v)) + '</b>'], ["Storage", F.num(cap) + (v >= cap ? ' <span class="pill red">full</span>' : "")],
+      ["Production", (rate >= 0 ? "+" : "") + F.num(Math.round(rate)) + " / h"], ["Safe from raids", F.num(E.protectedAmount(state))]]);
+    var items = D.SHOP.filter(function (x) { return x.kind === "res" && x.res === k; });
+    var mine = items.filter(function (x) { return E.bagCount(state, x.id) > 0; });
+    html += '<h3>' + icon("bag") + 'From your items</h3>';
+    html += mine.length ? '<div class="igrid">' + mine.map(function (it) {
+      return '<div class="icard k-res"><span class="ic-art">' + icon(k) + '<i class="ic-n">×' + E.bagCount(state, it.id) + '</i></span><b>' + esc(E.itemLabel(it.id)) + '</b><button class="btn tiny teal" data-act="use-res" data-arg="' + it.id + '">Use</button></div>';
+    }).join("") + '</div>' : '<p class="muted small">No ' + name.toLowerCase() + ' crates in your bag.</p>';
+    html += '<h3>' + icon("gold") + 'Buy with gold</h3><div class="igrid">' + items.map(function (it) {
+      return '<div class="icard k-res"><span class="ic-art">' + icon(k) + '</span><b>' + esc(E.itemLabel(it.id)) + '</b><button class="btn tiny gold" data-act="buy-use" data-arg="' + it.id + '"' + (state.resources.gold >= it.price ? "" : " disabled") + '>' + icon("gold") + F.num(it.price) + '</button></div>';
+    }).join("") + '</div><p class="muted small">Bought crates are opened at once. Gold: ' + F.num(state.resources.gold) + '.</p></div>';
+    return html;
+  };
+
+  // --- bouclier actif : demander avant d'attaquer ou d'espionner
+  function shieldAsk(act, arg) {
+    if (!E.shielded(state, now())) return false;
+    ui.shieldAsk = { act: act, arg: arg };
+    var m = document.getElementById("modal");
+    if (!m) { m = document.createElement("div"); m.id = "modal"; m.className = "modal"; document.body.appendChild(m); }
+    m.innerHTML = '<div class="modal-card"><span class="rpop-art">' + icon("castle") + '</span><h3>Peace Shield active</h3><p>Your city is protected for <b data-live-until="' + state.shieldUntil + '">' + F.duration((state.shieldUntil - now()) / 1000) + '</b>. Attacking or scouting will <b>remove your shield</b>.</p>' +
+      '<div class="wbtns"><button class="btn ghost" data-act="shield-keep">Keep my shield</button><button class="btn primary" data-act="shield-drop">Remove it and go</button></div></div>';
+    m.hidden = false;
+    return true;
+  }
 
   // --- lieux enregistrés
   PANELS.marks = function () {
@@ -8107,7 +8182,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (kind === "reports" && arg !== "keep") ui.reportId = null;
     if (ui.view === "city") M.setSelection(kind === "building" ? { kind: "building", id: arg } : kind === "plot" ? { kind: "plot", plot: arg } : kind === "locked" ? { kind: "locked", plot: arg } : null);
     if (kind === "tile") WV.setSelection(arg);
-    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("pop", kind === "tile"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks)$/.test(kind)); document.body.classList.add("panel-open");
+    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("pop", kind === "tile"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks|resource)$/.test(kind)); document.body.classList.add("panel-open");
     renderPanel(true); $("panelBody").scrollTop = 0;
     document.querySelectorAll(".nav button[data-arg]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-arg") === kind); });
   }
@@ -8306,11 +8381,13 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var p = E.OTHERS.filter(function (x) { return x.uid === arg; })[0];
       if (!p) return;
       if (E.isAlly(state, p)) { toast(icon("alert") + "<span>You cannot scout a member of your alliance.</span>"); return; }
+      if (shieldAsk("spy", arg)) return;
       var r = E.sendScout(state, { kind: "player", player: p }, now());
       if (result(r, icon("globe") + "<span>Your scout rides to <b>" + esc(p.name || "the city") + "</b>: back in " + F.duration(r.march ? r.march.travel * 2 : 0) + ".</span>")) closePanel();
     },
     "spy-bot": function (arg) {
       var b = E.findBot(state, arg); if (!b) return;
+      if (shieldAsk("spy-bot", arg)) return;
       var r = E.sendScout(state, { kind: "bot", bot: b }, now());
       if (result(r, icon("globe") + "<span>Your scout rides to <b>" + esc(b.name) + "</b>: back in " + F.duration(r.march ? r.march.travel * 2 : 0) + ".</span>")) closePanel();
     },
@@ -8347,6 +8424,16 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var p = arg.split(":").map(Number);
       if (!E.bagCount(state, "tpAdvanced")) { var b = E.buyItem(state, "tpAdvanced", 1); if (!b.ok) { result(b); return; } }
       if (result(E.useItem(state, "tpAdvanced", { x: p[0], y: p[1] }, now()), icon("globe") + "<span>Your city moved to <b>X:" + p[0] + " Y:" + p[1] + "</b>.</span>")) afterTeleport();
+    },
+    "res-open": function (arg) { openPanel("resource", arg); },
+    "use-res": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res) + "<span>+" + F.num(it.amount) + " " + RES_NAME[it.res].toLowerCase() + ".</span>"); },
+    "buy-use": function (arg) { var it = D.SHOP_BY_ID[arg], b = E.buyItem(state, arg, 1); if (!b.ok) { result(b); return; } result(E.useItem(state, arg, null, now()), icon(it.res) + "<span>+" + F.num(it.amount) + " " + RES_NAME[it.res].toLowerCase() + ".</span>"); },
+    "shield-keep": function () { ui.shieldAsk = null; var m = $("modal"); if (m) m.hidden = true; },
+    "shield-drop": function () {
+      var a = ui.shieldAsk; ui.shieldAsk = null; var m = $("modal"); if (m) m.hidden = true;
+      state.shieldUntil = 0; persist(true); if (S.uid()) S.publishPlayer(state); WV.markDirty(); renderChrome();
+      toast(icon("castle") + "<span>Peace Shield removed.</span>");
+      if (a && ACTIONS[a.act]) ACTIONS[a.act](a.arg);
     },
     "use-item": function (arg) {
       var it = D.SHOP_BY_ID[arg];
@@ -8394,7 +8481,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "goto-march": function (arg) { var m = E.findMarch(state, arg); if (!m) return; setView("world"); WV.centerOn(m.tx, m.ty); openPanel("tile", { x: m.tx, y: m.ty }); },
     recall: function (arg) { result(E.recall(state, arg, now()), icon("march") + "<span>The march is turning back.</span>"); },
     march: function (arg) {
-      var p = arg.split(":"); ui.march = { kind: p[0], targetId: p[1], troops: {}, hero: p[0] !== "gather" };
+      var p = arg.split(":"), tgt = p[0] === "gather" ? E.findTile(state, p[1]) : null;
+      if ((p[0] === "attack" || p[0] === "wonder" || (tgt && tgt.occ)) && shieldAsk("march", arg)) return;
+      ui.march = { kind: p[0], targetId: p[1], troops: {}, hero: p[0] !== "gather" };
       presetMarch(p[0] === "gather" ? "load" : p[0] === "attack" ? "counter" : "max");
       openPanel("march");
     },
