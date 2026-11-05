@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051237";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051453";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1058,6 +1058,13 @@ body.in-forge .bottom, body.in-forge .topbar, body.in-forge .resrow { visibility
 .nav .viewtoggle { margin-top: 6px !important; }
 .hstage .hero-fig { left: 70px !important; right: auto !important; width: calc(100% - 140px) !important; }
 @media (max-width: 380px) { .hstage .hero-fig { left: 62px !important; width: calc(100% - 124px) !important; } }
+.trait { display: inline-block; margin-left: 4px; padding: 1px 6px; border-radius: 8px; background: linear-gradient(180deg, #5a1410, #2a0806); color: #ffd76a; font: 800 10px var(--f-body); vertical-align: 1px; filter: none; }
+.fsheet .item-name .trait { filter: brightness(1.43); }
+/* recettes : vignettes centrées sur le fond gris */
+.rslot { width: 46px; height: 46px; overflow: hidden; background: var(--bg-t1, #3a2a1a) center / cover; border-radius: 8px; }
+.rslot img { width: auto !important; height: auto !important; max-width: 82%; max-height: 82%; object-fit: contain; display: block; }
+.recrow2 { grid-template-columns: 46px 1fr auto; }
+.fhead { min-height: 0; padding: 10px 14px 4px !important; }
 
 </style>
 
@@ -1423,6 +1430,20 @@ Medieval.Data = (function () {
     { key: "bronze",  name: "Bronze",   color: "#d08a3a" },
     { key: "gem",     name: "Gemstone", color: "#3fb6d8" }
   ];
+  /* Traits : certaines pièces forgées ou trouvées ont un gros bonus et un malus en contrepartie. Valeurs × rang. */
+  var TRAITS = [
+    { key: "berserk",  name: "Berserker",       plus: ["inf_atk", 5],   minus: ["inf_hp", 2.5] },
+    { key: "charge",   name: "Reckless Charge", plus: ["cav_atk", 5],   minus: ["cav_def", 2.5] },
+    { key: "volley",   name: "Deadeye",         plus: ["arc_atk", 5],   minus: ["arc_hp", 2.5] },
+    { key: "bulwark",  name: "Bulwark",         plus: ["all_def", 4],   minus: ["march_speed", 3] },
+    { key: "swift",    name: "Swift",           plus: ["march_speed", 6], minus: ["all_def", 2] },
+    { key: "glass",    name: "Glass Cannon",    plus: ["all_atk", 4],   minus: ["all_def", 2.5] },
+    { key: "ironskin", name: "Iron Skin",       plus: ["all_hp", 4],    minus: ["all_atk", 2] },
+    { key: "hoarder",  name: "Hoarder",         plus: ["load", 8],      minus: ["march_speed", 3] },
+    { key: "slayer",   name: "Monster Slayer",  plus: ["monster_atk", 7], minus: ["all_def", 2] },
+    { key: "siegebreaker", name: "Siegebreaker", plus: ["sie_atk", 6],  minus: ["sie_hp", 3] }
+  ];
+  var TRAIT_BY_KEY = {}; TRAITS.forEach(function (t) { TRAIT_BY_KEY[t.key] = t; });
   var MAT_BY_KEY = {}; MATERIALS.forEach(function (m) { MAT_BY_KEY[m.key] = m; });
   var RECIPES = {
     helmet: ["iron", "leather", "bronze"], armor: ["iron", "leather", "linen", "bronze"], gloves: ["leather", "linen"],
@@ -1855,7 +1876,7 @@ Medieval.Data = (function () {
   var TEST_PACK2 = { shield24h: 2, tpAdvanced: 2 };
 
   return {
-    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2, MONSTERS: MONSTERS, monsterOf: monsterOf, MATERIALS: MATERIALS, MAT_BY_KEY: MAT_BY_KEY, RECIPES: RECIPES, MONSTER_WEIGHTS: MONSTER_WEIGHTS,
+    TEST_PACK: TEST_PACK, TEST_PACK2: TEST_PACK2, MONSTERS: MONSTERS, monsterOf: monsterOf, MATERIALS: MATERIALS, MAT_BY_KEY: MAT_BY_KEY, TRAITS: TRAITS, TRAIT_BY_KEY: TRAIT_BY_KEY, RECIPES: RECIPES, MONSTER_WEIGHTS: MONSTER_WEIGHTS,
     PACE: PACE, RESOURCES: RESOURCES, BUILDINGS: BUILDINGS, CASTLE_MAX: CASTLE_MAX, CASTLE_REQUIREMENTS: CASTLE_REQUIREMENTS, WALL_REQUIREMENT: WALL_REQUIREMENT,
     INNER_ORDER: INNER_ORDER, OUTER_ORDER: OUTER_ORDER, INNER_PLOTS: INNER_PLOTS, OUTER_PLOTS: OUTER_PLOTS,
     BUILDERS: BUILDERS, MARCHES: MARCHES, marchSize: marchSize, BASE_STORAGE: BASE_STORAGE, BASE_PROTECT: BASE_PROTECT,
@@ -1964,7 +1985,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, testPack9: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, testPack9: true, eliteSeed: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2537,6 +2558,7 @@ Medieval.Engine = (function (D) {
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
     if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
+    if (!s.eliteSeed && s.world && E.spawnElite) { s.eliteSeed = true; E.spawnElite(s, s.lastTick); E.spawnElite(s, s.lastTick); }
     if (!s.testPack9) {
       s.testPack9 = true; s.resources.gold = (s.resources.gold || 0) + 500000;
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "500,000 gold for the test", text: "The treasury sends you 500,000 gold. The shop now has bigger hero XP tomes, a ×10 button, and Use all in your bag." });
@@ -2761,6 +2783,12 @@ Medieval.Engine = (function (D) {
       var stat = r[0].replace(/^T_/, set.focus + "_");
       out[stat] = Math.round(D.STAT_BASE[baseKey(stat)] * r[1] * mult * 10) / 10;
     });
+    var T = item.trait && D.TRAIT_BY_KEY[item.trait];
+    if (T) {
+      var tm = D.GEAR_TIERS[item.tier - 1].mult;
+      out[T.plus[0]] = Math.round(((out[T.plus[0]] || 0) + T.plus[1] * tm) * 10) / 10;
+      out[T.minus[0]] = Math.round(((out[T.minus[0]] || 0) - T.minus[1] * tm) * 10) / 10;
+    }
     return out;
   };
   E.findItem = function (s, id) {
@@ -2892,8 +2920,10 @@ Medieval.Engine = (function (D) {
     for (var i = 0; i < weights.length; i++) { if (r < weights[i]) return i; r -= weights[i]; }
     return 0;
   }
-  E.makeItem = function (s, set, slot, tier, rarity) {
-    return { id: E.uid(s, "it"), set: set, slot: slot, tier: tier, rarity: rarity };
+  E.makeItem = function (s, set, slot, tier, rarity, noTrait) {
+    var it = { id: E.uid(s, "it"), set: set, slot: slot, tier: tier, rarity: rarity };
+    if (!noTrait && D.TRAITS && E.rand(s) < 0.35) it.trait = D.TRAITS[Math.floor(E.rand(s) * D.TRAITS.length)].key;   // 1 pièce sur 3 environ
+    return it;
   };
   E.craftCost = function (s, tier) {
     var T = D.GEAR_TIERS[tier - 1], red = Math.min(60, E.bonus(s, "craft_cost")), out = {};
@@ -3737,6 +3767,14 @@ Medieval.Engine = (function (D) {
     w.tiles = w.tiles.filter(function (t) { return busy[t.id] || t.by || !cities.some(function (c) { return cheb(c, t) < 2; }); });
     return n0 - w.tiles.length;
   };
+  E.spawnElite = function (s, t) {
+    var pos = isolatedFree(s); if (!pos) return null;
+    var level = 6 + Math.floor(E.rand(s) * 5), troops = E.campTroops(s, level);
+    for (var k in troops) troops[k] = Math.round(troops[k] * 1.4);
+    var tile = { id: E.uid(s, "t"), kind: "camp", elite: true, level: level, troops: troops, x: pos.x, y: pos.y, by: null, expiresAt: (t || s.lastTick) + (4 + Math.floor(E.rand(s) * 5)) * 3600000 };
+    s.world.tiles.push(tile);
+    return tile;
+  };
   function spawnCamp(s, at) {
     var pos = at || isolatedFree(s);
     if (!pos) return;
@@ -4039,8 +4077,14 @@ Medieval.Engine = (function (D) {
         s.items.splice(s.items.indexOf(item), 1); m.items.push(item);
         rep.item = item;
       }
-      var mlv = Math.max(1, Math.min(6, Math.ceil(camp.level / 2) + (E.rand(s) < 0.2 ? 1 : 0) - (E.rand(s) < 0.25 ? 1 : 0)));
-      rep.mats = E.dropMats(s, mlv, 1 + (E.rand(s) < 0.5 ? 1 : 0) + (camp.level >= 6 ? 1 : 0));
+      if (camp.elite) {   // monstre légendaire : matériaux de niveau 4 à 6
+        rep.mats = [];
+        for (var em = 0; em < 3 + Math.floor(E.rand(s) * 3); em++) rep.mats = rep.mats.concat(E.dropMats(s, 4 + Math.floor(E.rand(s) * E.rand(s) * 3), 1));
+        rep.elite = true;
+      } else {
+        var mlv = Math.max(1, Math.min(6, Math.ceil(camp.level / 2) + (E.rand(s) < 0.3 ? 1 : 0) - (E.rand(s) < 0.15 ? 1 : 0)));
+        rep.mats = E.dropMats(s, mlv, 2 + (E.rand(s) < 0.5 ? 1 : 0) + (camp.level >= 6 ? 1 : 0));
+      }
       removeTile(s, camp);
     }
     E.report(s, rep);
@@ -4124,7 +4168,7 @@ Medieval.Engine = (function (D) {
     if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
     m.load[m.gatherRes] = (m.load[m.gatherRes] || 0) + got;
     E.netEmit(s, { op: "release", tileId: m.targetId, got: got });
-    if (tile && E.rand(s) < 0.3) {
+    if (tile && E.rand(s) < 0.5) {
       var found = E.dropMats(s, Math.max(1, tile.level - (E.rand(s) < 0.5 ? 1 : 0)), 1)[0];
       E.report(s, { kind: "info", at: t, title: "Material found", text: "While gathering, your troops found " + D.MAT_BY_KEY[found.key].name + " (level " + found.lv + "). Use it at the forge.", mats: [found] });
     }
@@ -4371,6 +4415,9 @@ Medieval.Engine = (function (D) {
     var campN = w.tiles.length - resN;
     if (!w.shared) for (var i = 0; i < 3 && resN < W.resTiles; i++, resN++) spawnRes(s);
     for (var j = 0; j < 2 && campN < W.camps; j++, campN++) spawnCamp(s);
+    // monstres légendaires : apparaissent quelques heures, butin rare
+    w.tiles = w.tiles.filter(function (x) { return !(x.elite && x.expiresAt <= t && !x.by && !w.marches.some(function (m) { return m.targetId === x.id; })); });
+    if (w.tiles.filter(function (x) { return x.elite; }).length < 3 && E.rand(s) < 0.35) E.spawnElite(s, t);
     w.nextTick += W.tickMs;
   }
 
@@ -6248,6 +6295,7 @@ Medieval.WorldView = (function (D, E, G) {
     // fumée qui sort de la grotte (en attendant l'image du monstre)
     for (var k = 0; k < 3; k++) { var ph = (t * 0.5 + k / 3) % 1; g.fillStyle = "rgba(120,110,100," + (0.45 * (1 - ph)) + ")"; g.beginPath(); g.arc(x - 2 + Math.sin(ph * 6 + k) * 4, y - 6 - ph * 26, 3 + ph * 6, 0, 6.3); g.fill(); }
   }
+  function F2(ms) { var m = Math.max(0, Math.round(ms / 60000)); return "leaves in " + (m >= 60 ? Math.floor(m / 60) + "h " + (m % 60 < 10 ? "0" : "") + (m % 60) : m + " min"); }
   function plate(g, x, y, text, sub, col, s, textCol) {
     g.save(); g.translate(x, y); g.scale(s, s);
     g.font = "700 12px 'Alegreya Sans', sans-serif";
@@ -6295,7 +6343,14 @@ Medieval.WorldView = (function (D, E, G) {
         if (it.o.by || it.o.occ) { ctx.fillStyle = it.o.by ? "#4fa3e0" : "#e0463c"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x + 18, p.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); }
         labels.push(function () { lvlBadge(ctx, p.x - 20, p.y + 12, it.o.level, ui * 0.8, "#2b3a24"); });
       } else if (it.k === "camp") {
+        if (it.o.elite) {   // monstre légendaire : halo doré pulsant
+          var eg = 0.5 + 0.5 * Math.sin(t * 3);
+          ctx.save(); var gr2 = ctx.createRadialGradient(p.x, p.y - 10, 4, p.x, p.y - 10, TW * 0.9);
+          gr2.addColorStop(0, "rgba(255,210,90," + (0.55 + eg * 0.3) + ")"); gr2.addColorStop(1, "rgba(255,160,40,0)");
+          ctx.fillStyle = gr2; ctx.beginPath(); ctx.ellipse(p.x, p.y - 6, TW * 0.9, TW * 0.55, 0, 0, 6.3); ctx.fill(); ctx.restore();
+        }
         monsterIcon(ctx, p.x, p.y, t, it.o.level);
+        if (it.o.elite) labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, "Elder " + D.monsterOf(it.o.level, Date.now()).name, F2(it.o.expiresAt - Date.now()), "#ffd36b", ui * 0.85, "#ffe39a"); });
         labels.push(function () { lvlBadge(ctx, p.x - 22, p.y + 12, it.o.level, ui * 0.85, "#4a1a12"); });
       } else if (it.k === "bot") {
         var b = it.o;
@@ -7914,7 +7969,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var f = state.buildings[fid] || E.forgeOf(state); if (!f) return null;
     var view = ui.forgeView || "anvil", picks = forgePicks(), cj = E.jobFor(state, f.id, ["craft"]);
     var back = view === "anvil" ? '<button class="fback" data-act="close">‹ City</button>' : '<button class="fback" data-act="forge-view" data-arg="anvil">‹ Back</button>';
-    var html = '<header class="p-head fhead">' + back + '<div class="p-title"><span class="eyebrow">Forge level ' + f.level + ' · ' + E.matTotal(state) + ' materials</span><h2>The Forge</h2></div></header><div class="fbody">';
+    var html = '<header class="p-head fhead">' + back + '</header><div class="fbody">';
     var nav = '<div class="fnav"><button class="fbtn' + (view === "mats" ? " on" : "") + '" data-act="forge-view" data-arg="mats">' + icon("bag") + 'Materials</button>' +
       '<button class="fbtn' + (view === "anvil" || view === "pick" ? " on" : "") + '" data-act="forge-view" data-arg="anvil">' + icon("anvil") + 'Anvil</button>' +
       '<button class="fbtn' + (view === "recipes" ? " on" : "") + '" data-act="forge-view" data-arg="recipes">' + icon("scroll") + 'Recipes</button></div>';
@@ -8014,7 +8069,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background:url(' + tbg + ') center/cover !important"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
   }
   function itemRow(it, actions) {
-    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
+    var T = it.trait && D.TRAIT_BY_KEY[it.trait];
+    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + (T ? ' <span class="trait">' + esc(T.name) + '</span>' : "") + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
   }
   PANELS.hero = function () {
     var h = state.hero, need = E.heroXpNeeded(state), view = ui.heroTab || "gear", max = h.level >= D.HERO.maxLevel;
@@ -8101,7 +8157,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function reportTitle(r) {
     if (r.kind === "attack") return (r.win ? "Victory over " : "Defeat against ") + r.target;
-    if (r.kind === "camp") { var mo = E.monsterOf(r.level, r.at); return (r.win ? mo.name + " lv. " + r.level + " slain" : "Repelled by the " + mo.name + " lv. " + r.level); }
+    if (r.kind === "camp") { var mo = E.monsterOf(r.level, r.at); return (r.elite ? "Elder " : "") + (r.win ? mo.name + " lv. " + r.level + " slain" : "Repelled by the " + mo.name + " lv. " + r.level); }
     if (r.kind === "defense") return (r.win ? "Attack from " + r.target + " repelled" : "Raided by " + r.target);
     if (r.kind === "tile") return (r.win ? "Took the " : "Failed to take the ") + r.target + " from " + r.lord;
     if (r.kind === "tiledef") return "Driven off the " + r.target + " by " + r.lord;
@@ -8390,8 +8446,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     }
     if (o.kind === "camp") {
       var c = o.tile, mo = E.monsterOf(c.level, t0), img = assetSrc("mon-" + mo.key);
-      return head(coordTxt(pos), esc(mo.name) + " · level " + c.level) + '<div class="p-body">' + wcard(img ? '<img src="' + img + '" alt="">' : '<span class="wc-res">' + icon("alert") + '</span>', [
-        ["Strength", '<b>' + F.compact(E.troopPower(c.troops)) + '</b> power'], ["Health", F.num(E.troopTotal(c.troops))], ["Reward", "Resources, gold, hero XP, gear"],
+      return head(coordTxt(pos), (c.elite ? "Elder " : "") + esc(mo.name) + " · level " + c.level) + '<div class="p-body">' + (c.elite ? '<p class="royal">' + icon("crown") + '<b>Legendary monster · leaves in <span data-live-until="' + c.expiresAt + '"></span></b><span>Drops 3 to 5 rare materials (blue, purple, gold).</span></p>' : "") + wcard(img ? '<img src="' + img + '" alt="">' : '<span class="wc-res">' + icon("alert") + '</span>', [
+        ["Strength", '<b>' + F.compact(E.troopPower(c.troops)) + '</b> power'], ["Health", F.num(E.troopTotal(c.troops))], ["Reward", c.elite ? "3 to 5 rare materials, resources, XP" : "Materials, resources, gold, hero XP"],
         ["Distance", E.worldDistance(c, E.homeOf(state)).toFixed(1) + " tiles"]]) +
         wbtns([wbtn("march", "bandit:" + c.id, "sword", "Attack", "primary"), markBtn(pos, mo.name)]) + '</div>';
     }
@@ -8700,7 +8756,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "reset-skills": function () { result(E.resetSkills(state), icon("check") + "<span>Skill points refunded.</span>"); },
     "hero-rename": function () { var r = E.renameHero(state, $("heroName").value); $("heroName").blur(); result(r); },
     "hero-ransom": function () { result(E.payHeroRansom(state, now()), icon("crown") + "<span>Your hero is free.</span>"); },
-    "forge-set": function (arg) { ui.forgeSet = arg; renderPanel(true); },
+    "forge-set": function (arg) { if (ui.panel && ui.panel.kind === "forge") ui.forgeView = "recipes"; ui.forgeSet = arg; renderPanel(true); },
     "trap-type": function (arg) { ui.trapType = arg; renderPanel(true); },
     "trap-max": function () { ui.trapCount = Math.max(1, E.maxTraps(state, ui.trapType)); renderPanel(true); },
     "build-traps": function () { result(E.buildTraps(state, ui.trapType, ui.trapCount || 1, now())); },
