@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051143";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051152";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1580,6 +1580,10 @@ Medieval.Data = (function () {
     RP("food100k", "food", 100000, 130), RP("wood100k", "wood", 100000, 130), RP("stone100k", "stone", 100000, 190),
     RP("ore100k", "ore", 100000, 190), RP("silver100k", "silver", 100000, 260)
   ];
+  ["food", "wood", "stone", "ore", "silver"].forEach(function (r) {
+    var p = { food: 1, wood: 1, stone: 1.45, ore: 1.45, silver: 2 }[r];
+    SHOP.push(RP(r + "1m", r, 1000000, Math.round(1100 * p)), RP(r + "5m", r, 5000000, Math.round(5000 * p)), RP(r + "10m", r, 10000000, Math.round(9500 * p)));
+  });
   function BO(id, name, stat, pct, hours, price) { return { id: id, kind: "boost", name: name, stat: stat, pct: pct, seconds: hours * 3600, price: price }; }
   SHOP.push(
     BO("atk1h", "Attack +20% (1 h)", "all_atk", 20, 1, 60), BO("def1h", "Defense +20% (1 h)", "all_def", 20, 1, 60), BO("hp1h", "Health +20% (1 h)", "all_hp", 20, 1, 60),
@@ -1896,7 +1900,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2469,6 +2473,15 @@ Medieval.Engine = (function (D) {
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
     if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
+    if (!s.testPack8) {   // 200 000 or et 20 matériaux de chaque niveau (remplace les 1 500 gris)
+      s.testPack8 = true; s.mats = s.mats || {}; s.resources.gold = (s.resources.gold || 0) + 200000;
+      var had7 = s.testPack7; s.testPack7 = true;
+      (D.MATERIALS || []).forEach(function (M) {
+        if (had7) s.mats[M.key + 1] = Math.max(0, (s.mats[M.key + 1] || 0) - 1500);
+        for (var L = 1; L <= 6; L++) s.mats[M.key + L] = (s.mats[M.key + L] || 0) + 20;
+      });
+      if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "200,000 gold and materials", text: "For testing: 200,000 gold and 20 of each material at every level (grey to gold). The shop now sells 1M, 5M and 10M resource crates." });
+    }
     if (!s.testPack7) {
       s.testPack7 = true; s.mats = s.mats || {};
       (D.MATERIALS || []).forEach(function (M) { s.mats[M.key + 1] = (s.mats[M.key + 1] || 0) + 1500; });
@@ -3214,7 +3227,7 @@ Medieval.Engine = (function (D) {
   E.itemLabel = function (id) {
     var it = D.SHOP_BY_ID[id];
     if (!it) return id;
-    if (it.kind === "res") return (it.amount >= 1000 ? it.amount / 1000 + "k " : it.amount + " ") + D.RESOURCES.filter(function (r) { return r.key === it.res; })[0].name.toLowerCase();
+    if (it.kind === "res") return (it.amount >= 1e6 ? it.amount / 1e6 + "M " : it.amount >= 1000 ? it.amount / 1000 + "k " : it.amount + " ") + D.RESOURCES.filter(function (r) { return r.key === it.res; })[0].name.toLowerCase();
     return it.name;
   };
 })(Medieval.Engine, Medieval.Data);
