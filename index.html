@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051517";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051534";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1481,7 +1481,7 @@ Medieval.Data = (function () {
   var WORLD = {
     size: 30, home: { x: 15, y: 15 }, kingdom: 7,
     botCount: 12, resTiles: 42, camps: 18,
-    sharedSize: 60, layout: 4, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 56,   // carte commune
+    sharedSize: 60, layout: 5, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 56,   // carte commune
     forestSlow: 0.8,             // +80 % de temps de marche à travers la forêt
     wonderHoldMs: 3600000,       // garder la Merveille 1 h pour devenir roi
     secondsPerTile: 8, tickMs: 3600000,
@@ -2564,7 +2564,8 @@ Medieval.Engine = (function (D) {
     if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
     if (s.world) s.world.tiles = s.world.tiles.filter(function (x) { return !(x.elite && x.expiresAt - s.lastTick > 3600000); });   // anciens légendaires de 4-8 h
-    if (!s.arenaSeed && s.world && E.spawnArena) { s.arenaSeed = true; E.spawnArena(s, s.lastTick); if (E.spawnElite) E.spawnElite(s, s.lastTick); }
+    if (s.world && s.world.shared) s.world.tiles = s.world.tiles.filter(function (x) { return x.kind !== "arena" || x.shared; });
+    if (!s.arenaSeed && s.world && !s.world.shared && E.spawnArena) { s.arenaSeed = true; E.spawnArena(s, s.lastTick); if (E.spawnElite) E.spawnElite(s, s.lastTick); }
     if (!s.testPack9) {
       s.testPack9 = true; s.resources.gold = (s.resources.gold || 0) + 500000;
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "500,000 gold for the test", text: "The treasury sends you 500,000 gold. The shop now has bigger hero XP tomes, a ×10 button, and Use all in your bag." });
@@ -3748,9 +3749,9 @@ Medieval.Engine = (function (D) {
     while (r > RES_TILE_WEIGHTS[k]) { r -= RES_TILE_WEIGHTS[k]; k++; }
     var res = RES_TILE_KINDS[k], pos = at || isolatedFree(s);
     if (!pos) return;
-    var level = E.resLevelAt(s.world, pos, E.rand(s));
-    var amount = W.resAmount(res, level);
-    s.world.tiles.push({ id: E.uid(s, "t"), kind: "res", res: res, level: level, amount: amount, max: amount, x: pos.x, y: pos.y, by: null });
+    var level = E.resLevelAt(s.world, pos, E.rand(s)), rich = !!(s.world.wonder && E.rand(s) < 0.07);
+    var amount = W.resAmount(res, level) * (rich ? 3 : 1);
+    s.world.tiles.push({ id: E.uid(s, "t"), kind: "res", res: res, level: level, amount: amount, max: amount, x: pos.x, y: pos.y, by: null, rich: rich || undefined });
   }
   E.campTroops = function (s, level) {
     var total = W.campTroops(level), T = W.campTier(level), out = {};
@@ -3773,7 +3774,7 @@ Medieval.Engine = (function (D) {
     var w = s.world; if (!w) return 0;
     var cities = [HOME(s)].concat(w.shared ? E.OTHERS : []).concat(w.bots), n0 = w.tiles.length;
     var busy = {}; w.marches.forEach(function (m) { busy[m.targetId] = 1; });
-    w.tiles = w.tiles.filter(function (t) { return busy[t.id] || t.by || !cities.some(function (c) { return cheb(c, t) < 2; }); });
+    w.tiles = w.tiles.filter(function (t) { return busy[t.id] || t.by || t.kind === "arena" || !cities.some(function (c) { return cheb(c, t) < 2; }); });
     return n0 - w.tiles.length;
   };
   var ELITE_MS = 10 * 60000, ARENA_MS = 2 * 3600000;
@@ -3799,9 +3800,39 @@ Medieval.Engine = (function (D) {
     var tile = { id: E.uid(s, "t"), kind: "arena", level: level, troops: troops, x: pos.x, y: pos.y, by: null, expiresAt: (t || s.lastTick) + ARENA_MS };
     s.world.tiles.push(tile); return tile;
   };
+  /* Carte commune : une arène toutes les 4 h, ouverte 2 h, au même endroit pour tous (calculé, pas tiré au sort localement). */
+  var ARENA_EVERY = 4 * 3600000;
+  E.arenaWindow = function (t) { return Math.floor(t / ARENA_EVERY); };
+  E.syncArena = function (s, t) {
+    var w = s.world; if (!w || !w.shared) return;
+    var win = E.arenaWindow(t), start = win * ARENA_EVERY, open = t < start + ARENA_MS, id = "arena-" + win;
+    var mine = w.marches.filter(function (m) { return m.kind === "arena"; }).map(function (m) { return m.targetId; });
+    w.tiles = w.tiles.filter(function (x) { return x.kind !== "arena" || (x.id === id && open) || mine.indexOf(x.id) >= 0; });
+    if (!open || w.tiles.some(function (x) { return x.id === id; })) return;
+    var h = function (k) { var v = (win * 2654435761 + k * 40503 + (w.shared | 0)) >>> 0; v ^= v >>> 15; v = Math.imul(v, 2246822507) >>> 0; v ^= v >>> 13; return v; };
+    for (var k = 0; k < 200; k++) {
+      var x = 3 + h(k) % (w.size - 6), y = 3 + h(k + 999) % (w.size - 6), p = { x: x, y: y };
+      if (E.terrainAt(w, x, y) !== "g") continue;
+      if (w.wonder && cheb(w.wonder, p) <= 8) continue;
+      if (w.bots.some(function (b) { return cheb(b, p) < 3; }) || cheb(HOME(s), p) < 2) continue;
+      var lv = Math.max(3, Math.min(10, 1 + Math.round(E.zoneT(w, p) * 9))), tr = {};
+      var tot = W.campTroops(lv), T = W.campTier(lv); tr["inf" + T] = Math.round(tot * 0.4); tr["cav" + T] = Math.round(tot * 0.3); tr["arc" + T] = Math.round(tot * 0.3);
+      w.tiles = w.tiles.filter(function (o) { return o.kind === "arena" || cheb(o, p) >= 1; });
+      w.tiles.push({ id: id, kind: "arena", shared: true, level: lv, troops: tr, x: x, y: y, by: null, expiresAt: start + ARENA_MS });
+      return;
+    }
+  };
   function arenaArrive(s, m, t, events) {
     var tile = E.findTile(s, m.targetId);
     if (!tile || tile.by || tile.expiresAt <= t) { E.report(s, { kind: "info", at: t, title: "Arena closed", text: "The arena games are over. Your march is heading home." }); goHome(m, t); return; }
+    if (tile.occ) {   // un autre seigneur tient l'arène : on l'attaque
+      m.fightAt = t;
+      if (!fightOccupant(s, m, { id: tile.id, occ: tile.occ, label: "the Arena", x: tile.x, y: tile.y }, t, events)) { goHome(m, t + FIGHT_MS); return; }
+      tile.occ = null; tile.troops = {};
+      tile.by = m.id; m.phase = "hold"; m.next = tile.expiresAt; m.holdAt = t;
+      E.netEmit(s, { op: "arenaOccupy", id: tile.id, troops: clean(m.troops), bonus: combatBonus(s, m.hero), since: t });
+      return;
+    }
     var bo = E.bonuses(s, { combat: m.hero, t: t }), res = E.battle({ troops: m.troops, bonus: bo, siege: "field" }, { troops: tile.troops, bonus: {} });
     tile.troops = clean(res.def.left); E.addKills(s, res.def.lost);
     var cas = E.addCasualties(s, res.att.lost, 0.7); m.troops = clean(res.att.left); m.fightAt = t;
@@ -3809,11 +3840,13 @@ Medieval.Engine = (function (D) {
     events.push({ type: "battle", win: res.win, label: "the Arena", at: t });
     if (!res.win || !E.troopTotal(m.troops)) { goHome(m, t + FIGHT_MS); return; }
     tile.by = m.id; m.phase = "hold"; m.next = tile.expiresAt; m.holdAt = t;
+    if (tile.shared) E.netEmit(s, { op: "arenaOccupy", id: tile.id, troops: clean(m.troops), bonus: combatBonus(s, m.hero), since: t });
   }
   function arenaWon(s, m, t, events) {
     var tile = E.findTile(s, m.targetId);
     var rep = { kind: "info", at: t, title: "Arena champion!", text: "Your troops held the arena until the end of the games. The crowd cheers your name!", loot: {} };
-    if (E.rand(s) < 0.35) {   // un rival a tenté sa chance pendant les jeux
+    if (tile && tile.shared) E.netEmit(s, { op: "arenaRelease", id: tile.id });
+    if (!(tile && tile.shared) && E.rand(s) < 0.35) {   // un rival a tenté sa chance pendant les jeux (carte solo)
       var rv = E.campTroops(s, tile ? tile.level : 4), res = E.battle({ troops: rv, bonus: {} }, { troops: m.troops, bonus: E.bonuses(s, { combat: m.hero, t: t }) });
       m.troops = clean(res.def.left); E.addCasualties(s, res.def.lost, 0.7); E.addKills(s, res.att.lost);
       if (res.win) { rep.title = "Driven out of the arena"; rep.text = "A rival champion stormed the arena and drove your troops out before the end of the games."; E.report(s, rep); if (tile) removeTile(s, tile); goHome(m, t); return; }
@@ -3986,7 +4019,7 @@ Medieval.Engine = (function (D) {
     if (kind === "attack" && tg && tg.shieldUntil > s.lastTick) reasons.push(tg.name + " is protected by a Peace Shield.");
     if (!tg) return { ok: false, reasons: ["This target no longer exists."] };
     if (s.world.marches.filter(function (x) { return x.kind !== "scout"; }).length >= E.maxMarches(s)) reasons.push("All your marches are out (" + E.maxMarches(s) + " max).");
-    if (E.shielded(s, s.lastTick) && (kind === "attack" || kind === "wonder" || (kind === "gather" && tg.occ))) reasons.push("You cannot attack while your Peace Shield is up.");
+    if (E.shielded(s, s.lastTick) && (kind === "attack" || kind === "wonder" || (kind === "gather" && tg.occ) || (kind === "arena" && tg.occ))) reasons.push("You cannot attack while your Peace Shield is up.");
     for (var id in t) if (t[id] > (s.army[id] || 0)) { reasons.push("Not enough " + D.TROOPS[id].name + " in the city."); break; }
     if (n < 1 && !(kind === "bandit" && withHero)) reasons.push("Pick at least one troop.");
     if (n > E.marchSizeMax(s)) reasons.push("Maximum march size: " + E.marchSizeMax(s) + ".");
@@ -4026,7 +4059,7 @@ Medieval.Engine = (function (D) {
     return { wood: "Forest", stone: "Stone quarry", ore: "Ore deposit", food: "Fields", silver: "Silver mine", gold: "Gold vein" }[res];
   };
 
-  function gatherRate(s, res) { return W.gatherRate[res] * (1 + E.bonus(s, "gather_speed") / 100); }
+  function gatherRate(s, res, tile) { return W.gatherRate[res] * (tile && tile.rich ? 10 : 1) * (1 + E.bonus(s, "gather_speed") / 100); }
   function gatheredSoFar(s, m, t) {
     var h = Math.max(0, Math.min(t, m.gatherEnd) - m.gatherStart) / HOUR;
     return Math.min(m.gatherAmount, Math.floor(h * m.gatherRate));
@@ -4044,7 +4077,7 @@ Medieval.Engine = (function (D) {
       E.netEmit(s, { op: "wonderRelease" });
       goHome(m, now);
     }
-    else if (m.phase === "hold") { var at2 = E.findTile(s, m.targetId); if (at2) at2.by = null; goHome(m, now); }
+    else if (m.phase === "hold") { var at2 = E.findTile(s, m.targetId); if (at2) { at2.by = null; if (at2.shared) E.netEmit(s, { op: "arenaRelease", id: at2.id }); } goHome(m, now); }
     else if (m.phase === "gather") {
       var tile = E.findTile(s, m.targetId), got = gatheredSoFar(s, m, now);
       if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
@@ -4118,8 +4151,11 @@ Medieval.Engine = (function (D) {
 
   /** Le héros seul : sa force vaut une petite armée qui grandit avec son niveau (bonus d'équipement compris). */
   E.heroArmy = function (s) {
-    var L = s.hero.level, tier = Math.min(4, 1 + Math.floor(L / 10)), o = {};
-    o["inf" + tier] = Math.round(150 * Math.pow(L, 1.35)); return o;
+    // la force du héros vient surtout de son équipement et des recherches faites
+    var L = s.hero.level, n = 250 + 25 * L, best = 1;
+    (E.equippedItems ? E.equippedItems(s) : []).forEach(function (it) { n += Math.round(260 * Math.pow(it.tier, 1.7) * (1 + 0.35 * it.rarity)); if (it.tier > best) best = it.tier; });
+    n += 45 * (E.researchTotal ? E.researchTotal(s) : 0);
+    var tier = Math.min(4, Math.max(1, Math.ceil(best * 2 / 3))), o = {}; o["inf" + tier] = Math.round(n / [1, 1, 1.9, 3.5, 6][tier] * (tier > 1 ? 1.6 : 1)); return o;
   };
   function resolveCamp(s, m, camp, t, events) {
     var heroIn = m.hero, alone = heroIn && !E.troopTotal(m.troops);
@@ -4201,7 +4237,7 @@ Medieval.Engine = (function (D) {
       }
       var cap = E.loadCapacity(s, m.troops), amount = Math.min(tile.amount, Math.floor(cap / W.weight[tile.res]));
       tile.by = m.id;
-      m.phase = "gather"; m.gatherRes = tile.res; m.gatherAmount = amount; m.gatherRate = gatherRate(s, tile.res);
+      m.phase = "gather"; m.gatherRes = tile.res; m.gatherAmount = amount; m.gatherRate = gatherRate(s, tile.res, tile);
       m.gatherStart = t; m.gatherEnd = t + Math.max(10000, Math.round(amount / m.gatherRate * HOUR)); m.next = m.gatherEnd;
       E.netEmit(s, { op: "occupy", tileId: tile.id, troops: clean(m.troops), bonus: combatBonus(s, m.hero), hero: m.hero, start: t, end: m.gatherEnd, amount: amount, rate: m.gatherRate });
       return;
@@ -4236,8 +4272,8 @@ Medieval.Engine = (function (D) {
     if (tile) { tile.amount -= got; tile.by = null; if (tile.amount <= 0) removeTile(s, tile); }
     m.load[m.gatherRes] = (m.load[m.gatherRes] || 0) + got;
     E.netEmit(s, { op: "release", tileId: m.targetId, got: got });
-    if (tile && E.rand(s) < 0.5) {
-      var found = E.dropMats(s, Math.max(1, tile.level - (E.rand(s) < 0.5 ? 1 : 0)), 1)[0];
+    if (tile && (tile.rich || E.rand(s) < 0.5)) {
+      var found = E.dropMats(s, tile.rich ? Math.min(6, 3 + Math.floor(E.rand(s) * 3)) : Math.max(1, tile.level - (E.rand(s) < 0.5 ? 1 : 0)), 1)[0];
       E.report(s, { kind: "info", at: t, title: "Material found", text: "While gathering, your troops found " + D.MAT_BY_KEY[found.key].name + " (level " + found.lv + "). Use it at the forge.", mats: [found] });
     }
     goHome(m, t);
@@ -4269,7 +4305,7 @@ Medieval.Engine = (function (D) {
   }
   /** Un autre joueur nous a chassés d'une case ressource (message reçu du serveur). */
   E.dislodged = function (s, hit, now) {
-    var m = s.world.marches.filter(function (x) { return hit.tileId === "wonder" ? x.kind === "wonder" && x.phase === "garrison" : x.kind === "gather" && x.targetId === hit.tileId && x.phase === "gather"; })[0];
+    var m = s.world.marches.filter(function (x) { return hit.tileId === "wonder" ? x.kind === "wonder" && x.phase === "garrison" : /^arena-/.test(hit.tileId) ? x.kind === "arena" && x.targetId === hit.tileId && x.phase === "hold" : x.kind === "gather" && x.targetId === hit.tileId && x.phase === "gather"; })[0];
     var lost = {}, k;
     if (m) {
       var got = m.kind === "gather" ? gatheredSoFar(s, m, now) : 0;
@@ -4409,7 +4445,8 @@ Medieval.Engine = (function (D) {
         // événements : monstres légendaires (10 min) et arènes (2 h)
         w.tiles = w.tiles.filter(function (x) { return !((x.elite || x.kind === "arena") && x.expiresAt <= t && !x.by && !w.marches.some(function (m2) { return m2.targetId === x.id; })); });
         if (w.tiles.filter(function (x) { return x.elite; }).length < 2 && E.rand(s) < 0.45) E.spawnElite(s, t);
-        if (!w.tiles.some(function (x) { return x.kind === "arena"; }) && E.rand(s) < 0.12) E.spawnArena(s, t);
+        if (w.shared) E.syncArena(s, t);
+        else if (!w.tiles.some(function (x) { return x.kind === "arena"; }) && E.rand(s) < 0.12) E.spawnArena(s, t);
       }
     }
   });
@@ -4495,6 +4532,11 @@ Medieval.Engine = (function (D) {
     next: function (s) {
       var w = s.world; if (!w) return Infinity;
       var t = w.nextTick;
+      if (w.shared) {   // ouverture / fermeture de l'arène commune
+        E.syncArena(s, s.lastTick);
+        var ws = E.arenaWindow(s.lastTick) * ARENA_EVERY, nx = s.lastTick < ws + ARENA_MS ? ws + ARENA_MS : ws + ARENA_EVERY;
+        if (nx < t) t = nx;
+      }
       w.marches.forEach(function (m) {
         if (m.phase === "garrison") { m.next = E.NEVER; return; }
         if (!(typeof m.next === "number" && isFinite(m.next))) m.next = s.lastTick;   // marche abîmée : on la règle tout de suite
@@ -4507,6 +4549,7 @@ Medieval.Engine = (function (D) {
     run: function (s, t, events) {
       var w = s.world; if (!w) return;
       E.clearAroundCities(s);
+      if (w.shared) E.syncArena(s, t);
       var due = w.marches.filter(function (m) { return m.next <= t; }).sort(function (a, b) { return a.next - b.next; });
       due.forEach(function (m) {
         var at = m.next;
@@ -6426,7 +6469,14 @@ Medieval.WorldView = (function (D, E, G) {
     objs.forEach(function (it) {
       var p = tileXY(it.o.x, it.o.y);
       if (it.k === "res") {
+        if (it.o.rich) {   // gisement riche : récolte ×10, très convoité
+          var rg = 0.5 + 0.5 * Math.sin(t * 2.5 + p.x);
+          ctx.save(); var gr3 = ctx.createRadialGradient(p.x, p.y - 6, 4, p.x, p.y - 6, TW * 0.75);
+          gr3.addColorStop(0, "rgba(120,220,255," + (0.45 + rg * 0.3) + ")"); gr3.addColorStop(1, "rgba(80,160,255,0)");
+          ctx.fillStyle = gr3; ctx.beginPath(); ctx.ellipse(p.x, p.y - 4, TW * 0.75, TW * 0.45, 0, 0, 6.3); ctx.fill(); ctx.restore();
+        }
         resIcon(ctx, p.x, p.y, it.o.res, it.o.level);
+        if (it.o.rich) labels.push(function () { plate(ctx, p.x, p.y + 28 * ui, "Rich " + E.resTileName(it.o.res).toLowerCase(), "×10 gathering", "#7fd8ff", ui * 0.82, "#bff0ff"); });
         if (it.o.by || it.o.occ) { ctx.fillStyle = it.o.by ? "#4fa3e0" : "#e0463c"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(p.x + 18, p.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); }
         labels.push(function () { lvlBadge(ctx, p.x - 20, p.y + 12, it.o.level, ui * 0.8, "#2b3a24"); });
       } else if (it.k === "arena") {
@@ -7148,6 +7198,16 @@ Medieval.Online = (function (D, E, S) {
   function tilesRef() { return db().collection("world").doc(WORLD_DOC).collection("tiles"); }
   function wonderRef() { return db().collection("world").doc(WORLD_DOC).collection("meta").doc("wonder"); }
   var wonderDoc = null, unWonder = null, crowning = false;
+  function arenaRef() { return db().collection("world").doc(WORLD_DOC).collection("meta").doc("arena"); }
+  var arenaDoc = null, unArena = null;
+  /** Arène partagée : celui qui la tient est visible de tous et peut être attaqué. */
+  function applyArena(s, v) {
+    var w = s.world, me = S.uid(); if (!w) return;
+    w.tiles.forEach(function (t) {
+      if (t.kind !== "arena") return;
+      t.occ = v && v.id === t.id && v.uid && v.uid !== me ? { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, since: v.since } : null;
+    });
+  }
   function myName(s) { return (s.name || "City") + " (" + ((s.hero && s.hero.name) || "") + ")"; }
   function applyWonder(s, v, now) {
     var w = s.world.wonder, me = S.uid(); if (!w) return;
@@ -7233,7 +7293,7 @@ Medieval.Online = (function (D, E, S) {
       if (!q.empty) return;
       var w = E.sharedWorld(seed, now), batch = db().batch();
       w.tiles.filter(function (t) { return t.kind === "res"; }).forEach(function (t) {
-        batch.set(tilesRef().doc("t" + t.x + "_" + t.y), { res: t.res, level: t.level, amount: t.amount, max: t.max, x: t.x, y: t.y });
+        batch.set(tilesRef().doc("t" + t.x + "_" + t.y), { res: t.res, level: t.level, amount: t.amount, max: t.max, x: t.x, y: t.y, rich: !!t.rich });
       });
       return batch.commit();
     });
@@ -7256,8 +7316,8 @@ Medieval.Online = (function (D, E, S) {
     }
     if (!best) return;
     var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
-    var res = KINDS[i], level = E.resLevelAt(w, best, Math.random()), amount = D.WORLD.resAmount(res, level);
-    tx.set(tilesRef().doc("t" + best.x + "_" + best.y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: best.x, y: best.y });
+    var rich = Math.random() < 0.07, res = KINDS[i], level = E.resLevelAt(w, best, Math.random()), amount = D.WORLD.resAmount(res, level) * (rich ? 3 : 1);
+    tx.set(tilesRef().doc("t" + best.x + "_" + best.y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: best.x, y: best.y, rich: rich });
   }
 
   /** Applique l'état du serveur aux cases ressources locales. */
@@ -7267,13 +7327,14 @@ Medieval.Online = (function (D, E, S) {
     var home = E.homeOf(s);
     docs.forEach(function (d) {
       if (!mine[d.id] && (E.cheb(d.data, home) < 2 || E.OTHERS.some(function (o) { return E.cheb(o, d.data) < 2; }))) return;   // jamais collé à une cité
-      var v = d.data, t = { id: d.id, kind: "res", res: v.res, level: v.level, amount: v.amount, max: v.max, x: v.x, y: v.y, by: mine[d.id] || null, occ: null };
+      var v = d.data, t = { id: d.id, kind: "res", res: v.res, level: v.level, amount: v.amount, max: v.max, x: v.x, y: v.y, by: mine[d.id] || null, occ: null, rich: !!v.rich };
       if (v.uid && v.uid !== me && v.end > now) t.occ = { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, end: v.end, start: v.start, rate: v.rate, amount: v.gather };
       keep.push(t);
     });
     var res = keep.filter(function (t) { return t.kind === "res"; });
     w.tiles = keep.filter(function (t) { return t.kind === "res" || t.by || !res.some(function (r) { return E.cheb(r, t) < 2; }); });
     if (E.applyBotOcc) E.applyBotOcc(s);
+    applyArena(s, arenaDoc);
   }
 
   function send(s) {
@@ -7299,6 +7360,12 @@ Medieval.Online = (function (D, E, S) {
       });
     } else if (ev.op === "wonderOccupy") {
       p = wonderRef().set({ uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, since: ev.since }, { merge: true });
+    } else if (ev.op === "arenaOccupy") {
+      p = arenaRef().set({ id: ev.id, uid: me, name: name, troops: ev.troops, bonus: ev.bonus || {}, since: ev.since });
+    } else if (ev.op === "arenaRelease") {
+      p = db().runTransaction(function (tx) {
+        return tx.get(arenaRef()).then(function (d) { if (d.exists && d.data().uid === me && d.data().id === ev.id) tx.set(arenaRef(), { id: ev.id, uid: null, name: null, troops: null, since: 0 }); });
+      });
     } else if (ev.op === "wonderRelease") {
       p = db().runTransaction(function (tx) {
         return tx.get(wonderRef()).then(function (d) { if (d.exists && d.data().uid === me) tx.set(wonderRef(), { uid: null, name: null, troops: null, since: 0 }, { merge: true }); });
@@ -7320,7 +7387,7 @@ Medieval.Online = (function (D, E, S) {
       });
     } else if (ev.op === "dislodge") {
       var tile = ev.tileId === "wonder" ? null : E.findTile(s, ev.tileId);
-      p = ev.victim ? hitsRef().add({ target: ev.victim, tileId: ev.tileId, tileName: ev.tileId === "wonder" ? "the Wonder" : tile ? E.resTileName(tile.res) + " lv. " + tile.level : "Resource tile",
+      p = ev.victim ? hitsRef().add({ target: ev.victim, tileId: ev.tileId, tileName: ev.tileId === "wonder" ? "the Wonder" : tile && tile.kind === "arena" ? "the Arena" : tile ? E.resTileName(tile.res) + " lv. " + tile.level : "Resource tile",
         by: name, lost: ev.lost || {}, before: ev.before || {}, atk: ev.atk || {}, atkLost: ev.atkLost || {}, rounds: ev.rounds || 1, at: Date.now() }) : Promise.resolve();
     } else p = Promise.resolve();
     p.then(function () { s.netOut.shift(); }, function (e) {
@@ -7348,6 +7415,11 @@ Medieval.Online = (function (D, E, S) {
           allianceList = out; api.refresh();
         }, function () {});
         var cur = api.state().alliance; watchMyAlliance(cur && cur.real ? cur.id : null);
+        if (unArena) unArena();
+        unArena = arenaRef().onSnapshot(function (d) {
+          var st = api.state(); if (!st || !st.world || st.world.shared !== seed) return;
+          arenaDoc = d.exists ? d.data() : null; applyArena(st, arenaDoc); api.refresh();
+        }, function () {});
         if (unWonder) unWonder();
         unWonder = wonderRef().onSnapshot(function (d) {
           var st = api.state(); if (!st || !st.world || st.world.shared !== seed) return;
@@ -8530,7 +8602,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (o.kind === "res") {
       var t = o.tile, mine = t.by ? E.findMarch(state, t.by) : null;
       var owner = mine ? '<b class="ok">You</b>' : t.occ ? '<b class="bad">' + esc(t.occ.name || "Another lord") + '</b>' : '<b class="bad">Unoccupied</b>';
-      var html = head(coordTxt(pos), E.resTileName(t.res) + " · level " + t.level) + '<div class="p-body">' + wcard('<span class="wc-res">' + icon(t.res) + '</span>', [
+      var html = head(coordTxt(pos), (t.rich ? "Rich " : "") + E.resTileName(t.res) + " · level " + t.level) + '<div class="p-body">' + (t.rich ? '<p class="royal">' + icon("crown") + '<b>Rich deposit · gathering ×10</b><span>Three times more resources and a rare material for each full haul. Expect a fight for it!</span></p>' : "") + wcard('<span class="wc-res">' + icon(t.res) + '</span>', [
         ["Available", '<b>' + F.num(t.amount) + '</b> ' + RES_NAME[t.res].toLowerCase()], ["Owner", owner],
         t.occ ? ["Leaves in", '<span data-live-until="' + t.occ.end + '"></span>'] : null, ["Distance", E.worldDistance(t, E.homeOf(state)).toFixed(1) + " tiles"]]);
       if (mine) return html + '<p class="small">Gathered: ' + F.num(E.gatherProgress(state, mine, t0)) + ' / ' + F.num(mine.gatherAmount || 0) + '</p>' + wbtns([wbtn("recall", mine.id, "march", "Recall", ""), markBtn(pos, E.resTileName(t.res))]) + '</div>';
@@ -8540,8 +8612,9 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (o.kind === "arena") {
       var ar = o.tile, mineA = state.world.marches.filter(function (x) { return x.targetId === ar.id; })[0];
       return head(coordTxt(pos), "Arena · level " + ar.level) + '<div class="p-body"><p class="royal">' + icon("crown") + '<b>Arena games · ' + (ar.by ? "you hold it" : "closes in") + ' <span data-live-until="' + ar.expiresAt + '"></span></b><span>Beat the guards, then hold the arena until the games end. Prize: gold, rare materials, speed-ups, sometimes a piece of gear.</span></p>' +
-        wcard('<span class="wc-res">' + icon("castle") + '</span>', [["Guards", '<b>' + F.compact(E.troopPower(ar.troops)) + '</b> power'], ["Soldiers", F.num(E.troopTotal(ar.troops))], ["Rivals", "may try to take it from you"], ["Distance", E.worldDistance(ar, E.homeOf(state)).toFixed(1) + " tiles"]]) +
-        wbtns([mineA ? (mineA.phase !== "back" ? wbtn("recall", mineA.id, "march", "Recall", "") : "") : wbtn("march", "arena:" + ar.id, "sword", "Take the arena", "primary"), markBtn(pos, "Arena")]) + '</div>';
+        wcard('<span class="wc-res">' + icon("castle") + '</span>', [ar.occ ? ["Held by", '<b class="bad">' + esc(ar.occ.name || "Another lord") + '</b>'] : ar.by ? ["Held by", '<b class="ok">You</b>'] : ["Guards", '<b>' + F.compact(E.troopPower(ar.troops)) + '</b> power'],
+          ar.occ ? ["Their army", "≈ " + F.num(Math.round(E.troopTotal(ar.occ.troops) / 50) * 50) + " soldiers"] : ["Soldiers", F.num(E.troopTotal(ar.troops))], ["Rivals", ar.shared ? "every lord of the map can attack it" : "may try to take it from you"], ["Distance", E.worldDistance(ar, E.homeOf(state)).toFixed(1) + " tiles"]]) +
+        wbtns([mineA ? (mineA.phase !== "back" ? wbtn("recall", mineA.id, "march", "Recall", "") : "") : wbtn("march", "arena:" + ar.id, "sword", ar.occ ? "Attack the holder" : "Take the arena", "primary"), markBtn(pos, "Arena")]) + '</div>';
     }
     if (o.kind === "camp") {
       var c = o.tile, mo = E.monsterOf(c.level, t0), img = assetSrc("mon-" + mo.key);
@@ -8632,6 +8705,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   };
 
   function enemyOf(kind, target) {
+    if (kind === "arena" && target.occ) return { troops: target.occ.troops, bonus: target.occ.bonus || {}, known: E.bonus(state, "scouting") >= 5 };
     if (kind === "bandit" || kind === "arena") return { troops: target.troops, bonus: {}, known: true };
     if (kind === "wonder" || kind === "gather") return target.occ ? { troops: target.occ.troops, bonus: target.occ.bonus || {}, known: E.bonus(state, "scouting") >= 5 } : { troops: {}, bonus: {}, known: true };
     if (kind === "attack") return { troops: target.troops, bonus: E.botBonus(target), known: watch() >= 10 || E.bonus(state, "scouting") >= 5, mix: D.WORLD.doctrines[target.doctrine].mix };
@@ -9048,7 +9122,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         return;
       }
       var p = arg.split(":"), tgt = p[0] === "gather" ? E.findTile(state, p[1]) : null;
-      if ((p[0] === "attack" || p[0] === "wonder" || (tgt && tgt.occ)) && shieldAsk("march", arg)) return;
+      var tga = p[0] === "arena" ? E.findTile(state, p[1]) : null;
+      if ((p[0] === "attack" || p[0] === "wonder" || (tgt && tgt.occ) || (tga && tga.occ)) && shieldAsk("march", arg)) return;
       ui.march = { kind: p[0], targetId: p[1], troops: {}, hero: p[0] !== "gather" };
       presetMarch(p[0] === "gather" ? "load" : p[0] === "attack" ? "counter" : "max");
       openPanel("march");
