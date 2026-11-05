@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050945";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050952";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -888,6 +888,9 @@ body.has-nav .nav button span { font-size: 10px; }
 body.has-gold .goldbox b { font-family: var(--f-display) !important; font-weight: 900 !important; color: #2a1204 !important; letter-spacing: .02em; white-space: nowrap;
   text-shadow: 0 1px 0 rgba(255,236,170,.85), 0 0 3px rgba(255,220,120,.6) !important; font-size: 14px !important; font-variant-numeric: lining-nums; }
 @media (max-width: 760px) { body.has-gold .goldbox b { font-size: 10.5px !important; letter-spacing: 0; } }
+body.has-gold .goldbox b { color: #000 !important; text-shadow: none !important; }
+@media (max-width: 760px) { body.has-gold .goldbox b { font-size: 13px !important; } }
+.rc-art .rs-img, .rpop-art .rs-img { width: 90%; height: 90%; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(0,0,0,.5)); }
 
 </style>
 
@@ -1360,8 +1363,8 @@ Medieval.Data = (function () {
     R("trainspeed", "combat", 1, "Training Speed",  10, { stat: "train_speed", per: 2 }, { scouting: 1 }, "Drill sergeants turn recruits into soldiers faster."),
     R("troopatk",   "combat", 2, "Troop Attack",    10, { stat: "all_atk", per: 1 }, { trainspeed: 1 }, "Better weapons and drills: all troops gain attack."),
     R("troophp",    "combat", 2, "Troop Health",    10, { stat: "all_hp", per: 1 }, { trainspeed: 1 }, "Better food and armor: all troops gain health."),
-    tierUnlock("sie", 2, 3, { troopatk: 5, troophp: 5 }), tierUnlock("inf", 2, 3, { troopatk: 5, troophp: 5 }),
-    tierUnlock("arc", 2, 3, { troopatk: 5, troophp: 5 }), tierUnlock("cav", 2, 3, { troopatk: 5, troophp: 5 }),
+    tierUnlock("inf", 2, 3, { troopatk: 5, troophp: 5 }), tierUnlock("arc", 2, 3, { troopatk: 5, troophp: 5 }),
+    tierUnlock("cav", 2, 3, { troopatk: 5, troophp: 5 }), tierUnlock("sie", 2, 3, { troopatk: 5, troophp: 5 }),
     R("infatk",     "combat", 4, "Infantry Attack", 10, { stat: "inf_atk", per: 1.5 }, { inf_t2: 1 }, "Sharper gladii for the infantry."),
     R("arcatk",     "combat", 4, "Ranged Attack",   10, { stat: "arc_atk", per: 1.5 }, { arc_t2: 1 }, "Straighter shafts and heavier bolts."),
     R("cavatk",     "combat", 4, "Cavalry Attack",  10, { stat: "cav_atk", per: 1.5 }, { cav_t2: 1 }, "Lances, spurs and charging drills."),
@@ -1370,18 +1373,18 @@ Medieval.Data = (function () {
     R("cavdef",     "combat", 5, "Cavalry Defense", 10, { stat: "cav_def", per: 1.5 }, { cavatk: 1 }, "Barding for the horses."),
     R("sieatk",     "combat", 6, "Siege Attack",    10, { stat: "sie_atk", per: 1.5 }, { sie_t2: 1, infdef: 1 }, "Heavier stones, stronger torsion springs."),
     R("siedef",     "combat", 6, "Siege Defense",   10, { stat: "sie_def", per: 1.5 }, { sie_t2: 1, cavdef: 1 }, "Wet hides and mantlets shield the engines."),
-    tierUnlock("sie", 3, 7, { sieatk: 5, siedef: 5 }), tierUnlock("inf", 3, 7, { sieatk: 5, siedef: 5 }),
-    tierUnlock("arc", 3, 7, { sieatk: 5, siedef: 5 }), tierUnlock("cav", 3, 7, { sieatk: 5, siedef: 5 }),
+    tierUnlock("inf", 3, 7, { sieatk: 5, siedef: 5 }), tierUnlock("arc", 3, 7, { sieatk: 5, siedef: 5 }),
+    tierUnlock("cav", 3, 7, { sieatk: 5, siedef: 5 }), tierUnlock("sie", 3, 7, { sieatk: 5, siedef: 5 }),
     R("infhp",      "combat", 8, "Infantry Health", 10, { stat: "inf_hp", per: 1.5 }, { inf_t3: 1 }, "Lorica segmentata for the legions."),
     R("archp",      "combat", 8, "Ranged Health",   10, { stat: "arc_hp", per: 1.5 }, { arc_t3: 1 }, "Mail shirts for the archers."),
     R("cavhp",      "combat", 8, "Cavalry Health",  10, { stat: "cav_hp", per: 1.5 }, { cav_t3: 1 }, "Scale armor for riders and horses."),
     R("infspeed",   "combat", 9, "Infantry March Speed", 10, { stat: "inf_speed", per: 2 }, { infhp: 1 }, "Lighter packs: the infantry marches faster."),
     R("arcspeed",   "combat", 9, "Ranged March Speed",   10, { stat: "arc_speed", per: 2 }, { archp: 1 }, "Mounted carts carry the archers' gear."),
     R("cavspeed",   "combat", 9, "Cavalry March Speed",  10, { stat: "cav_speed", per: 2 }, { cavhp: 1 }, "Remounts along the roads."),
-    tierUnlock("sie", 4, 10, { infhp: 5, archp: 5, cavhp: 5, infspeed: 5, arcspeed: 5, cavspeed: 5 }),
     tierUnlock("inf", 4, 10, { infhp: 5, infspeed: 5 }),
     tierUnlock("arc", 4, 10, { archp: 5, arcspeed: 5 }),
     tierUnlock("cav", 4, 10, { cavhp: 5, cavspeed: 5 }),
+    tierUnlock("sie", 4, 10, { infhp: 5, archp: 5, cavhp: 5, infspeed: 5, arcspeed: 5, cavspeed: 5 }),
     // --- défense du mur : pièges
     R("walltraps",  "defense", 0, "Wall Traps",        1, { trap: "caltrops" }, null, "Unlocks Caltrops, built at the City Wall. Traps strike attackers before the battle."),
     R("trapdmg",    "defense", 1, "Trap Damage",       10, { stat: "trap_dmg", per: 3 }, { walltraps: 1 }, "Sharper spikes and heavier stones."),
@@ -7202,7 +7205,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var bar = $("rc-" + k); bar.style.width = Math.min(100, v / cap * 100).toFixed(1) + "%"; bar.className = full ? "full" : "";
       $("res-" + k).title = RES_NAME[k] + " : " + F.num(v) + " / " + F.num(cap) + " · " + (rate >= 0 ? "+" : "") + F.num(rate) + " par heure";
     });
-    $("gold").textContent = "Gold " + F.compact(state.resources.gold);
+    $("gold").textContent = F.compact(state.resources.gold);
     $("power").textContent = F.num(E.power(state));
     $("heroLvl").textContent = state.hero.level;
     var hxp = state.hero.level >= D.HERO.maxLevel ? 1 : state.hero.xp / E.heroXpNeeded(state);
@@ -7474,12 +7477,12 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         var lv = E.researchLevel(state, r.id), av = E.researchAvailable(state, r.id), busy = rj && rj.research === r.id;
         var cls = lv >= r.max ? "done" : busy ? "busy" : av ? "avail" : "locked";
         return '<button class="rcard ' + cls + (r.id === sel ? " sel" : "") + (r.effect.stat ? "" : " unlock") + '" data-act="research-sel" data-arg="' + r.id + '">' +
-          '<span class="rc-art">' + icon(researchIcon(r)) + (cls === "locked" ? '<i class="rc-lock">' + icon("lock") + '</i>' : busy ? '<i class="rc-lock">' + icon("clock") + '</i>' : "") + '</span>' +
+          '<span class="rc-art">' + researchArt(r) + (cls === "locked" ? '<i class="rc-lock">' + icon("lock") + '</i>' : busy ? '<i class="rc-lock">' + icon("clock") + '</i>' : "") + '</span>' +
           '<span class="rc-name">' + esc(r.name) + '</span>' +
           '<span class="rc-lv"><i style="width:' + (lv / r.max * 100) + '%"></i><b>' + lv + '/' + r.max + '</b></span></button>';
       }).join("") + '</div>';
     }).join("") + '</div>';
-    if (sel) html += '<div class="rpop" data-act="research-sel" data-arg="' + sel + '"><div class="rpop-card" data-act="noop"><button class="rpop-x" data-act="research-sel" data-arg="' + sel + '" aria-label="Close">' + icon("close") + '</button><span class="rpop-art ' + (E.researchLevel(state, sel) >= D.RESEARCH_BY_ID[sel].max ? "done" : "") + '">' + icon(researchIcon(D.RESEARCH_BY_ID[sel])) + '</span>' + researchDetail(sel, a, rj) + '</div></div>';
+    if (sel) html += '<div class="rpop" data-act="research-sel" data-arg="' + sel + '"><div class="rpop-card" data-act="noop"><button class="rpop-x" data-act="research-sel" data-arg="' + sel + '" aria-label="Close">' + icon("close") + '</button><span class="rpop-art ' + (E.researchLevel(state, sel) >= D.RESEARCH_BY_ID[sel].max ? "done" : "") + '">' + researchArt(D.RESEARCH_BY_ID[sel]) + '</span>' + researchDetail(sel, a, rj) + '</div></div>';
     return html + '</div>';
   };
   var STAT_ICON = { prod_food: "food", prod_wood: "wood", prod_stone: "stone", prod_ore: "ore", prod_silver: "silver", build_speed: "hammer", storage: "bag", protect: "lock",
@@ -7488,6 +7491,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     hero_speed: "march", hero_atk: "sword", hero_def: "castle", hero_hp: "heal", monster_atk: "alert", monster_loot: "bag", hero_xp: "helm",
     inf_atk: "inf", inf_def: "inf", inf_hp: "inf", cav_atk: "cav", cav_def: "cav", cav_hp: "cav", arc_atk: "arc", arc_def: "arc", arc_hp: "arc", sie_atk: "sie", sie_def: "sie", sie_hp: "sie",
     inf_speed: "inf", cav_speed: "cav", arc_speed: "arc", sie_speed: "sie", trap_dmg: "castle", trap_capacity: "castle", trap_speed: "clock", trap_keep: "castle", enemy_atk: "alert", enemy_def: "alert", enemy_hp: "alert" };
+  /** Image de la recherche si elle existe (rs-<id>), sinon une icône. */
+  function researchArt(r) { var im = UI_SRC["rs-" + r.id]; return im ? '<img class="rs-img" src="' + im + '" alt="">' : icon(researchIcon(r)); }
   function researchIcon(r) {
     var e = r.effect;
     if (e.troop) return TYPE_ICON[e.troop];
