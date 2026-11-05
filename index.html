@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051932";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611052015";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1138,6 +1138,33 @@ body.has-gold .goldbox b { color: #1a0d02 !important; text-shadow: 0 1px 0 rgba(
 body.has-gold .goldbox .gb-label { color: #4a2504 !important; text-shadow: none !important; }
 body.has-gold .goldbox .gb-txt { left: 6% !important; right: 34% !important; }
 @media (max-width: 760px) { body.has-gold .goldbox b { font-size: 15.5px !important; } }
+/* or : chiffre centré, effet gravé dans le métal */
+body.has-gold .goldbox .gb-txt { position: absolute !important; left: 5% !important; right: 33% !important; top: 0 !important; bottom: 0 !important; display: flex !important; align-items: center !important; justify-content: center !important; height: auto !important; transform: none !important; }
+body.has-gold .goldbox b { position: static !important; transform: none !important; top: auto !important; line-height: 1 !important; margin-top: 1px;
+  font-family: var(--f-display) !important; font-weight: 800 !important; letter-spacing: .06em !important; font-size: 14px !important;
+  color: #4a2a06 !important; text-shadow: 0 1px 0 rgba(255,236,170,.85), 0 -1px 0 rgba(60,25,0,.55) !important; }
+@media (min-width: 761px) { body.has-gold .goldbox b { font-size: 18px !important; } }
+
+/* pierres et bijou */
+.gchip { position: relative; display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; vertical-align: middle; background: radial-gradient(circle at 50% 40%, rgba(255,255,255,.25), rgba(0,0,0,.35)), #3a2a1a; border: 1px solid rgba(0,0,0,.4); }
+.gchip img { width: 90%; height: 90%; object-fit: contain; }
+.gchip i { width: 15px; height: 15px; background: var(--gc); transform: rotate(45deg); border-radius: 3px; box-shadow: inset -3px -3px 0 rgba(0,0,0,.25), inset 2px 2px 0 rgba(255,255,255,.55), 0 0 6px var(--gc); }
+.gchip u { position: absolute; left: 1px; bottom: -1px; font: 800 8px var(--f-body); text-decoration: none; color: #fff; text-shadow: 0 0 2px #000, 0 0 2px #000; }
+.gchip em { position: absolute; right: -4px; top: -6px; min-width: 15px; padding: 0 3px; border-radius: 8px; background: #2b1a0a; color: #ffe9a8; font: 800 9.5px/14px var(--f-body); font-style: normal; text-align: center; }
+.gchip.g4 { box-shadow: 0 0 0 1px #c9a54a; } .gchip.g5 { box-shadow: 0 0 0 2px #e2b23a, 0 0 8px #e2b23a; }
+.sockets { display: flex; gap: 6px; margin: 4px 0; }
+.socket { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; padding: 0; border: 2px solid #b08a3a; background: radial-gradient(circle, #2b1d10, #120a04); cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,.6); }
+.item .socket { width: 24px; height: 24px; border-width: 1px; cursor: default; } .item .socket .gchip { width: 20px; height: 20px; } .item .socket .gchip i { width: 9px; height: 9px; } .item .socket .gchip u { display: none; }
+.socket .plus { color: #e8c76a; font: 800 20px/1 var(--f-body); }
+.socket.locked { opacity: .45; border-style: dashed; cursor: default; } .socket.locked .ico { width: 16px; height: 16px; color: #cbb; }
+.socket.on { box-shadow: 0 0 0 3px #ffd36a, 0 0 12px #ffd36a; }
+.socket .gchip { border-radius: 50%; width: 34px; height: 34px; background: transparent; border: 0; }
+.jewelbox { margin-top: 8px; padding: 8px; border-radius: 10px; background: rgba(255,248,230,.6); border: 1px solid rgba(120,90,40,.35); }
+.jewelbox h4 { margin: 4px 0; }
+.gemlist { display: grid; gap: 5px; }
+.gemrow { display: grid; grid-template-columns: 38px 1fr auto; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 9px; background: rgba(255,248,230,.6); border: 1px solid rgba(0,0,0,.12); }
+.gemrow .gchip { width: 36px; height: 36px; }
+.socket .gchip u { left: 50%; bottom: -3px; transform: translateX(-50%); font-size: 9px; }
 
 </style>
 
@@ -1444,50 +1471,50 @@ Medieval.Data = (function () {
 
   var SLOTS = [
     { key: "helmet", name: "Helmet" }, { key: "armor", name: "Chest armor" }, { key: "gloves", name: "Gloves" },
-    { key: "legs", name: "Leg guards" }, { key: "boots", name: "Boots" }, { key: "weapon", name: "Weapon" },
+    { key: "legs", name: "Jewel" }, { key: "boots", name: "Boots" }, { key: "weapon", name: "Weapon" },
     { key: "amulet", name: "Amulet" }
   ];
   var SETS = {
     legion:  { name: "Legion", focus: "inf", desc: "Infantry set",
-      pieces: ["Legionary Helmet", "Legionary Lorica", "Legionary Manicae", "Legionary Greaves", "Legionary Caligae", "Legionary Gladius", "Legion Phalera"],
+      pieces: ["Legionary Helmet", "Legionary Lorica", "Legionary Manicae", "Legionary Signet Ring", "Legionary Caligae", "Legionary Gladius", "Legion Phalera"],
       bonus4: { inf_atk: 10 }, bonus7: { all_atk: 5, all_def: 5 } },
     rider:   { name: "Rider", focus: "cav", desc: "Cavalry set",
-      pieces: ["Rider Helm", "Rider Mail", "Rider Gauntlets", "Rider Cuisses", "Rider Spurs", "Rider Lance", "Centaur Medallion"],
+      pieces: ["Rider Helm", "Rider Mail", "Rider Gauntlets", "Centaur Bracelet", "Rider Spurs", "Rider Lance", "Centaur Medallion"],
       bonus4: { cav_atk: 10 }, bonus7: { all_atk: 5, all_def: 5 } },
     archer:  { name: "Sagittarius", focus: "arc", desc: "Archer set",
-      pieces: ["Sagittarius Hood", "Sagittarius Brigandine", "Sagittarius Bracers", "Sagittarius Leggings", "Sagittarius Boots", "Composite Bow", "Falcon Amulet"],
+      pieces: ["Sagittarius Hood", "Sagittarius Brigandine", "Sagittarius Bracers", "Falconer's Thumb Ring", "Sagittarius Boots", "Composite Bow", "Falcon Amulet"],
       bonus4: { arc_atk: 10 }, bonus7: { all_atk: 5, all_def: 5 } },
     steward: { name: "Steward", focus: null, desc: "Economy set",
-      pieces: ["Steward's Wreath", "Steward's Toga", "Steward's Gloves", "Steward's Breeches", "Steward's Sandals", "Steward's Scepter", "Steward's Seal"],
+      pieces: ["Steward's Wreath", "Steward's Toga", "Steward's Gloves", "Senator's Armlet", "Steward's Sandals", "Steward's Scepter", "Steward's Seal"],
       bonus4: { gather_speed: 15 }, bonus7: { build_speed: 10, train_speed: 10 } },
     hunter:  { name: "Hunter", focus: null, desc: "Monster hunting set",
-      pieces: ["Wolfskin Hood", "Drakehide Vest", "Hunter's Gloves", "Hunter's Chaps", "Tracker Boots", "Dragonbane Spear", "Fang Talisman"],
+      pieces: ["Wolfskin Hood", "Drakehide Vest", "Hunter's Gloves", "Tracker's Silver Cuff", "Tracker Boots", "Dragonbane Spear", "Fang Talisman"],
       roles: { helmet: [["hero_hp", 1]], armor: [["hero_hp", 1], ["monster_atk", 0.5]], gloves: [["monster_atk", 1]], legs: [["hero_speed", 1]],
                boots: [["hero_speed", 1.2]], weapon: [["monster_atk", 1.4], ["hero_atk", 0.6]], amulet: [["monster_loot", 1], ["hero_xp", 0.6]] },
       bonus4: { monster_atk: 10 }, bonus7: { monster_loot: 20, hero_xp: 15 } },
     scholar: { name: "Scholar", focus: null, desc: "Research set",
-      pieces: ["Scholar's Circlet", "Scholar's Robe", "Scribe's Gloves", "Scholar's Tunic", "Scholar's Slippers", "Stylus of Wisdom", "Owl Pendant"],
+      pieces: ["Scholar's Circlet", "Scholar's Robe", "Scribe's Gloves", "Scholar's Seal Ring", "Scholar's Slippers", "Stylus of Wisdom", "Owl Pendant"],
       roles: { helmet: [["research_speed", 1]], armor: [["research_speed", 1]], gloves: [["craft_speed", 1]], legs: [["hero_xp", 1]],
                boots: [["research_speed", 0.8]], weapon: [["research_speed", 1.4]], amulet: [["forge_luck", 1], ["hero_xp", 0.5]] },
       bonus4: { research_speed: 10 }, bonus7: { research_speed: 15, craft_speed: 15 } },
     // panoplies à double tranchant : un gros point fort, un vrai point faible
     berserker: { name: "Berserker", focus: null, desc: "All-out attack, weaker defense",
-      pieces: ["Obsidian Crown", "Magma Plate", "Ember Knuckles", "Lava-Vein Greaves", "Cinder Treads", "Twin Flame Sabres", "Obsidian War Horn"],
+      pieces: ["Obsidian Crown", "Magma Plate", "Ember Knuckles", "Ember Knuckle Ring", "Cinder Treads", "Twin Flame Sabres", "Obsidian War Horn"],
       roles: { helmet: [["all_atk", 0.9], ["all_def", -0.4]], armor: [["all_atk", 0.8], ["all_def", -0.5]], gloves: [["all_atk", 1.2]], legs: [["all_atk", 0.7], ["all_hp", -0.3]],
                boots: [["march_speed", 1], ["all_def", -0.3]], weapon: [["all_atk", 1.6], ["all_def", -0.4]], amulet: [["all_atk", 1], ["hero_atk", 0.6]] },
       bonus4: { all_atk: 8 }, bonus7: { all_atk: 8, enemy_def: -4 } },
     bulwark: { name: "Sentinel", focus: null, desc: "Unbreakable defense, slow march",
-      pieces: ["Marble Sentinel Helm", "Crystal-Core Cuirass", "Stoneguard Gauntlets", "Granite Greaves", "Monolith Sabatons", "Rune Warhammer & Shield", "Orbiting Ward Stones"],
+      pieces: ["Marble Sentinel Helm", "Crystal-Core Cuirass", "Stoneguard Gauntlets", "Aquamarine Armband", "Monolith Sabatons", "Rune Warhammer & Shield", "Orbiting Ward Stones"],
       roles: { helmet: [["all_def", 1], ["all_hp", 0.5]], armor: [["all_hp", 1.2], ["all_def", 0.6], ["march_speed", -0.4]], gloves: [["all_def", 1]], legs: [["all_hp", 1], ["march_speed", -0.3]],
                boots: [["all_def", 0.8], ["march_speed", -0.5]], weapon: [["all_def", 1.4], ["all_hp", 0.6], ["all_atk", -0.3]], amulet: [["all_hp", 1], ["all_def", 0.6]] },
       bonus4: { all_def: 8 }, bonus7: { all_hp: 8, enemy_atk: -4 } },
     harvest: { name: "Harvest", focus: null, desc: "Production and gathering set",
-      pieces: ["Vine-Woven Crown", "Sunwheat Vest", "Gardener's Gloves", "Reaper's Leggings", "Pathfinder Boots", "Golden Scythe", "Horn of Plenty"],
+      pieces: ["Vine-Woven Crown", "Sunwheat Vest", "Gardener's Gloves", "Amber Vine Bracelet", "Pathfinder Boots", "Golden Scythe", "Horn of Plenty"],
       roles: { helmet: [["production", 1]], armor: [["production", 1.2], ["load", 0.5]], gloves: [["gather_speed", 1.2]], legs: [["load", 1]],
                boots: [["gather_speed", 0.8], ["march_speed", 0.8]], weapon: [["gather_speed", 1.4], ["load", 0.6]], amulet: [["production", 1.4], ["gather_speed", 0.6]] },
       bonus4: { production: 10 }, bonus7: { production: 15, gather_speed: 25 } },
     raider: { name: "Corsair", focus: null, desc: "Fast and greedy, fragile",
-      pieces: ["Coral-Crest Galea", "Pearl-Scale Jerkin", "Grapple Gloves", "Sailcloth Breeches", "Finned Sea Boots", "Tide Khopesh", "Loot Compass"],
+      pieces: ["Coral-Crest Galea", "Pearl-Scale Jerkin", "Grapple Gloves", "Coral & Pearl Bangle", "Finned Sea Boots", "Tide Khopesh", "Loot Compass"],
       roles: { helmet: [["march_speed", 0.8], ["all_hp", -0.3]], armor: [["load", 1], ["all_hp", -0.4]], gloves: [["gather_speed", 1], ["load", 0.5]], legs: [["march_speed", 1]],
                boots: [["march_speed", 1.4], ["all_def", -0.3]], weapon: [["all_atk", 0.8], ["load", 0.8]], amulet: [["load", 1.2], ["gather_speed", 0.8]] },
       bonus4: { march_speed: 10 }, bonus7: { load: 20, gather_speed: 15 } }
@@ -1550,8 +1577,23 @@ Medieval.Data = (function () {
   var MAT_BY_KEY = {}; MATERIALS.forEach(function (m) { MAT_BY_KEY[m.key] = m; });
   var RECIPES = {
     helmet: ["iron", "leather", "bronze"], armor: ["iron", "leather", "linen", "bronze"], gloves: ["leather", "linen"],
-    legs: ["iron", "linen", "leather"], boots: ["leather", "oak"], weapon: ["iron", "oak", "bronze", "gem"], amulet: ["gem", "bronze", "linen"]
+    legs: ["gem", "bronze", "iron"], boots: ["leather", "oak"], weapon: ["iron", "oak", "bronze", "gem"], amulet: ["gem", "bronze", "linen"]
   };
+  /* Pierres précieuses : trouvées brutes sur la carte, serties dans le bijou (jusqu'à 3 chatons). Valeurs par niveau I à V. */
+  var GEM_LEVELS = ["Rough", "Cut", "Polished", "Flawless", "Royal"];
+  var GEMS = [
+    { key: "ruby",     name: "Ruby",     color: "#d3263a", stats: { all_atk: [1, 2, 3.5, 5.5, 8] } },
+    { key: "sapphire", name: "Sapphire", color: "#2f5fd0", stats: { all_def: [1, 2, 3.5, 5.5, 8] } },
+    { key: "emerald",  name: "Emerald",  color: "#1f9a52", stats: { all_hp: [1, 2, 3.5, 5.5, 8] } },
+    { key: "diamond",  name: "Diamond",  color: "#d8f2ff", stats: { all_atk: [0.6, 1.2, 2, 3.2, 5], all_def: [0.6, 1.2, 2, 3.2, 5], all_hp: [0.6, 1.2, 2, 3.2, 5] } },
+    { key: "topaz",    name: "Topaz",    color: "#f0a020", stats: { gather_speed: [4, 8, 13, 20, 30] } },
+    { key: "amber",    name: "Amber",    color: "#c96a12", stats: { production: [2, 4, 6.5, 10, 15] } },
+    { key: "amethyst", name: "Amethyst", color: "#8a3fc8", stats: { research_speed: [2, 4, 6.5, 10, 15] } },
+    { key: "garnet",   name: "Garnet",   color: "#7a1a2a", stats: { build_speed: [2, 4, 6.5, 10, 15] } },
+    { key: "onyx",     name: "Onyx",     color: "#2a2a30", stats: { march_speed: [3, 6, 10, 15, 22] } },
+    { key: "pearl",    name: "Pearl",    color: "#efe6da", stats: { hero_xp: [5, 10, 16, 25, 40] } }
+  ];
+  var GEM_BY_KEY = {}; GEMS.forEach(function (g) { GEM_BY_KEY[g.key] = g; });
   var RARITIES = [
     { name: "Common", mult: 1, color: "#9aa0a6" },
     { name: "Rare", mult: 1.5, color: "#3f86d8" },
@@ -1990,7 +2032,7 @@ Medieval.Data = (function () {
     BUILDERS: BUILDERS, MARCHES: MARCHES, marchSize: marchSize, BASE_STORAGE: BASE_STORAGE, BASE_PROTECT: BASE_PROTECT,
     TROOP_TYPES: TROOP_TYPES, TYPE_KEYS: TYPE_KEYS, TROOPS: TROOPS, TROOP_IDS: TROOP_IDS, HEAL: HEAL,
     STATS: STATS, COMBAT_STATS: COMBAT_STATS, SLOTS: SLOTS, SETS: SETS, SLOT_ROLES: SLOT_ROLES, STEWARD_ROLES: STEWARD_ROLES,
-    STAT_BASE: STAT_BASE, OUTFIT: OUTFIT, GEAR_TIERS: GEAR_TIERS, RARITIES: RARITIES, HERO: HERO, SKILLS: SKILLS, PRISON: PRISON, CAPTURE: CAPTURE,
+    STAT_BASE: STAT_BASE, OUTFIT: OUTFIT, GEMS: GEMS, GEM_BY_KEY: GEM_BY_KEY, GEM_LEVELS: GEM_LEVELS, GEAR_TIERS: GEAR_TIERS, RARITIES: RARITIES, HERO: HERO, SKILLS: SKILLS, PRISON: PRISON, CAPTURE: CAPTURE,
     WORLD: WORLD, START: START, SPEEDUP: SPEEDUP, QUESTS: QUESTS, QUEST_INSERTS_V5: [4, 5, 26],
     RESEARCH: RESEARCH, RESEARCH_BY_ID: RESEARCH_BY_ID, RESEARCH_TREES: RESEARCH_TREES, SHOP: SHOP, SHOP_BY_ID: SHOP_BY_ID, KINGDOM: KINGDOM, TITLE_BY_ID: TITLE_BY_ID, VIP: VIP, ALLIANCE: ALLIANCE, TRAPS: TRAPS, TRAP_IDS: TRAP_IDS, TRAP_RULES: TRAP_RULES, START_BAG: START_BAG, STRONGHOLD_GIFT: STRONGHOLD_GIFT,
     RESEARCH_SCALE: RESEARCH_SCALE, STARTER_SETS: STARTER_SETS
@@ -2669,7 +2711,12 @@ Medieval.Engine = (function (D) {
     if (s.world) s.world.tiles = s.world.tiles.filter(function (x) { return !(x.elite && x.expiresAt - s.lastTick > 3600000); });   // anciens légendaires de 4-8 h
     if (s.world && s.world.shared) s.world.tiles = s.world.tiles.filter(function (x) { return x.kind !== "arena" || x.shared; });
     if (!s.arenaSeed && s.world && !s.world.shared && E.spawnArena) { s.arenaSeed = true; E.spawnArena(s, s.lastTick); if (E.spawnElite) E.spawnElite(s, s.lastTick); }
-    (s.items || []).forEach(function (it) { if (it.trait) delete it.trait; });   // les traits aléatoires ont été remplacés par des panoplies
+    (s.items || []).forEach(function (it) { if (it.trait) delete it.trait; });
+    if (s.world && E.ensureYoung) E.ensureYoung(s, 8);
+    if (!s.gemPack && E.addGem) {
+      s.gemPack = true; (D.GEMS || []).forEach(function (G) { E.addGem(s, G.key, 1, 3); E.addGem(s, G.key, 3, 1); });
+      if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "Jewels and gems", text: "Leg guards are now Jewels: rings, bracelets and armlets with up to 3 gem settings (1 for common, 2 for rare, 3 for epic and legendary). Raw gems drop from monsters, rich tiles and the Arena. Here are 3 rough gems and 1 polished gem of each kind to try. Open your hero, tap the jewel slot, then tap a setting." });
+    }   // toujours des monstres à votre niveau autour de la cité   // les traits aléatoires ont été remplacés par des panoplies
         if (!s.testPack9) {
       s.testPack9 = true; s.resources.gold = (s.resources.gold || 0) + 500000;
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "500,000 gold for the test", text: "The treasury sends you 500,000 gold. The shop now has bigger hero XP tomes, a ×10 button, and Use all in your bag." });
@@ -2895,6 +2942,10 @@ Medieval.Engine = (function (D) {
       // les malus grandissent bien moins vite que les bonus (et pas avec la rareté)
       out[stat] = Math.round(D.STAT_BASE[baseKey(stat)] * r[1] * (r[1] < 0 ? malus : mult) * 10) / 10;
     });
+    (item.gems || []).forEach(function (g) {   // pierres serties
+      if (!g) return; var G = D.GEM_BY_KEY[g.key]; if (!G) return;
+      for (var st in G.stats) out[st] = Math.round(((out[st] || 0) + G.stats[st][g.lv - 1]) * 10) / 10;
+    });
     var T = item.trait && D.TRAIT_BY_KEY[item.trait];
     if (T) {
       var tm = D.GEAR_TIERS[item.tier - 1].mult;
@@ -3096,6 +3147,7 @@ Medieval.Engine = (function (D) {
     if (!it) return { ok: false, reasons: ["Item not found."] };
     if (E.isEquipped(s, itemId)) return { ok: false, reasons: ["Unequip this piece first."] };
     var v = E.salvageValue(it);
+    (it.gems || []).forEach(function (g) { if (g) E.addGem(s, g.key, g.lv, 1); });   // les pierres reviennent
     s.items.splice(s.items.indexOf(it), 1);
     E.grant(s, v);
     return { ok: true, value: v };
@@ -3123,6 +3175,43 @@ Medieval.Engine = (function (D) {
   };
   E.craftTime = function (s, tier) { return Math.max(5, Math.round(D.GEAR_TIERS[tier - 1].time / (1 + E.bonus(s, "craft_speed") / 100))); };
   // ------------------------------------------------------------ matériaux
+  // ------------------------------------------------------------ pierres précieuses
+  function gems(s) { if (!s.gems || typeof s.gems !== "object") s.gems = {}; return s.gems; }
+  E.gemCount = function (s, key, lv) { return (s.gems && s.gems[key + lv]) || 0; };
+  E.gemTotal = function (s) { var n = 0, g = s.gems || {}; for (var k in g) n += g[k]; return n; };
+  E.addGem = function (s, key, lv, n) { var g = gems(s); g[key + lv] = (g[key + lv] || 0) + (n || 1); };
+  E.gemName = function (key, lv) { return D.GEM_LEVELS[lv - 1] + " " + D.GEM_BY_KEY[key].name; };
+  E.gemStats = function (key, lv) { var o = {}, G = D.GEM_BY_KEY[key]; for (var k in G.stats) o[k] = G.stats[k][lv - 1]; return o; };
+  /** n pierres au hasard de niveau lv. Renvoie [{key, lv}]. */
+  E.dropGems = function (s, lv, n) {
+    var out = []; lv = Math.max(1, Math.min(5, lv));
+    for (var i = 0; i < n; i++) { var k = D.GEMS[Math.floor(E.rand(s) * D.GEMS.length)].key; E.addGem(s, k, lv, 1); out.push({ key: k, lv: lv }); }
+    return out;
+  };
+  E.GEM_COMBINE = 3;
+  E.combineGems = function (s, key, lv) {
+    if (lv >= 5) return { ok: false, reasons: ["Royal is the finest cut."] };
+    if (E.gemCount(s, key, lv) < E.GEM_COMBINE) return { ok: false, reasons: ["You need " + E.GEM_COMBINE + " of them."] };
+    var g = gems(s); g[key + lv] -= E.GEM_COMBINE; E.addGem(s, key, lv + 1, 1);
+    return { ok: true };
+  };
+  E.socketCount = function (item) { return item && item.slot === "legs" ? Math.min(3, 1 + item.rarity) : 0; };
+  E.socketGem = function (s, itemId, idx, key, lv) {
+    var it = E.findItem(s, itemId);
+    if (!it || it.slot !== "legs") return { ok: false, reasons: ["Only jewels hold gems."] };
+    if (!(idx >= 0 && idx < E.socketCount(it))) return { ok: false, reasons: ["This setting is locked: rarer jewels have more settings."] };
+    if (!D.GEM_BY_KEY[key] || E.gemCount(s, key, lv) < 1) return { ok: false, reasons: ["You don't have this gem."] };
+    it.gems = it.gems || [];
+    var old = it.gems[idx]; if (old) E.addGem(s, old.key, old.lv, 1);
+    gems(s)[key + lv] -= 1; it.gems[idx] = { key: key, lv: lv };
+    return { ok: true };
+  };
+  E.unsocketGem = function (s, itemId, idx) {
+    var it = E.findItem(s, itemId), g = it && it.gems && it.gems[idx];
+    if (!g) return { ok: false, reasons: ["Empty setting."] };
+    E.addGem(s, g.key, g.lv, 1); it.gems[idx] = null;
+    return { ok: true, gem: g };
+  };
   function mats(s) { if (!s.mats || typeof s.mats !== "object") s.mats = {}; return s.mats; }
   E.matCount = function (s, key, lv) { return (s.mats && s.mats[key + lv]) || 0; };
   E.matTotal = function (s) { var n = 0, m = s.mats || {}; for (var k in m) n += m[k]; return n; };
@@ -3972,6 +4061,8 @@ Medieval.Engine = (function (D) {
     var sp = ["sp5m", "sp15m", "sp1h", "bsp15m", "rsp15m"], got = {};
     if (E.rand(s) < (big ? 0.9 : 0.4)) { var id = sp[Math.floor(E.rand(s) * sp.length)], n = big ? 2 : 1; s.bag = s.bag || {}; s.bag[id] = (s.bag[id] || 0) + n; got[id] = n; }
     rep.bagged = got;
+    var ng = big ? 2 + Math.floor(E.rand(s) * 2) : (E.rand(s) < 0.6 ? 1 : 0);
+    rep.gems = (rep.gems || []).concat(ng ? E.dropGems(s, (big ? 3 : 2) + (E.rand(s) < 0.25 ? 1 : 0), ng) : []);
     var r = E.rand(s), sets = Object.keys(D.SETS), slots = D.SLOTS.map(function (x) { return x.key; }), item = null;
     if (r < (big ? 0.03 : 0.01)) item = E.makeItem(s, sets[Math.floor(E.rand(s) * sets.length)], slots[Math.floor(E.rand(s) * slots.length)], 6, 3);
     else if (r < (big ? 0.12 : 0.05)) item = E.makeItem(s, sets[Math.floor(E.rand(s) * sets.length)], slots[Math.floor(E.rand(s) * slots.length)], 3 + Math.floor(E.rand(s) * 2), 1 + Math.floor(E.rand(s) * 2));
@@ -4055,6 +4146,29 @@ Medieval.Engine = (function (D) {
     var tile = { id: E.uid(s, "t"), kind: "camp", elite: true, level: level, troops: troops, x: pos.x, y: pos.y, by: null, expiresAt: (t || s.lastTick) + ELITE_MS };
     s.world.tiles.push(tile);
     return tile;
+  };
+  E.freeNear = function (s, c) {
+    for (var r = 1; r <= 3; r++) for (var dy = -r; dy <= r; dy++) for (var dx = -r; dx <= r; dx++) {
+      var x = c.x + dx, y = c.y + dy; if (free(s, x, y, 0)) return { x: x, y: y };
+    }
+    return null;
+  };
+  /** Jeunes monstres autour de la cité, à la mesure du château : il y en a toujours quelques-uns. */
+  E.youngLevel = function (s) { return Math.max(1, Math.min(10, Math.floor(E.castleLevel(s) / 2.5))); };
+  E.youngCount = function (s) {
+    var top = E.youngLevel(s) + 1, home = HOME(s);
+    return s.world.tiles.filter(function (x) { return x.kind === "camp" && !x.elite && x.level <= top && cheb(x, home) <= 9; }).length;
+  };
+  E.ensureYoung = function (s, want) {
+    if (!s.world) return 0;
+    var n = E.youngCount(s), added = 0;
+    for (var k = 0; n < (want || 8) && k < 12; k++) {
+      var pos = randomFree(s, 2, 9, 1); if (!pos) break;
+      var level = E.youngLevel(s) + (E.rand(s) < 0.4 ? 1 : 0);
+      s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: level, troops: E.campTroops(s, level), x: pos.x, y: pos.y, by: null, young: true });
+      n++; added++;
+    }
+    return added;
   };
   function spawnCamp(s, at) {
     var pos = at || isolatedFree(s);
@@ -4364,7 +4478,8 @@ Medieval.Engine = (function (D) {
     rep.alone = alone;
     E.heroGainXp(s, rep.heroXp, events, t);
     if (res.win) {
-      s.stats.bandits++;
+      s.stats.bandits++; if (E.rand(s) < 0.7) E.ensureYoung(s, 8);
+      if (E.rand(s) < 0.3 + 0.03 * camp.level) rep.gems = E.dropGems(s, 1 + Math.floor((camp.level - 1) / 3) + (E.rand(s) < 0.15 ? 1 : 0), 1);
       var amount = Math.round(1500 * Math.pow(camp.level, 1.5) * (1 + (bo.monster_loot || 0) / 100)), keys = ["wood", "stone", "ore", "food", "silver"];
       var k1 = keys[Math.floor(E.rand(s) * keys.length)], k2 = keys[Math.floor(E.rand(s) * keys.length)];
       rep.loot[k1] = (rep.loot[k1] || 0) + amount; rep.loot[k2] = (rep.loot[k2] || 0) + Math.round(amount / 2);
@@ -4467,6 +4582,10 @@ Medieval.Engine = (function (D) {
     if (tile && (tile.rich || E.rand(s) < 0.5)) {
       var found = E.dropMats(s, tile.rich ? Math.min(6, 3 + Math.floor(E.rand(s) * 3)) : Math.max(1, tile.level - (E.rand(s) < 0.5 ? 1 : 0)), 1)[0];
       E.report(s, { kind: "info", at: t, title: "Material found", text: "While gathering, your troops found " + D.MAT_BY_KEY[found.key].name + " (level " + found.lv + "). Use it at the forge.", mats: [found] });
+    }
+    if (tile && (tile.rich || E.rand(s) < 0.15)) {
+      var gem = E.dropGems(s, tile.rich ? 2 + (E.rand(s) < 0.35 ? 1 : 0) : 1, 1)[0];
+      E.report(s, { kind: "info", at: t, title: "Raw gem found", text: "Buried in the " + (tile.res === "gold" ? "vein" : "ground") + ", your troops found a " + E.gemName(gem.key, gem.lv) + ". Set it in your hero's jewel.", gems: [gem] });
     }
     goHome(m, t);
   }
@@ -4714,9 +4833,9 @@ Medieval.Engine = (function (D) {
     if (L >= W.raidFromCastle && w.incoming.length === 0 && !E.shielded(s, t) && E.rand(s) < W.raidChancePerHour * (w.bots.some(function (b) { return E.botProfile(b) === "raider"; }) ? 1.8 : 1)) launchRaid(s, t);
     var resN = w.tiles.filter(function (x) { return x.kind === "res"; }).length;
     var campN = w.tiles.filter(function (x) { return x.kind === "camp" && !x.elite; }).length, campCap = w.shared ? W.sharedCamps : W.camps;
-    var youngN = w.tiles.filter(function (x) { return x.kind === "camp" && !x.elite && x.level <= Math.max(2, Math.floor(L / 2.5) + 1) && cheb(x, HOME(s)) <= 8; }).length;
     if (!w.shared) for (var i = 0; i < 3 && resN < W.resTiles; i++, resN++) spawnRes(s);
-    for (var j = 0; j < 3 && (campN < campCap || youngN < 4); j++, campN++, youngN++) spawnCamp(s);
+    for (var j = 0; j < 8 && campN < campCap; j++, campN++) spawnCamp(s);
+    E.ensureYoung(s, 8);
     // monstres légendaires : apparaissent quelques heures, butin rare
     w.nextTick += W.tickMs;
   }
@@ -7525,7 +7644,11 @@ Medieval.Online = (function (D, E, S) {
       keep.push(t);
     });
     var res = keep.filter(function (t) { return t.kind === "res"; });
-    w.tiles = keep.filter(function (t) { return t.kind === "res" || t.by || !res.some(function (r) { return E.cheb(r, t) < 2; }); });
+    // un monstre posé sur la même case qu'un gisement est déplacé à côté (avant : supprimé dès qu'il était voisin → la carte se vidait)
+    w.tiles = keep.filter(function (t) {
+      if (t.kind === "res" || t.by || !res.some(function (r) { return r.x === t.x && r.y === t.y; })) return true;
+      var p = E.freeNear ? E.freeNear(s, t) : null; if (p) { t.x = p.x; t.y = p.y; return true; } return false;
+    });
     if (E.applyBotOcc) E.applyBotOcc(s);
     applyArena(s, arenaDoc);
   }
@@ -8294,6 +8417,33 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var qb = UI_SRC["bg-t" + lv];
     return '<span class="mchip l' + lv + '" style="--mc:' + M.color + (qb ? ';background:url(' + qb + ') center/cover !important' : "") + '" title="Level ' + lv + '">' + (img ? '<img src="' + img + '" alt="">' : '<i></i>') + (n !== undefined ? '<em>' + n + '</em>' : "") + '</span>';
   }
+  function gemChip(key, lv, n) {
+    var G = D.GEM_BY_KEY[key], img = UI_SRC["gem-" + key];
+    return '<span class="gchip g' + lv + '" style="--gc:' + G.color + '" title="' + esc(E.gemName(key, lv)) + '">' + (img ? '<img src="' + img + '" alt="">' : '<i></i>') + '<u>' + ROMAN[lv] + '</u>' + (n !== undefined ? '<em>' + n + '</em>' : "") + '</span>';
+  }
+  function gemsLine(list) {
+    if (!list || !list.length) return "";
+    var c = {}; list.forEach(function (m) { var k = m.key + ":" + m.lv; c[k] = (c[k] || 0) + 1; });
+    return '<p class="small mats-got">' + icon("star") + '<b>Gems:</b> ' + Object.keys(c).map(function (k) { var p = k.split(":"); return gemChip(p[0], +p[1]) + ' ' + esc(E.gemName(p[0], +p[1])) + ' ×' + c[k]; }).join(" · ") + '</p>';
+  }
+  function socketsRow(it, act) {
+    var n = E.socketCount(it), out = "";
+    for (var i = 0; i < 3; i++) {
+      var g = it.gems && it.gems[i], locked = i >= n, on = act && ui.gemSocket === i;
+      out += '<button class="socket' + (locked ? " locked" : g ? " full" : "") + (on ? " on" : "") + '"' + (act && !locked ? ' data-act="' + (g ? "gem-out" : "gem-pick") + '" data-arg="' + it.id + ':' + i + '"' : ' tabindex="-1"') + ' title="' + (locked ? "Locked: rarer jewels have more settings" : g ? esc(E.gemName(g.key, g.lv)) + " · tap to remove" : "Empty setting") + '">' +
+        (locked ? icon("lock") : g ? gemChip(g.key, g.lv) : '<span class="plus">+</span>') + '</button>';
+    }
+    return '<div class="sockets">' + out + '</div>';
+  }
+  function gemsInventory(pickFor) {
+    var have = []; D.GEMS.forEach(function (G) { for (var lv = 5; lv >= 1; lv--) { var n = E.gemCount(state, G.key, lv); if (n > 0) have.push({ key: G.key, lv: lv, n: n }); } });
+    if (!have.length) return '<p class="small">No gems yet. Find raw gems on monsters, rich resource tiles, legendary monsters and in the Arena.</p>';
+    return '<div class="gemlist">' + have.map(function (g) {
+      var btn = pickFor ? '<button class="btn tiny teal" data-act="gem-in" data-arg="' + pickFor + ':' + g.key + ':' + g.lv + '">Set</button>' :
+        (g.lv < 5 && g.n >= E.GEM_COMBINE ? '<button class="btn tiny" data-act="gem-combine" data-arg="' + g.key + ':' + g.lv + '">' + E.GEM_COMBINE + ' → ' + ROMAN[g.lv + 1] + '</button>' : "");
+      return '<div class="gemrow">' + gemChip(g.key, g.lv, g.n) + '<div><b>' + esc(E.gemName(g.key, g.lv)) + '</b><div class="small">' + statsLine(E.gemStats(g.key, g.lv)) + '</div></div>' + btn + '</div>';
+    }).join("") + '</div>';
+  }
   function matsLine(list) {
     if (!list || !list.length) return "";
     var c = {}; list.forEach(function (m) { var k = m.key + ":" + m.lv; c[k] = (c[k] || 0) + 1; });
@@ -8424,7 +8574,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background:url(' + tbg + ') center/cover !important"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
   }
   function itemRow(it, actions) {
-    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
+    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div>' + (it.slot === "legs" ? socketsRow(it, false) : "") + '<div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
   }
   function outfitList() {
     var ob = E.outfitBonuses(state), sc = E.setCounts(state), html = "";
@@ -8457,6 +8607,10 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (ui.heroSheet) {
       var sk = ui.heroSheet, cur = E.findItem(state, h.equipped[sk]);
       sheet = '<div class="fsheet hsheet"><h3>' + slotName(sk) + '</h3>' + (cur ? itemRow(cur, '<button class="btn tiny ghost" data-act="unequip" data-arg="' + sk + '">Unequip</button>') : '<p class="small">Empty slot.</p>');
+      if (sk === "legs" && cur) {
+        sheet += '<div class="jewelbox"><h4>Gem settings</h4>' + socketsRow(cur, true) + '<p class="muted small">Common jewels have 1 setting, rare 2, epic and legendary 3. Removing a gem gives it back.</p>' +
+          (ui.gemSocket !== null && ui.gemSocket !== undefined && ui.gemSocket < E.socketCount(cur) && !(cur.gems && cur.gems[ui.gemSocket]) ? '<h4>Choose a gem</h4>' + gemsInventory(cur.id + ":" + ui.gemSocket) : "") + '</div>';
+      }
       var cands = state.items.filter(function (it) { return it.slot === sk && !E.isEquipped(state, it.id); }).sort(function (a, b) { return b.tier - a.tier || b.rarity - a.rarity; });
       sheet += cands.length ? '<div class="items">' + cands.map(function (it) {
         var ok = E.canEquip(state, it);
@@ -8472,7 +8626,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         '<label class="lbl" for="heroName">Hero name</label><div class="row"><input id="heroName" maxlength="20" value="' + esc(h.name) + '" style="flex:1"><button class="btn" data-act="hero-rename">Rename</button></div></div>';
     } else if (view === "bag") {
       var items = state.items.slice().sort(function (a, b) { return b.tier - a.tier || b.rarity - a.rarity || (a.slot < b.slot ? -1 : 1); });
-      sheet = '<div class="fsheet hsheet"><h3>Inventory · ' + items.length + '</h3>' + (items.length ? '<div class="items">' + items.map(function (it) {
+      sheet = '<div class="fsheet hsheet"><h3>Gems · ' + E.gemTotal(state) + '</h3>' + gemsInventory(null) + '<h3>Inventory · ' + items.length + '</h3>' + (items.length ? '<div class="items">' + items.map(function (it) {
         var eq = E.isEquipped(state, it.id), conf = ui.confirm === "salv:" + it.id;
         var act = eq ? '<span class="pill green">Equipped</span>' : conf ? '<button class="btn tiny danger" data-act="salvage-confirm" data-arg="' + it.id + '">Confirm</button>' :
           (E.canEquip(state, it).ok ? '<button class="btn tiny teal" data-act="equip" data-arg="' + it.id + '">Equip</button>' : "") + '<button class="btn tiny ghost" data-act="salvage" data-arg="' + it.id + '">Salvage</button>';
@@ -8578,7 +8732,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
           var act = r.claimable ? '<button class="btn claim wide" data-act="mail-claim" data-arg="' + r.id + '">Claim</button>' : r.gift ? '<p class="claimed">' + icon("check") + 'Collected</p>' : /King|crown|Wonder/i.test(r.title || "") ? '<button class="btn teal wide" data-act="toggle-view">Go to the world map</button>' : "";
           return '</div>' + (act ? '<div class="mv-card">' + act + '</div>' : "") + '<div class="mv-card mv-tools"><button data-act="mail-delete" data-arg="' + r.id + '">' + icon("close") + '<span>Delete</span></button></div></div>';
         };
-        if (r.kind === "info") return html + '<div class="mv-from"><span class="mv-seal">' + icon("crown") + '</span><b>Royal Herald</b></div><p class="mv-text">' + esc(r.text) + '</p>' + matsLine(r.mats) + (r.gift ? giftLines(r) : "") + foot();
+        if (r.kind === "info") return html + '<div class="mv-from"><span class="mv-seal">' + icon("crown") + '</span><b>Royal Herald</b></div><p class="mv-text">' + esc(r.text) + '</p>' + matsLine(r.mats) + gemsLine(r.gems) + (r.gift ? giftLines(r) : "") + foot();
         if (r.kind === "spy") return html + spyHtml(r) + foot();
         var html0 = html; html = "";
         var isDef = r.kind === "defense" || r.kind === "tiledef";
@@ -8589,7 +8743,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         html += (r.alone ? '<p class="small">' + icon("helm") + '<b>' + esc(state.hero.name) + '</b> fought alone · <b>+' + F.num(r.heroXp || 0) + ' hero XP</b></p>' : sideTable(mine, "Your troops")) + (r.kind === "camp" && !r.arena ? monsterLine(r) : sideTable(theirs, r.arena ? "Arena guards" : "Enemies"));
         html += '<dl class="stats"><dt>Wounded (hospital)</dt><dd>' + F.num(E.troopTotal(r.wounded || {})) + '</dd><dt>Dead</dt><dd>' + F.num(E.troopTotal(r.dead || {})) + '</dd><dt>' + (r.kind === "defense" ? "Resources lost" : "Loot") + '</dt><dd>' + resList(r.loot) + '</dd></dl>';
         if (r.item) html += itemRow(r.item, "");
-        html += matsLine(r.mats);
+        html += matsLine(r.mats) + gemsLine(r.gems);
         if (r.bagged && Object.keys(r.bagged).length) html += '<p class="small">' + icon("clock") + '<b>Found:</b> ' + Object.keys(r.bagged).map(function (k) { return r.bagged[k] + " × " + esc(E.itemLabel(k)); }).join(", ") + '</p>';
         if (r.jackpot) html += '<p class="royal">' + icon("crown") + '<b>Jackpot!</b><span>A legendary tier VI piece dropped.</span></p>';
         if (r.traps) html += '<p class="small">' + icon("castle") + '<b>Wall traps:</b> ' + F.num(r.traps.fired) + ' traps killed ' + F.num(E.troopTotal(r.traps.killed)) + ' attackers before the battle' + (E.trapsLine(r.traps.lost) ? '; destroyed: ' + esc(E.trapsLine(r.traps.lost)) : "") + '.</p>';
@@ -9189,13 +9343,17 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     timers: function () { ui.timersOpen = !ui.timersOpen; renderChrome(); },
     claim: function (arg) { result(E.claimQuest(state, +arg)); },
     "hero-tab": function (arg) { ui.heroTab = ui.heroTab === arg && !ui.heroSheet ? "gear" : arg; ui.heroSheet = null; ui.confirm = null; renderPanel(true); },
-    "hero-slot": function (arg) { ui.heroSlot = arg; ui.heroSheet = ui.heroSheet === arg ? null : arg; renderPanel(true); },
+    "hero-slot": function (arg) { ui.gemSocket = null; ui.heroSlot = arg; ui.heroSheet = ui.heroSheet === arg ? null : arg; renderPanel(true); },
     "hero-back": function () { if (ui.heroSheet) ui.heroSheet = null; else ui.heroTab = "gear"; renderPanel(true); },
     "hero-xp": function () { ui.itemsTab = "shop"; ui.itemsCat = "hero"; openPanel("items"); },
     equip: function (arg) { var it = E.findItem(state, arg); if (it) ui.heroSlot = it.slot; var r = E.equip(state, arg); if (r.ok && ui.heroSheet) { ui.heroSheet = null; ui.heroTab = "gear"; } if (result(r) && it) flashGear(it.slot); },
     "reveal-close": function () { closeReveal(); },
     "reveal-equip": function (arg) { var it = E.findItem(state, arg); var r = E.equip(state, arg); closeReveal(); if (result(r) && it) { toast(icon("armor") + "<span>" + esc(E.itemName(it)) + " equipped.</span>"); flashGear(it.slot); } },
     unequip: function (arg) { result(E.unequip(state, arg)); },
+    "gem-pick": function (arg) { var p = arg.split(":"); ui.gemSocket = ui.gemSocket === +p[1] ? null : +p[1]; renderPanel(true); },
+    "gem-in": function (arg) { var p = arg.split(":"); var r = E.socketGem(state, p[0], +p[1], p[2], +p[3]); if (result(r)) { ui.gemSocket = null; toast(icon("star") + "<span>" + esc(E.gemName(p[2], +p[3])) + " set in your jewel.</span>"); } },
+    "gem-out": function (arg) { var p = arg.split(":"); var r = E.unsocketGem(state, p[0], +p[1]); if (result(r)) toast(icon("star") + "<span>" + esc(E.gemName(r.gem.key, r.gem.lv)) + " back in your bag.</span>"); },
+    "gem-combine": function (arg) { var p = arg.split(":"); result(E.combineGems(state, p[0], +p[1]), icon("star") + "<span>" + E.GEM_COMBINE + " × " + esc(E.gemName(p[0], +p[1])) + " → 1 × " + esc(E.gemName(p[0], +p[1] + 1)) + "</span>"); },
     "bonus-tab": function (arg) { ui.bonusTab = arg; renderPanel(true); },
     "wear-set": function (arg) { var r = E.equipSet(state, arg); if (r.ok) { ui.heroSheet = null; ui.heroTab = "gear"; } if (result(r)) { flashGear(); toast(icon("armor") + "<span>" + esc(D.SETS[arg].name) + " set on · " + r.n + " pieces.</span>"); } },
     "preset-save": function (arg) { var r = E.savePreset(state, +arg); if (result(r)) toast(icon("check") + "<span>Outfit saved.</span>"); },
