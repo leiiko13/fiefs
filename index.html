@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051125";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051134";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -975,6 +975,16 @@ body.has-forgebg .forgecard .forge-name, body.has-forgebg .forgecard .muted { te
 .fbody .fspacer { flex: 0 0 22vh; }
 .fslots .fslot { background: radial-gradient(circle at 50% 40%, rgba(255,170,70,.28), rgba(10,5,2,.6)); }
 body.in-forge .bottom, body.in-forge .topbar, body.in-forge .resrow { visibility: hidden; }
+/* forge : bouton retour discret, zone de l'encoche bleue comme le reste, barre du bas compacte */
+.panel.forgefull { top: 0 !important; padding-top: var(--sat, 0px); background: var(--night, #0b1220) !important; }
+@media (min-width: 761px) { .panel.forgefull { top: 16px !important; padding-top: 0; } }
+.panel.forgefull .panel-close { display: none; }
+.fhead { display: flex; align-items: center; gap: 12px; padding-right: 16px !important; }
+.fback { flex: none; padding: 7px 12px; border-radius: 18px; border: 1px solid rgba(231,192,98,.6); background: rgba(20,10,6,.6); color: #f1d9a2; font: 800 13px var(--f-body); cursor: pointer; }
+.fhint { margin: 2px 0 0 !important; font-size: 12px !important; color: #e8d6b0; }
+.fnav { position: sticky; bottom: 0; margin-top: auto; padding: 6px 10px calc(4px + env(safe-area-inset-bottom, 0px) * .35) !important; background: linear-gradient(180deg, transparent, rgba(10,4,2,.75) 45%) !important; }
+.fbtn { padding: 5px 4px; gap: 1px; font-size: 11px; background: rgba(30,14,6,.78); } .fbtn .ico { width: 18px; height: 18px; }
+.fbody { padding-bottom: 4px; }
 
 </style>
 
@@ -1296,7 +1306,17 @@ Medieval.Data = (function () {
       bonus4: { arc_atk: 10 }, bonus7: { all_atk: 5, all_def: 5 } },
     steward: { name: "Steward", focus: null, desc: "Economy set",
       pieces: ["Steward's Wreath", "Steward's Toga", "Steward's Gloves", "Steward's Breeches", "Steward's Sandals", "Steward's Scepter", "Steward's Seal"],
-      bonus4: { gather_speed: 15 }, bonus7: { build_speed: 10, train_speed: 10 } }
+      bonus4: { gather_speed: 15 }, bonus7: { build_speed: 10, train_speed: 10 } },
+    hunter:  { name: "Hunter", focus: null, desc: "Monster hunting set",
+      pieces: ["Wolfskin Hood", "Drakehide Vest", "Hunter's Gloves", "Hunter's Chaps", "Tracker Boots", "Dragonbane Spear", "Fang Talisman"],
+      roles: { helmet: [["hero_hp", 1]], armor: [["hero_hp", 1], ["monster_atk", 0.5]], gloves: [["monster_atk", 1]], legs: [["hero_speed", 1]],
+               boots: [["hero_speed", 1.2]], weapon: [["monster_atk", 1.4], ["hero_atk", 0.6]], amulet: [["monster_loot", 1], ["hero_xp", 0.6]] },
+      bonus4: { monster_atk: 10 }, bonus7: { monster_loot: 20, hero_xp: 15 } },
+    scholar: { name: "Scholar", focus: null, desc: "Research set",
+      pieces: ["Scholar's Circlet", "Scholar's Robe", "Scribe's Gloves", "Scholar's Tunic", "Scholar's Slippers", "Stylus of Wisdom", "Owl Pendant"],
+      roles: { helmet: [["research_speed", 1]], armor: [["research_speed", 1]], gloves: [["craft_speed", 1]], legs: [["hero_xp", 1]],
+               boots: [["research_speed", 0.8]], weapon: [["research_speed", 1.4]], amulet: [["forge_luck", 1], ["hero_xp", 0.5]] },
+      bonus4: { research_speed: 10 }, bonus7: { research_speed: 15, craft_speed: 15 } }
   };
   // Rôle de chaque emplacement : [statistique, poids]. "T" = type de troupe de la panoplie.
   var SLOT_ROLES = {
@@ -1312,7 +1332,7 @@ Medieval.Data = (function () {
     helmet: [["build_speed", 1]], armor: [["train_speed", 1]], gloves: [["gather_speed", 1]],
     legs: [["load", 1]], boots: [["march_speed", 1]], weapon: [["march_size", 1]], amulet: [["production", 1]]
   };
-  var STAT_BASE = { atk: 3, def: 3, hp: 3, march_speed: 5, gather_speed: 6, build_speed: 3, train_speed: 4, load: 6, march_size: 4, production: 3 };
+  var STAT_BASE = { monster_atk: 4, monster_loot: 6, hero_xp: 6, hero_atk: 2, hero_hp: 2, hero_speed: 4, research_speed: 4, craft_speed: 5, forge_luck: 1, atk: 3, def: 3, hp: 3, march_speed: 5, gather_speed: 6, build_speed: 3, train_speed: 4, load: 6, march_size: 4, production: 3 };
   var GEAR_TIERS = [
     { name: "I",   forge: 1,  hero: 1,  mult: 1,   cost: { wood: 2000, ore: 2000, silver: 1000 }, time: 60 },
     { name: "II",  forge: 6,  hero: 10, mult: 1.8, cost: { wood: 12000, ore: 12000, silver: 6000, gold: 20 }, time: 600 },
@@ -1511,6 +1531,8 @@ Medieval.Data = (function () {
     R("horsetack",  "tech", 1, "Horse Tack",       1, { set: "rider" }, { bellows: 1 }, "The forge can craft the Rider set (cavalry)."),
     R("bows",       "tech", 1, "Composite Bows",   1, { set: "archer" }, { bellows: 1 }, "The forge can craft the Sagittarius set (ranged)."),
     R("insignia",   "tech", 1, "Civic Insignia",   1, { set: "steward" }, { scribes: 2 }, "The forge can craft the Steward set (economy)."),
+    R("huntgear",   "tech", 1, "Hunter's Craft",   1, { set: "hunter" }, { bellows: 1 }, "The forge can craft the Hunter set (monster hunting)."),
+    R("scholargear","tech", 1, "Scholar's Craft",  1, { set: "scholar" }, { scribes: 2 }, "The forge can craft the Scholar set (research)."),
     R("bronze",     "tech", 2, "Bronze Casting",   1, { gearTier: 2 }, { bellows: 2 }, "New material: the forge can craft tier II gear."),
     R("assaying",   "tech", 3, "Assaying",         5, { stat: "craft_cost", per: 4 }, { bronze: 1 }, "Test the ore before smelting: gear costs less."),
     R("smiths",     "tech", 3, "Master Smiths",    5, { stat: "forge_luck", per: 1 }, { bronze: 1 }, "Better odds of rare, epic and legendary pieces."),
@@ -2629,7 +2651,7 @@ Medieval.Engine = (function (D) {
   }
   /** Statistiques d'une pièce (en %). */
   E.itemStats = function (item) {
-    var set = D.SETS[item.set], roles = set.focus ? D.SLOT_ROLES[item.slot] : D.STEWARD_ROLES[item.slot], out = {};
+    var set = D.SETS[item.set], roles = set.roles ? set.roles[item.slot] : set.focus ? D.SLOT_ROLES[item.slot] : D.STEWARD_ROLES[item.slot], out = {};
     var mult = D.GEAR_TIERS[item.tier - 1].mult * D.RARITIES[item.rarity].mult;
     roles.forEach(function (r) {
       var stat = r[0].replace(/^T_/, set.focus + "_");
@@ -7783,7 +7805,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   PANELS.forge = function (fid) {
     var f = state.buildings[fid] || E.forgeOf(state); if (!f) return null;
     var view = ui.forgeView || "anvil", picks = forgePicks(), cj = E.jobFor(state, f.id, ["craft"]);
-    var html = '<header class="p-head fhead"><div class="p-title"><span class="eyebrow">Forge level ' + f.level + ' · ' + E.matTotal(state) + ' materials</span><h2>The Forge</h2></div></header><div class="fbody">';
+    var back = view === "anvil" ? '<button class="fback" data-act="close">‹ City</button>' : '<button class="fback" data-act="forge-view" data-arg="anvil">‹ Back</button>';
+    var html = '<header class="p-head fhead">' + back + '<div class="p-title"><span class="eyebrow">Forge level ' + f.level + ' · ' + E.matTotal(state) + ' materials</span><h2>The Forge</h2></div></header><div class="fbody">';
     var nav = '<div class="fnav"><button class="fbtn' + (view === "mats" ? " on" : "") + '" data-act="forge-view" data-arg="mats">' + icon("bag") + 'Materials</button>' +
       '<button class="fbtn' + (view === "anvil" || view === "pick" ? " on" : "") + '" data-act="forge-view" data-arg="anvil">' + icon("anvil") + 'Anvil</button>' +
       '<button class="fbtn' + (view === "recipes" ? " on" : "") + '" data-act="forge-view" data-arg="recipes">' + icon("scroll") + 'Recipes</button></div>';
@@ -7820,13 +7843,14 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     }
     var c = E.checkForge(state, ui.forgeSet, picks), filled = picks.filter(Boolean);
     html += setTabs() + '<div class="fspacer"></div><div class="fslots">' + picks.map(function (p, i) {
-      return '<button class="fslot' + (p ? " full" : "") + '" data-act="forge-slot-pick" data-arg="' + i + '">' + (p ? '<span class="fmat">' + matChip(p.key, p.lv) + '</span><small>' + esc(D.MAT_BY_KEY[p.key].name) + '</small>' : '<span class="fplus">+</span>') + '</button>';
+      return '<button class="fslot' + (p ? " full" : "") + '" data-act="' + (p ? "forge-clear" : "forge-slot-pick") + '" data-arg="' + i + '">' + (p ? '<span class="fmat">' + matChip(p.key, p.lv) + '</span><small>' + esc(D.MAT_BY_KEY[p.key].name) + '</small>' : '<span class="fplus">+</span>') + '</button>';
     }).join("") + '</div>';
     html += '<div class="fresult">';
     if (filled.length >= 2) {
       html += '<p>' + (c.recipe.exact ? 'You will forge: <b>' + esc(pieceName(ui.forgeSet, c.recipe.slot)) + '</b>' : '<b>Unknown mix</b> · the forge will decide what comes out') + '</p>';
       html += '<div class="odds">' + c.odds.map(function (pp, i) { return pp > 0.0005 ? '<span class="od' + (i + 1 > c.cap ? " capped" : "") + '"><b>Tier ' + ROMAN[i + 1] + '</b>' + (pp >= 0.995 ? "sure" : (pp * 100 < 1 ? "<1" : Math.round(pp * 100)) + "%") + '</span>' : ""; }).join("") + '<span class="od">' + icon("clock") + F.duration(c.time) + '</span></div>';
     } else html += '<p>Tap the slots to place 2 to 4 materials on the anvil.</p>';
+    if (filled.length) html += '<p class="fhint">Tap a material to take it off the anvil.</p>';
     html += '</div><button class="btn primary wide fgo" data-act="forge-go"' + (c.ok ? "" : " disabled") + '>' + icon("anvil") + 'Forge it</button>' +
       (filled.length >= 2 && !c.ok ? '<p class="freasons">' + c.reasons.map(esc).join(" ") + '</p>' : "");
     return html + '</div>' + nav;
@@ -8696,6 +8720,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "forge-tier": function (arg) { ui.forgeTier = +arg; renderPanel(true); },
     "forge-slot": function (arg) { ui.forgeSlot = arg; renderPanel(true); },
     "forge-enter": function (arg) { ui.forgeView = "anvil"; openPanel("forge", arg); },
+    "forge-clear": function (arg) { forgePicks()[+arg] = null; renderPanel(true); },
     "forge-view": function (arg) { ui.forgeView = arg; renderPanel(true); },
     "forge-slot-pick": function (arg) { ui.forgePick = +arg; ui.forgeView = "pick"; renderPanel(true); },
     "forge-put": function (arg) { var p = forgePicks(); if (arg) { var q = arg.split(":"); p[ui.forgePick || 0] = { key: q[0], lv: +q[1] }; } else p[ui.forgePick || 0] = null; ui.forgeView = "anvil"; renderPanel(true); },
