@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611042329";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050739";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -731,6 +731,37 @@ body.has-quest .questbar.done .q-tag { background: var(--img-qplate) center / 10
 .icard .ic-art .itimg { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
 .rpop-card .rdetail { background: none; border: 0; box-shadow: none; padding: 0; color: #2a1a0c; }
 .icard .ic-art:has(.itimg) { background: radial-gradient(circle at 50% 55%, rgba(255,240,200,.9), rgba(255,240,200,0) 70%); border-color: transparent; }
+.viewtoggle, .nav button { touch-action: manipulation; }
+.heropow { display: grid; grid-template-columns: 26px auto 1fr; align-items: center; gap: 2px 8px; padding: 8px 12px; border-radius: 8px; background: linear-gradient(180deg, #efe4cb, #dccba5); color: #2a1a0c; border: 1px solid rgba(0,0,0,.45); }
+.heropow .ico { grid-row: span 2; width: 24px; height: 24px; color: #7a4e0c; } .heropow span { font-weight: 800; } .heropow b { justify-self: end; font: 800 20px var(--f-display); color: #7a1a12; }
+.heropow small { grid-column: 2 / -1; color: #6b5638; }
+/* ---- barre du haut : textes resserrés au centre des cadres (ni sur le contour, ni trop bas) ---- */
+body.has-power .powerplate { display: flex !important; flex-direction: column; justify-content: center; align-items: center; gap: 0; padding-top: 3px; padding-bottom: 0; }
+body.has-power .powerplate .pp-label { margin: 0 !important; line-height: 1; transform: translateY(2px); }
+body.has-power .powerplate b { line-height: 1; margin-top: 1px; }
+body.has-gold .goldbox .gb-txt { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; gap: 1px; height: 100%; }
+body.has-gold .goldbox .gb-label { line-height: 1; transform: translateY(2px); }
+body.has-gold .goldbox b { line-height: 1; transform: translateY(-1px); }
+body.has-vip .vipbox { display: flex !important; flex-direction: column; justify-content: center; align-items: center; gap: 0; line-height: 1; }
+body.has-vip .vipbox .vip-l { line-height: 1; transform: translateY(2px); }
+body.has-vip .vipbox b { line-height: 1; }
+body.has-power .powerplate { gap: 3px; } body.has-power .powerplate .pp-label { transform: none; }
+body.has-gold .goldbox .gb-txt { gap: 3px; } body.has-gold .goldbox .gb-label, body.has-gold .goldbox b { transform: none; }
+body.has-vip .vipbox { gap: 2px; padding-top: 12%; } body.has-vip .vipbox .vip-l { transform: none; }
+body.has-power .powerplate { padding-top: 0 !important; padding-bottom: 0 !important; gap: 1px; }
+body.has-power .powerplate .pp-label { transform: translateY(1px); }
+body.has-vip .vipbox { padding: 0 !important; gap: 1px; }
+body.has-vip .vipbox > * { transform: translateY(55%); }
+/* positions finales, en % de la hauteur de chaque cadre (identiques sur téléphone et ordinateur) */
+body.has-vip .vipbox, body.has-gold .goldbox { position: relative; }
+body.has-vip .vipbox .vip-l, body.has-vip .vipbox b, body.has-power .powerplate .pp-label, body.has-power .powerplate b, body.has-gold .goldbox .gb-label, body.has-gold .goldbox b {
+  position: absolute; left: 0; right: 0; text-align: center; transform: none !important; margin: 0 !important; line-height: 1; }
+body.has-vip .vipbox .vip-l { top: 42%; } body.has-vip .vipbox b { top: 62%; }
+body.has-power .powerplate .pp-label { top: 30%; } body.has-power .powerplate b { top: 50%; }
+body.has-gold .goldbox .gb-txt { position: absolute; left: 8%; right: 36%; top: 0; bottom: 0; height: auto; }
+body.has-gold .goldbox .gb-label { top: 26%; } body.has-gold .goldbox b { top: 46%; }
+body.has-vip .vipbox .vip-l { top: 40%; } body.has-vip .vipbox b { top: 64%; }
+body.has-gold .goldbox .gb-label { top: 23%; } body.has-gold .goldbox b { top: 48%; }
 
 </style>
 
@@ -813,7 +844,7 @@ body.has-quest .questbar.done .q-tag { background: var(--img-qplate) center / 10
     <button class="questbar" id="questBar" data-act="panel" data-arg="quests"></button>
     <button class="ticker" id="ticker" data-act="panel" data-arg="reports"></button>
     <nav class="nav" aria-label="Menus">
-      <button class="viewtoggle" data-act="toggle-view" id="viewToggle" aria-label="World map"><svg class="ico"><use href="#i-globe"></use></svg></button>
+      <button class="viewtoggle" data-act="nav-toggle" id="viewToggle" aria-label="World map"><svg class="ico"><use href="#i-globe"></use></svg></button>
       <button data-act="panel" data-arg="quests"><svg class="ico"><use href="#i-scroll"></use></svg><i class="navimg ni-quests"></i><span>Quests</span><i class="badge" id="bQuests" hidden></i></button>
       <button data-act="panel" data-arg="items"><svg class="ico"><use href="#i-bag"></use></svg><i class="navimg ni-items"></i><span>Items</span></button>
       <button data-act="panel" data-arg="alliance"><svg class="ico"><use href="#i-crown"></use></svg><i class="navimg ni-alliance"></i><span>Alliance</span></button>
@@ -1076,7 +1107,7 @@ Medieval.Data = (function () {
     { name: "Legendary", mult: 3.2, color: "#e2a33a" }
   ];
   var HERO = {
-    maxLevel: 60, startName: "Aurelia",
+    maxLevel: 50, startName: "Aurelia",
     xpFor: function (L) { return Math.round(120 * Math.pow(L, 2.15)); } // XP pour passer du niveau L à L+1
   };
   var SKILLS = [
@@ -1096,7 +1127,7 @@ Medieval.Data = (function () {
   var WORLD = {
     size: 30, home: { x: 15, y: 15 }, kingdom: 7,
     botCount: 12, resTiles: 42, camps: 18,
-    sharedSize: 44, sharedBots: 14, sharedRes: 80, sharedCamps: 30,   // carte commune
+    sharedSize: 60, layout: 2, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 50,   // carte commune
     forestSlow: 0.8,             // +80 % de temps de marche à travers la forêt
     wonderHoldMs: 3600000,       // garder la Merveille 1 h pour devenir roi
     secondsPerTile: 8, tickMs: 3600000,
@@ -2016,12 +2047,19 @@ Medieval.Engine = (function (D) {
     for (var id in troops) p += (troops[id] || 0) * D.TROOPS[id].power;
     return Math.round(p);
   };
+  /** Puissance du héros : son niveau (forte courbe, jusqu'au niveau 50) et son équipement. */
+  E.heroPower = function (s) {
+    var h = s.hero; if (!h) return 0;
+    var p = Math.round(80 * Math.pow(h.level, 1.75));
+    if (E.equippedItems) E.equippedItems(s).forEach(function (it) { p += Math.round(250 * (it.tier || 1) * (1 + (it.rarity || 0) * 0.6)); });
+    return p;
+  };
   E.power = function (s) {
     var p = 0;
     E.listBuildings(s).forEach(function (b) { p += Math.round(D.BUILDINGS[b.type].power * 2.5 * Math.pow(b.level, 1.6)); });
     p += E.troopPower(s.army);
     if (s.world) s.world.marches.forEach(function (m) { p += E.troopPower(m.troops); });
-    if (s.hero) p += s.hero.level * 150;
+    if (s.hero) p += E.heroPower(s);
     if (E.researchPower) p += E.researchPower(s);
     return p;
   };
@@ -2122,6 +2160,7 @@ Medieval.Engine = (function (D) {
     if (o.version < 6) s.bag = JSON.parse(JSON.stringify(D.START_BAG));
     if (!s.bag || typeof s.bag !== "object") s.bag = {};
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
+    if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
     if (!s.testPack3) {
       s.testPack3 = true; s.resources.gold = (s.resources.gold || 0) + 5000;
@@ -3080,11 +3119,23 @@ Medieval.Engine = (function (D) {
     for (var j = 0; j < w.tiles.length; j++) if (w.tiles[j].x === x && w.tiles[j].y === y) return { kind: w.tiles[j].kind, tile: w.tiles[j], x: x, y: y };
     return null;
   };
+  /** Distance « roi des échecs » : 1 = case voisine (diagonales comprises). */
+  function cheb(a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)); }
+  E.cheb = cheb;
+  /** Une case vide au moins entre deux éléments (gisements, monstres, cités). */
+  E.spacedOut = function (s, x, y) {
+    var w = s.world, p = { x: x, y: y }, near = function (o) { return cheb(o, p) < 2; };
+    if (cheb(HOME(s), p) < 2) return false;
+    if (w.tiles.some(near) || w.bots.some(near) || (w.shared && E.OTHERS.some(near))) return false;
+    if (w.wonder && cheb(w.wonder, p) < 2) return false;
+    return true;
+  };
   function free(s, x, y, spacing) {
     var w = s.world, t = E.terrainAt(w, x, y);
     if (t !== "g" && t !== "f") return false;
     if (dist({ x: x, y: y }, HOME(s)) < 2.5) return false;
     if (E.objectAt(s, x, y)) return false;
+    if (!E.spacedOut(s, x, y)) return false;
     if (spacing) for (var i = 0; i < w.bots.length; i++) if (dist(w.bots[i], { x: x, y: y }) < spacing) return false;
     return true;
   }
@@ -3159,7 +3210,7 @@ Medieval.Engine = (function (D) {
       var e = elev(x, y), m = moist(x, y), dh = dist({ x: x, y: y }, W.home), edge = Math.min(x, y, size - 1 - x, size - 1 - y);
       var c = "g";
       if (dh > 3) {
-        if (e < 0.2) c = "w"; else if (e > 0.78 || edge === 0 && e > 0.6) c = "m"; else if (m > 0.6) c = "f";
+        if (m > 0.7) c = "f";      // plus de montagnes ni d'eau
       }
       terrain += c;
     }
@@ -3184,12 +3235,10 @@ Medieval.Engine = (function (D) {
       var e = elev(x, y), m = moist(x, y), dx = Math.abs(x - C), dy = Math.abs(y - C), edge = Math.min(x, y, size - 1 - x, size - 1 - y);
       var c = "g";
       if (dx <= 6 && dy <= 6) c = dx <= 2 && dy <= 2 ? "g" : "f";             // forêt sacrée, clairière de la Merveille
-      else if (e < 0.11) c = "w";
-      else if (e > 0.9 || edge === 0 && e > 0.75) c = "m";
       terrain += c;                                                      // plus d'autres forêts : seule la forêt sacrée
     }
     s.world = { size: size, kingdom: W.kingdom, terrain: terrain, tiles: [], bots: [], marches: [], incoming: [], nextTick: now + W.tickMs,
-      center: center, spawnMax: C - 1, wonder: { x: C, y: C, occ: null, king: null, openAt: 0 } };
+      center: center, layout: W.layout, spawnMax: C - 1, wonder: { x: C, y: C, occ: null, king: null, openAt: 0 } };
     for (var i = 0; i < W.sharedBots; i++) {
       var pos = randomFree(s, 9, C - 2, 4) || randomFree(s, 8, C, 2);
       if (!pos) continue;
@@ -3208,6 +3257,7 @@ Medieval.Engine = (function (D) {
       var d = dist({ x: x, y: y }, c); if (d > maxD || d < minD) continue;
       if (taken.some(function (p) { return dist(p, { x: x, y: y }) < 3.5; })) continue;
       if (world.bots.some(function (b) { return dist(b, { x: x, y: y }) < 2.5; })) continue;
+      if (world.tiles.some(function (t) { return cheb(t, { x: x, y: y }) < 2; })) continue;
       var score = (((x * 73856093) ^ (y * 19349663) ^ (salt | 0)) >>> 0) % 1000 / 60 + Math.abs(d - 13);
       if (score < bestScore) { bestScore = score; best = { x: x, y: y }; }
     }
@@ -3219,7 +3269,7 @@ Medieval.Engine = (function (D) {
     if (old) old.marches.forEach(function (m) { for (var id in m.troops) s.army[id] = (s.army[id] || 0) + m.troops[id]; if (m.hero && s.hero.status === "march") s.hero.status = "home"; });
     var w = E.sharedWorld(seed, now);
     w.home = { x: home.x, y: home.y }; w.shared = seed;
-    w.tiles = w.tiles.filter(function (t) { return dist(t, home) >= 1.5; });
+    w.tiles = w.tiles.filter(function (t) { return cheb(t, home) >= 2; });
     // les identifiants des cases doivent venir de votre partie
     w.tiles.forEach(function (t) { t.id = E.uid(s, "t"); });
     w.nextTick = now + W.tickMs;
@@ -5199,9 +5249,16 @@ Medieval.WorldView = (function (D, E, G) {
   function tileXY(x, y) { return { x: (x - y) * HW, y: (x + y) * HH }; }
   function diamond(cx, cy, k) { return [[cx, cy - HH * k], [cx + HW * k, cy], [cx, cy + HH * k], [cx - HW * k, cy]]; }
   function size() { return state && state.world ? state.world.size : 30; }
+  var FOG = 14;   // cases de « monde caché » dessinées autour de la carte
   function bounds() {
-    var n = size();
-    return { x: -n * HW - HW, y: -HH - 60, w: 2 * n * HW + 2 * HW, h: 2 * n * HH + 2 * HH + 60 };
+    var n = size() + FOG, o = -FOG;
+    var top = tileXY(o, o), left = tileXY(o, n), right = tileXY(n, o), bot = tileXY(n, n);
+    return { x: left.x - HW, y: top.y - HH - 60, w: right.x - left.x + 2 * HW, h: bot.y - top.y + 2 * HH + 60 };
+  }
+  /** Zone où la caméra peut se promener : la carte et une petite marge de brume. */
+  function camBounds() {
+    var n = size(), m = 2.5, top = tileXY(-m, -m), left = tileXY(-m, n + m), right = tileXY(n + m, -m), bot = tileXY(n + m, n + m);
+    return { x: left.x, y: top.y, w: right.x - left.x, h: bot.y - top.y };
   }
 
   // ------------------------------------------------------------ terrain
@@ -5223,12 +5280,13 @@ Medieval.WorldView = (function (D, E, G) {
       if (flip) { g.save(); g.translate(px, py); g.scale(-1, 1); g.drawImage(a.img, -a.center[0] * sc, -a.center[1] * sc, a.w * sc, a.h * sc); g.restore(); }
       else g.drawImage(a.img, px - a.center[0] * sc, py - a.center[1] * sc, a.w * sc, a.h * sc);
     };
-    var mount = G.asset("wm-mountain", 1), forest = G.asset("wm-forest", 1), deco = [];
-    for (var s2 = 0; s2 < 2 * n; s2++) for (x = 0; x < n; x++) {
-      y = s2 - x; if (y < 0 || y >= n) continue;
+    var mount = null, forest = G.asset("wm-forest", 1), deco = [], fogT = [];
+    for (var s2 = -2 * FOG; s2 < 2 * (n + FOG); s2++) for (x = -FOG; x < n + FOG; x++) {
+      y = s2 - x; if (y < -FOG || y >= n + FOG) continue;
       var p = tileXY(x, y); if (!inView(p.x, p.y, 120)) continue;
       var t = E.terrainAt(w, x, y), h = G.hash(x + 500, y + 500);
-      tile(t === "w" ? water : grass, p.x, p.y, h % 2);
+      if (t === "x") { tile(grass, p.x, p.y, h % 2); fogT.push(p); continue; }
+      tile(grass, p.x, p.y, h % 2);
       if (occ[x + "," + y]) continue;
       if (t === "f" && forest) deco.push({ a: forest, x: p.x, y: p.y, f: (h >> 3) % 2, w: 1.02 });
       else if (t === "m" && mount) {
@@ -5242,10 +5300,23 @@ Medieval.WorldView = (function (D, E, G) {
       if (d.f) { g.save(); g.translate(d.x, 0); g.scale(-1, 1); G.drawAsset(g, d.a, 0, d.y, TW * d.w); g.restore(); }
       else G.drawAsset(g, d.a, d.x, d.y, TW * d.w);
     });
-    var c0 = tileXY(-0.5, -0.5), c1 = tileXY(n - 0.5, -0.5), c2 = tileXY(n - 0.5, n - 0.5), c3 = tileXY(-0.5, n - 0.5);
-    g.setLineDash([10, 8]);
-    poly(g, [[c0.x, c0.y], [c1.x, c1.y], [c2.x, c2.y], [c3.x, c3.y]], null, "rgba(255,230,170,.55)", 3);
-    g.setLineDash([]);
+    // monde caché : la plaine continue, voilée de bleu
+    fogT.forEach(function (p) { poly(g, diamond(p.x, p.y, 1.04), "rgba(70,140,215,.5)", null); });
+    var cA = tileXY(-0.5, -0.5), cB = tileXY(n - 0.5, -0.5), cC = tileXY(n - 0.5, n - 0.5), cD = tileXY(-0.5, n - 0.5);
+    g.save(); g.beginPath(); g.rect(view.x - 200, view.y - 200, view.w + 400, view.h + 400);
+    g.moveTo(cA.x, cA.y); g.lineTo(cD.x, cD.y); g.lineTo(cC.x, cC.y); g.lineTo(cB.x, cB.y); g.closePath(); g.clip("evenodd");
+    for (var k = 0; k < 3; k++) { g.fillStyle = "rgba(150,200,255,.12)"; g.fillRect(view.x - 200, view.y - 200, view.w + 400, view.h + 400); }
+    g.restore();
+  }
+  /** Liseré scintillant au bord du royaume (animé, dessiné à chaque image). */
+  function borderFx(g, t) {
+    var n = size(), c = [tileXY(-0.5, -0.5), tileXY(n - 0.5, -0.5), tileXY(n - 0.5, n - 0.5), tileXY(-0.5, n - 0.5)];
+    g.save(); g.lineJoin = "round";
+    g.beginPath(); c.forEach(function (p, i) { if (i) g.lineTo(p.x, p.y); else g.moveTo(p.x, p.y); }); g.closePath();
+    g.shadowColor = "#7fd8ff"; g.shadowBlur = 14; g.strokeStyle = "rgba(120,210,255,.55)"; g.lineWidth = 7; g.stroke();
+    g.shadowBlur = 0; g.strokeStyle = "rgba(225,248,255,.95)"; g.lineWidth = 2; g.stroke();
+    g.setLineDash([3, 26]); g.lineDashOffset = -t * 40; g.strokeStyle = "rgba(255,255,255,.95)"; g.lineWidth = 4; g.lineCap = "round"; g.stroke();
+    g.restore();
   }
   function drawTerrain(g, view) {
     var grassImg = G.asset("wm-grass", 1), waterImg = G.asset("wm-water", 1);
@@ -5303,7 +5374,7 @@ Medieval.WorldView = (function (D, E, G) {
     staticLayer.width = Math.ceil(r.w * scale); staticLayer.height = Math.ceil(r.h * scale);
     var g = staticLayer.getContext("2d");
     g.setTransform(scale, 0, 0, scale, -r.x * scale, -r.y * scale);
-    g.fillStyle = G.asset("wm-water", 1) ? "#1d5a8a" : "#24331f"; g.fillRect(r.x, r.y, r.w, r.h);
+    g.fillStyle = "#4b7fa8"; g.fillRect(r.x, r.y, r.w, r.h);
     drawTerrain(g, r);
     staticLayer._r = r; staticLayer._s = cam.s * dpr; staticSeed = state.world.terrain + occupiedKey(); lastStatic = performance.now();
   }
@@ -5358,8 +5429,9 @@ Medieval.WorldView = (function (D, E, G) {
     var w = TW * (1 + Math.min(lv, 21) * 0.025), now = Date.now();
     if ((o.burnUntil || 0) > now) fireFx(g, x, y, w * 0.8, t);
     if ((o.shieldUntil || 0) > now) shieldFx(g, x, y - 6, w * 0.62, t);
-    if (o.king) crownFx(g, x, y - w * 0.75, Math.max(0.9, ui), t);
-    else if (o.title) titleFx(g, x, y - w * 0.75, Math.max(0.9, ui), t, o.title);
+    var cs = Math.max(0.55, Math.min(0.85, ui * 0.6));   // reste à l'échelle du bastion
+    if (o.king) crownFx(g, x, y - w * 0.62, cs, t);
+    else if (o.title) titleFx(g, x, y - w * 0.62, cs, t, o.title);
   }
   /** Médaillon flottant au-dessus d'une ville titrée (or = faveur, rouge = disgrâce). */
   function titleFx(g, x, y, s, t, T) {
@@ -5463,10 +5535,11 @@ Medieval.WorldView = (function (D, E, G) {
     if (!ctx || !W || !active || !state || !state.world) return;
     var t = (performance.now() - startT) / 1000, now = Date.now(), w = state.world;
     if (!staticCovers() && performance.now() - lastStatic > 80) buildStatic();
-    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#1c2818"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = "#4b7fa8"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(cam.s * dpr, 0, 0, cam.s * dpr, cam.x * dpr, cam.y * dpr);
     if (staticLayer && staticLayer._r) { var sr = staticLayer._r; ctx.drawImage(staticLayer, sr.x, sr.y, sr.w, sr.h); }
     var ui = Math.max(0.7, Math.min(1.8, 0.9 / cam.s));
+    borderFx(ctx, t);
 
     // sélection
     if (selection) { var sp = tileXY(selection.x, selection.y); ctx.save(); ctx.shadowColor = "rgba(255,214,120,.9)"; ctx.shadowBlur = 12; poly(ctx, diamond(sp.x, sp.y, 1), "rgba(255,220,130,.25)", "#f2c862", 2.5); ctx.restore(); }
@@ -5571,9 +5644,15 @@ Medieval.WorldView = (function (D, E, G) {
   }
   function clamp() {
     cam.s = Math.max(0.35, Math.min(2.2, cam.s));
-    var B = bounds(), cx = (W / 2 - cam.x) / cam.s, cy = (H / 2 - cam.y) / cam.s;
-    cx = Math.max(B.x + 60, Math.min(B.x + B.w - 60, cx)); cy = Math.max(B.y + 40, Math.min(B.y + B.h - 40, cy));
+    var B = camBounds(), cx = (W / 2 - cam.x) / cam.s, cy = (H / 2 - cam.y) / cam.s;
+    // le centre de l'écran reste dans le losange de la carte (plus une marge)
+    var u = (cx - B.x) / B.w * 2 - 1, v = (cy - B.y) / B.h * 2 - 1, k = Math.abs(u) + Math.abs(v);
+    if (k > 1) { u /= k; v /= k; cx = B.x + (u + 1) / 2 * B.w; cy = B.y + (v + 1) / 2 * B.h; }
     cam.x = W / 2 - cx * cam.s; cam.y = H / 2 - cy * cam.s;
+  }
+  function zoomAt(mx, my, f) {
+    var ns = Math.max(0.35, Math.min(2.2, cam.s * f)), wx = (mx - cam.x) / cam.s, wy = (my - cam.y) / cam.s;
+    cam.s = ns; cam.x = mx - wx * ns; cam.y = my - wy * ns; clamp(); dirty = true;
   }
   function centerOnTile(x, y) { var p = tileXY(x, y); cam.x = W / 2 - p.x * cam.s; cam.y = H / 2 - p.y * cam.s; clamp(); dirty = true; }
   function centerTile() {
@@ -5592,21 +5671,28 @@ Medieval.WorldView = (function (D, E, G) {
   }
 
   function bind() {
-    var pointers = {}, drag = null, pinch = null, moved = false;
+    var pointers = {}, drag = null, pinch = null, moved = false, multi = false;
+    function local(p) { var r = canvas.getBoundingClientRect(); return { x: p.x - r.left, y: p.y - r.top }; }
+    function startPinch() {
+      var ids = Object.keys(pointers), a = local(pointers[ids[0]]), b = local(pointers[ids[1]]);
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      // point du monde sous les doigts : il doit y rester
+      pinch = { d: Math.max(10, Math.hypot(a.x - b.x, a.y - b.y)), s: cam.s, wx: (mx - cam.x) / cam.s, wy: (my - cam.y) / cam.s };
+    }
+    function startDrag(p) { drag = { x: p.x, y: p.y, cx: cam.x, cy: cam.y }; }
     canvas.addEventListener("pointerdown", function (e) {
       canvas.setPointerCapture(e.pointerId); pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
       var ids = Object.keys(pointers);
-      if (ids.length === 1) { drag = { x: e.clientX, y: e.clientY, cx: cam.x, cy: cam.y }; moved = false; }
-      if (ids.length === 2) { var a = pointers[ids[0]], b = pointers[ids[1]]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), s: cam.s, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, cx: cam.x, cy: cam.y }; moved = true; }
+      if (ids.length === 1) { startDrag(pointers[ids[0]]); moved = false; multi = false; }
+      if (ids.length >= 2) { startPinch(); moved = true; multi = true; drag = null; }
     });
     canvas.addEventListener("pointermove", function (e) {
-      var r = canvas.getBoundingClientRect();
       if (pointers[e.pointerId]) pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
       var ids = Object.keys(pointers);
       if (pinch && ids.length >= 2) {
-        var a = pointers[ids[0]], b = pointers[ids[1]], ns = Math.max(0.35, Math.min(2.2, pinch.s * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d));
-        var mx = pinch.mx - r.left, my = pinch.my - r.top, wx = (mx - pinch.cx) / pinch.s, wy = (my - pinch.cy) / pinch.s;
-        cam.s = ns; cam.x = mx - wx * ns; cam.y = my - wy * ns; clamp(); dirty = true; return;
+        var a = local(pointers[ids[0]]), b = local(pointers[ids[1]]), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        var ns = Math.max(0.35, Math.min(2.2, pinch.s * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d));
+        cam.s = ns; cam.x = mx - pinch.wx * ns; cam.y = my - pinch.wy * ns; clamp(); dirty = true; return;
       }
       if (drag && ids.length === 1) {
         var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
@@ -5614,23 +5700,25 @@ Medieval.WorldView = (function (D, E, G) {
         if (moved) { cam.x = drag.cx + dx; cam.y = drag.cy + dy; clamp(); dirty = true; canvas.classList.add("dragging"); }
         return;
       }
-      if (e.pointerType === "mouse") {
-        var tl = tileAt(e.clientX - r.left, e.clientY - r.top);
+      if (e.pointerType === "mouse" && !ids.length) {
+        var lp = local({ x: e.clientX, y: e.clientY }), tl = tileAt(lp.x, lp.y);
         if (!hover || hover.x !== tl.x || hover.y !== tl.y) { hover = tl; dirty = true; }
       }
     });
     function up(e) {
-      var r = canvas.getBoundingClientRect(), wasPinch = !!pinch;
+      if (!pointers[e.pointerId]) return;
+      var r = canvas.getBoundingClientRect();
       delete pointers[e.pointerId];
-      if (Object.keys(pointers).length < 2) pinch = null;
-      if (Object.keys(pointers).length === 0) {
-        canvas.classList.remove("dragging");
-        if (drag && !moved && !wasPinch && e.type === "pointerup" && onSelect) {
-          var tl = tileAt(e.clientX - r.left, e.clientY - r.top), n = size();
-          if (tl.x >= 0 && tl.y >= 0 && tl.x < n && tl.y < n) onSelect(tl); else onSelect(null);
-        }
-        drag = null;
+      var ids = Object.keys(pointers);
+      if (ids.length >= 2) { startPinch(); return; }
+      if (ids.length === 1) { pinch = null; startDrag(pointers[ids[0]]); return; }   // un doigt reste : on repart de là, sans saut
+      pinch = null;
+      canvas.classList.remove("dragging");
+      if (drag && !moved && !multi && e.type === "pointerup" && onSelect) {
+        var tl = tileAt(e.clientX - r.left, e.clientY - r.top), n = size();
+        if (tl.x >= 0 && tl.y >= 0 && tl.x < n && tl.y < n) onSelect(tl); else onSelect(null);
       }
+      drag = null;
     }
     canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
     canvas.addEventListener("pointerleave", function () { if (hover) { hover = null; dirty = true; } });
@@ -5667,8 +5755,8 @@ Medieval.WorldView = (function (D, E, G) {
     setSelection: function (t) { selection = t; dirty = true; },
     markDirty: function () { dirty = true; },
     centerOn: centerOnTile, home: function () { var hh = E.homeOf(state); centerOnTile(hh.x, hh.y); },
-    zoomIn: function () { cam.s = Math.min(2.2, cam.s * 1.25); var c = centerTile(); centerOnTile(c.x, c.y); },
-    zoomOut: function () { cam.s = Math.max(0.35, cam.s * 0.8); var c = centerTile(); centerOnTile(c.x, c.y); },
+    zoomIn: function () { zoomAt(W / 2, H / 2, 1.25); },
+    zoomOut: function () { zoomAt(W / 2, H / 2, 0.8); },
     screenPos: function (x, y) { var p = tileXY(x, y); return { x: p.x * cam.s + cam.x, y: p.y * cam.s + cam.y }; }
   };
 })(Medieval.Data, Medieval.Engine, Medieval.Gfx);
@@ -6049,7 +6137,7 @@ Medieval.Save = (function (E) {
       var w = state.world || {}, al = state.alliance;
       var rec = { name: state.name || "", lord: (state.hero && state.hero.name) || status.user.name, stronghold: E.castleLevel(state), power: E.power(state),
         hero: state.hero ? state.hero.level : 1, tag: al ? al.tag : "", alliance: al ? al.name : "", updatedAt: Date.now() };
-      if (w.shared && w.home) { rec.x = w.home.x; rec.y = w.home.y; rec.world = w.shared; }
+      if (w.shared && w.home) { rec.x = w.home.x; rec.y = w.home.y; rec.world = w.shared; rec.layout = w.layout || 1; }
       var army = {}; for (var id in state.army) if (state.army[id] > 0) army[id] = state.army[id];
       var prot = E.protectedAmount(state), loot = {};
       ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { loot[k] = Math.max(0, Math.floor(state.resources[k] - prot)); });
@@ -6224,6 +6312,18 @@ Medieval.Online = (function (D, E, S) {
 
   /** Première connexion d'un joueur au monde vide : on y dépose les gisements de départ. */
   function seedIfEmpty(seed, now) {
+    var meta = db().collection("world").doc(WORLD_DOC).collection("meta").doc("layout");
+    return meta.get().then(function (m) {
+      if (m.exists && (m.data().v || 0) >= D.WORLD.layout) return;
+      // nouvelle disposition de la carte : on efface les anciens gisements et on reseme
+      return tilesRef().get().then(function (q) {
+        var b = db().batch(); q.forEach(function (d) { b.delete(d.ref); });
+        b.set(meta, { v: D.WORLD.layout, at: Date.now() });
+        return b.commit();
+      }).then(function () { return seedTiles(seed, now); });
+    });
+  }
+  function seedTiles(seed, now) {
     return tilesRef().limit(1).get().then(function (q) {
       if (!q.empty) return;
       var w = E.sharedWorld(seed, now), batch = db().batch();
@@ -6242,8 +6342,9 @@ Medieval.Online = (function (D, E, S) {
       var x = 1 + Math.floor(Math.random() * (w.size - 2)), y = 1 + Math.floor(Math.random() * (w.size - 2)), t = E.terrainAt(w, x, y);
       if (t !== "g" && t !== "f") continue;
       var p = { x: x, y: y };
-      if (taken.some(function (o) { return dist(o, p) < 1.5; })) continue;
-      if (w.tiles.some(function (o) { return o.x === x && o.y === y; })) continue;
+      if (taken.some(function (o) { return E.cheb(o, p) < 2; })) continue;
+      if (w.tiles.some(function (o) { return E.cheb(o, p) < 2; })) continue;
+      if (existing.some(function (o) { return E.cheb(o, p) < 2; })) continue;
       var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
       var res = KINDS[i], d = Math.max(0, 24 - dist(p, w.center || D.WORLD.home));
       if (w.wonder && Math.abs(x - w.wonder.x) <= 6 && Math.abs(y - w.wonder.y) <= 6) continue;
@@ -6257,12 +6358,15 @@ Medieval.Online = (function (D, E, S) {
   function applyTiles(s, docs, now) {
     var me = S.uid(), w = s.world, keep = w.tiles.filter(function (t) { return t.kind !== "res"; });
     var mine = {}; w.marches.forEach(function (m) { if (m.kind === "gather" && m.phase === "gather") mine[m.targetId] = m.id; });
+    var home = E.homeOf(s);
     docs.forEach(function (d) {
+      if (!mine[d.id] && E.cheb(d.data, home) < 2) return;   // jamais collé à votre cité
       var v = d.data, t = { id: d.id, kind: "res", res: v.res, level: v.level, amount: v.amount, max: v.max, x: v.x, y: v.y, by: mine[d.id] || null, occ: null };
       if (v.uid && v.uid !== me && v.end > now) t.occ = { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, end: v.end, start: v.start, rate: v.rate, amount: v.gather };
       keep.push(t);
     });
-    w.tiles = keep;
+    var res = keep.filter(function (t) { return t.kind === "res"; });
+    w.tiles = keep.filter(function (t) { return t.kind === "res" || t.by || !res.some(function (r) { return E.cheb(r, t) < 2; }); });
   }
 
   function send(s) {
@@ -6502,20 +6606,28 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
     return S.listPlayers().then(function (list) {
+      var LAY = D.WORLD.layout, shiftP = function (p) { if (p && isFinite(p.x) && (p.layout || 1) < LAY) { p.x += D.WORLD.layoutShift; p.y += D.WORLD.layoutShift; p.layout = LAY; } return p; };
+      list.forEach(shiftP);
       var me = list.filter(function (p) { return p.uid === S.uid(); })[0], others = list.filter(function (p) { return p.uid !== S.uid() && p.world === SHARED_SEED && isFinite(p.x); });
-      if (!(state.world && state.world.shared === SHARED_SEED)) {
+      var oldLayout = state.world && state.world.shared === SHARED_SEED && (state.world.layout || 1) < LAY;
+      if (!(state.world && state.world.shared === SHARED_SEED) || oldLayout) {
         var world = E.sharedWorld(SHARED_SEED, now());
-        var spot = me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, uidSalt());
+        var spot = oldLayout && state.world.home ? { x: state.world.home.x + D.WORLD.layoutShift, y: state.world.home.y + D.WORLD.layoutShift }
+          : me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, uidSalt());
+        if (world.tiles.some(function (t) { return E.cheb(t, spot) < 1; }) || E.terrainAt(world, spot.x, spot.y) !== "g") spot = E.findHomeSpot(world, others, uidSalt());
         E.joinSharedWorld(state, SHARED_SEED, spot, now());
         WV.setState(state); persist(true); S.writeCloud(state);
-        toast(icon("globe") + "<span>You joined the <b>shared world map</b> at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
+        toast(icon("globe") + "<span>" + (oldLayout ? "The world map grew. Your city is now" : "You joined the <b>shared world map</b>") + " at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
       }
       S.publishPlayer(state);
       if (Medieval.Online) Medieval.Online.start(SHARED_SEED, { state: function () { return state; }, now: now, persist: function () { persist(); },
         onEvents: function (evs) { handleEvents(evs); renderChrome(); }, refresh: function () { WV.markDirty(); if (ui.panel && ui.panel.kind === "tile") renderPanel(true); } });
       S.watchPlayers(function (ps) {
         var fresh = now() - 14 * 86400000;   // les seigneurs absents depuis 2 semaines disparaissent de la carte
-        E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x) && (p.updatedAt || 0) > fresh; });
+        E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x) && (p.updatedAt || 0) > fresh; }).map(function (p) {
+          if ((p.layout || 1) < D.WORLD.layout) { p = Object.assign({}, p, { x: p.x + D.WORLD.layoutShift, y: p.y + D.WORLD.layoutShift }); }
+          return p;
+        });
         // deux cités au même endroit : celle dont l'identifiant est le plus grand déménage
         var h = state.world && state.world.home, clash = h && E.OTHERS.filter(function (o) { return Math.hypot(o.x - h.x, o.y - h.y) < 2 && o.uid < S.uid(); })[0];
         if (clash) {
@@ -7048,6 +7160,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var h = state.hero, need = E.heroXpNeeded(state);
     var status = h.status === "home" ? '<span class="pill green">At home</span>' : h.status === "march" ? '<span class="pill">Marching</span>' : '<span class="pill red">Prisoner</span>';
     var html = '<header class="p-head"><div class="p-title"><span class="eyebrow">Hero · level ' + h.level + '</span><h2>' + esc(h.name) + '</h2>' + status + '</div></header><div class="p-body">';
+    html += '<div class="heropow">' + icon("crown") + '<span>Hero power</span><b>' + F.num(E.heroPower(state)) + '</b><small>' + Math.round(E.heroPower(state) / Math.max(1, E.power(state)) * 100) + '% of your power · level ' + h.level + ' / ' + D.HERO.maxLevel + '</small></div>';
     html += '<div class="xpbar"><i style="width:' + (h.level >= D.HERO.maxLevel ? 100 : h.xp / need * 100).toFixed(1) + '%"></i><span>' + (h.level >= D.HERO.maxLevel ? "Max level" : F.num(h.xp) + " / " + F.num(need) + " XP") + '</span></div>';
     if (h.status === "captured") {
       var bot = E.findBot(state, h.captor), cost = E.heroRansomCost(state);
@@ -7766,6 +7879,17 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "mail-clean": function () { var tab = ui.mailTab || "inbox"; state.reports = state.reports.filter(function (r) { return r.saved || !r.read || (tab === "inbox" ? r.kind !== "info" : r.kind === "info"); }); persist(); renderPanel(true); },
     "read-all": function () { E.markRead(state); renderPanel(true); updateHud(); },
     "toggle-view": function () { setView(ui.view === "city" ? "world" : "city"); },
+    /* bouton ville/monde en bas à gauche : un appui = changer de vue ; deux appuis rapides sur la carte = recentrer sur votre bastion */
+    "nav-toggle": function () {
+      var t = Date.now();
+      if (ui.view === "world") {
+        if (ui.navTimer) { clearTimeout(ui.navTimer); ui.navTimer = null; var h = E.homeOf(state); WV.centerOn(h.x, h.y); return; }
+        ui.navTimer = setTimeout(function () { ui.navTimer = null; setView("city"); }, 280);
+        return;
+      }
+      if (ui.lastNav && t - ui.lastNav < 400) { var h2 = E.homeOf(state); setView("world"); WV.centerOn(h2.x, h2.y); ui.lastNav = 0; return; }
+      ui.lastNav = t; setView("world");
+    },
     "goto-march": function (arg) { var m = E.findMarch(state, arg); if (!m) return; setView("world"); WV.centerOn(m.tx, m.ty); openPanel("tile", { x: m.tx, y: m.ty }); },
     recall: function (arg) { result(E.recall(state, arg, now()), icon("march") + "<span>The march is turning back.</span>"); },
     march: function (arg) {
