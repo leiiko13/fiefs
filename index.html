@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051011";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051028";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -894,6 +894,19 @@ body.has-gold .goldbox b { color: #000 !important; text-shadow: none !important;
 body.has-forgebg .forgecard { background: linear-gradient(rgba(239,228,203,.5), rgba(220,203,165,.62)), var(--img-forgebg) center 30% / cover !important; }
 body.has-forgebg .forgecard .recrow { background: rgba(255,248,232,.82); }
 body.has-forgebg .forgecard .forge-name, body.has-forgebg .forgecard .muted { text-shadow: 0 0 6px rgba(255,245,220,.9); }
+/* ---- classements ---- */
+.lbtabs { grid-template-columns: repeat(5, 1fr); }
+.lblist { display: grid; gap: 5px; }
+.lbrow { display: grid; grid-template-columns: 36px 1fr auto; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; color: #2a1a0c;
+  background: linear-gradient(180deg, #efe4cb, #dccba5); border: 1px solid rgba(0,0,0,.4); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.lbrow.me { background: linear-gradient(180deg, #d9f6ff, #9fd8ea); box-shadow: inset 0 0 0 2px #2f9aa2, 0 2px 0 rgba(0,0,0,.25); }
+.lbrank { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: #5a4630; color: #fff; font: 800 14px var(--f-display); }
+.lbrank.r1 { background: radial-gradient(circle at 40% 35%, #fff3b0, #d4a020); color: #3a2400; box-shadow: 0 0 8px rgba(255,200,60,.8); }
+.lbrank.r2 { background: radial-gradient(circle at 40% 35%, #ffffff, #a9b2bd); color: #2a2f35; }
+.lbrank.r3 { background: radial-gradient(circle at 40% 35%, #ffd9b0, #b06a2c); color: #3a1a00; }
+.lbname { display: grid; min-width: 0; } .lbname b { font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lbname small { color: #6b5638; font-size: 12px; }
+.lbval { font: 800 16px var(--f-display); color: #7a1a12; }
+.lbme { margin: 0; color: #c9b994; } .lbme b { color: #ffd76a; }
 
 </style>
 
@@ -1935,7 +1948,7 @@ Medieval.Engine = (function (D) {
       var n = losses[id] || 0; if (!n) return;
       var w = Math.min(free, Math.floor(n * (woundedRatio === undefined ? 1 : woundedRatio)));
       free -= w;
-      if (w) { s.wounded[id] = (s.wounded[id] || 0) + w; wounded[id] = w; }
+      if (w) { s.wounded[id] = (s.wounded[id] || 0) + w; wounded[id] = w; if (s.stats) s.stats.woundedTotal = (s.stats.woundedTotal || 0) + w; }
       if (n - w) dead[id] = n - w;
     });
     return { wounded: wounded, dead: dead };
@@ -2190,6 +2203,8 @@ Medieval.Engine = (function (D) {
   };
 
   // ------------------------------------------------------------ rapports
+  /** Ennemis tués (classement). */
+  E.addKills = function (s, lost) { if (!s.stats) return; s.stats.kills = (s.stats.kills || 0) + E.troopTotal(lost || {}); };
   E.report = function (s, r) {
     r.id = E.uid(s, "r"); r.read = false;
     s.reports.unshift(r);
@@ -3729,7 +3744,7 @@ Medieval.Engine = (function (D) {
     var res = E.battle({ troops: m.troops, bonus: E.bonuses(s, { combat: heroIn, t: t }), siege: "city" },
                        { troops: bot.troops, bonus: E.botBonus(bot) });
     bot.troops = merge(bot.troops, {}); for (var id in res.def.left) bot.troops[id] = res.def.left[id];
-    var cas = E.addCasualties(s, res.att.lost, 0.5);
+    var cas = E.addCasualties(s, res.att.lost, 0.5); E.addKills(s, res.def.lost);
     m.troops = clean(res.att.left);
     var rep = { kind: "attack", at: t, win: res.win, target: bot.name, lord: bot.lord, level: bot.level, x: bot.x, y: bot.y,
       hero: heroIn, rounds: res.rounds, att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
@@ -3884,6 +3899,7 @@ Medieval.Engine = (function (D) {
   /** Combat contre la marche d'un autre joueur sur une case ressource. Renvoie true si la case est prise. */
   function fightOccupant(s, m, tile, t, events) {
     var occ = tile.occ, res = E.battle({ troops: m.troops, bonus: E.bonuses(s, { combat: m.hero, t: t }) }, { troops: occ.troops, bonus: occ.bonus || {} });
+    E.addKills(s, res.def.lost);
     var cas = E.addCasualties(s, res.att.lost, 0.5);
     m.troops = clean(res.att.left);
     var rep = { kind: "tile", at: t, win: res.win, target: tile.label || E.resTileName(tile.res) + " lv. " + tile.level, lord: occ.name || "Another lord", x: tile.x, y: tile.y,
@@ -4072,7 +4088,7 @@ Medieval.Engine = (function (D) {
     var res = E.battle({ troops: attackers, bonus: bot ? E.botBonus(bot) : {} }, { troops: home, bonus: defBonus });
     for (var kid in volley.killed) { res.att.before[kid] = (res.att.before[kid] || 0) + volley.killed[kid]; res.att.lost[kid] = (res.att.lost[kid] || 0) + volley.killed[kid]; }
     for (var id in res.def.left) s.army[id] = res.def.left[id];
-    var cas = E.addCasualties(s, res.def.lost, 1);
+    var cas = E.addCasualties(s, res.def.lost, 1); E.addKills(s, res.att.lost);
     var rep = { kind: "defense", at: t, win: !res.win, target: inc.name, lord: inc.lord, hero: heroHome, rounds: res.rounds,
       att: res.att, def: res.def, wounded: cas.wounded, dead: cas.dead, loot: {}, events: [] };
     if (volley.fired) { rep.traps = { fired: volley.fired, killed: volley.killed, lost: E.trapLosses(s, !res.win) }; }
@@ -6631,6 +6647,7 @@ Medieval.Save = (function (E) {
       rec.army = army; rec.loot = loot; rec.wall = state.buildings.wall.level; rec.traps = E.trapCount ? E.trapCount(state) : 0;
       rec.marches = w.marches ? w.marches.length : 0;
       rec.smokeUntil = state.smokeUntil || 0;
+      var stt = state.stats || {}; rec.kills = stt.kills || 0; rec.woundedTotal = stt.woundedTotal || 0; rec.monsters = stt.bandits || 0;
       rec.shieldUntil = state.shieldUntil || 0; rec.burnUntil = state.burnUntil || 0;
       rec = JSON.parse(JSON.stringify(rec, function (k, v) { return typeof v === "number" && !isFinite(v) ? 0 : v; })); // Firestore refuse undefined / NaN
       return fb.db.collection("players").doc(fbUser.uid).set(rec, { merge: true }).then(function () { status.playerError = null; return true; }, function (e) { status.playerError = describe(e); return false; });
@@ -7977,6 +7994,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   // --- royaume
   PANELS.realm = function () {
     var st = S.status, html = head("Founded " + new Date(state.createdAt).toLocaleDateString("en-GB"), "Kingdom") + '<div class="p-body">';
+    html += '<button class="btn primary wide" data-act="panel" data-arg="leaderboard">' + icon("crown") + 'Leaderboard</button>';
     html += accountCard();
     if (window.RC_VERSION) html += '<p class="muted small">Game version ' + esc(window.RC_VERSION) + '</p>';
     if (fsSupported()) html += '<div class="row"><button class="btn" data-act="fullscreen">' + icon("fit") + (document.fullscreenElement ? "Exit full screen" : "Full screen") + '</button></div>';
@@ -8121,6 +8139,35 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     return true;
   }
 
+  // --- classements (joueurs de la carte commune)
+  var LB_TABS = [["power", "Power", "crown"], ["alliances", "Alliances", "army"], ["kills", "Kills", "sword"], ["wounded", "Wounded", "heal"], ["monsters", "Monsters", "alert"]];
+  function lbRows() {
+    var me = { uid: S.uid() || "me", me: true, name: state.name || "My city", lord: state.hero && state.hero.name, tag: state.alliance ? state.alliance.tag : "", alliance: state.alliance ? state.alliance.name : "",
+      stronghold: E.castleLevel(state), power: E.power(state), kills: state.stats.kills || 0, woundedTotal: state.stats.woundedTotal || 0, monsters: state.stats.bandits || 0 };
+    return [me].concat(E.OTHERS.filter(function (o) { return o.uid !== me.uid; }));
+  }
+  PANELS.leaderboard = function () {
+    var tab = ui.lbTab || "power", rows = lbRows(), list, val, html;
+    html = head(D.KINGDOM.name + " · " + rows.length + " lords", "Leaderboard") + '<div class="p-body"><div class="itabs lbtabs">' + LB_TABS.map(function (t) {
+      return '<button class="itab' + (tab === t[0] ? " on" : "") + '" data-act="lb-tab" data-arg="' + t[0] + '">' + icon(t[2]) + '<span>' + t[1] + '</span></button>'; }).join("") + '</div>';
+    if (tab === "alliances") {
+      var al = {};
+      rows.forEach(function (r) { if (!r.alliance) return; var k = r.alliance; al[k] = al[k] || { name: r.alliance, tag: r.tag, power: 0, members: 0, me: false }; al[k].power += r.power || 0; al[k].members++; if (r.me) al[k].me = true; });
+      list = Object.keys(al).map(function (k) { return al[k]; }).sort(function (a, b) { return b.power - a.power; });
+      if (!list.length) return html + '<p class="mail-empty">No alliance on the map yet.</p></div>';
+      return html + '<div class="lblist">' + list.map(function (a, i) {
+        return '<div class="lbrow' + (a.me ? " me" : "") + '"><span class="lbrank r' + (i + 1) + '">' + (i + 1) + '</span><span class="lbname"><b>[' + esc(a.tag || "") + '] ' + esc(a.name) + '</b><small>' + a.members + ' member' + (a.members > 1 ? "s" : "") + '</small></span><span class="lbval">' + F.compact(a.power) + '</span></div>';
+      }).join("") + '</div></div>';
+    }
+    val = { power: function (r) { return r.power || 0; }, kills: function (r) { return r.kills || 0; }, wounded: function (r) { return r.woundedTotal || 0; }, monsters: function (r) { return r.monsters || 0; } }[tab];
+    list = rows.slice().sort(function (a, b) { return val(b) - val(a); });
+    var myRank = list.findIndex(function (r) { return r.me; }) + 1;
+    html += '<p class="muted small lbme">Your rank: <b>#' + myRank + '</b> of ' + list.length + '</p>';
+    return html + '<div class="lblist">' + list.slice(0, 100).map(function (r, i) {
+      return '<div class="lbrow' + (r.me ? " me" : "") + '"><span class="lbrank r' + (i + 1) + '">' + (i + 1) + '</span><span class="lbname"><b>' + (r.tag ? "[" + esc(r.tag) + "] " : "") + esc(r.name || "City") + '</b><small>' + esc(r.lord || "") + ' · Stronghold ' + (r.stronghold || 1) + '</small></span><span class="lbval">' + F.compact(val(r)) + '</span></div>';
+    }).join("") + '</div>' + (S.uid() ? "" : '<p class="muted small">Sign in to compete with the other lords of the map.</p>') + '</div>';
+  };
+
   // --- lieux enregistrés
   PANELS.marks = function () {
     var list = state.marks || [];
@@ -8220,7 +8267,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (kind === "reports" && arg !== "keep") ui.reportId = null;
     if (ui.view === "city") M.setSelection(kind === "building" ? { kind: "building", id: arg } : kind === "plot" ? { kind: "plot", plot: arg } : kind === "locked" ? { kind: "locked", plot: arg } : null);
     if (kind === "tile") WV.setSelection(arg);
-    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("pop", kind === "tile"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks|resource)$/.test(kind)); document.body.classList.add("panel-open");
+    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("pop", kind === "tile"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks|resource|leaderboard)$/.test(kind)); document.body.classList.add("panel-open");
     renderPanel(true); $("panelBody").scrollTop = 0;
     document.querySelectorAll(".nav button[data-arg]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-arg") === kind); });
   }
@@ -8463,6 +8510,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       if (!E.bagCount(state, "tpAdvanced")) { var b = E.buyItem(state, "tpAdvanced", 1); if (!b.ok) { result(b); return; } }
       if (result(E.useItem(state, "tpAdvanced", { x: p[0], y: p[1] }, now()), icon("globe") + "<span>Your city moved to <b>X:" + p[0] + " Y:" + p[1] + "</b>.</span>")) afterTeleport();
     },
+    "lb-tab": function (arg) { ui.lbTab = arg; renderPanel(true); },
     "res-open": function (arg) { openPanel("resource", arg); },
     "use-res": function (arg) { var it = D.SHOP_BY_ID[arg]; result(E.useItem(state, arg, null, now()), icon(it.res) + "<span>+" + F.num(it.amount) + " " + RES_NAME[it.res].toLowerCase() + ".</span>"); },
     "buy-use": function (arg) { var it = D.SHOP_BY_ID[arg], b = E.buyItem(state, arg, 1); if (!b.ok) { result(b); return; } result(E.useItem(state, arg, null, now()), icon(it.res) + "<span>+" + F.num(it.amount) + " " + RES_NAME[it.res].toLowerCase() + ".</span>"); },
