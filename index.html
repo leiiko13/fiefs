@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050939";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050945";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -884,6 +884,10 @@ body.has-nav .nav button span { font-size: 10px; }
 .modal-card p { margin: 0; font-size: 14.5px; }
 .modal-card .rpop-art { background: radial-gradient(circle at 50% 40%, #9fe6ff, #1d5a7a); }
 .modal-card .btn.ghost { color: #3a2410; border-color: rgba(0,0,0,.4); }
+/* or : « GOLD 3,709 » sur une ligne, lettres sombres sur la plaque dorée */
+body.has-gold .goldbox b { font-family: var(--f-display) !important; font-weight: 900 !important; color: #2a1204 !important; letter-spacing: .02em; white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255,236,170,.85), 0 0 3px rgba(255,220,120,.6) !important; font-size: 14px !important; font-variant-numeric: lining-nums; }
+@media (max-width: 760px) { body.has-gold .goldbox b { font-size: 10.5px !important; letter-spacing: 0; } }
 
 </style>
 
@@ -1762,7 +1766,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, testPack4: true, monsterLv1: true, mats: {}, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, monsterLv1: true, mats: {}, research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2327,6 +2331,10 @@ Medieval.Engine = (function (D) {
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
     if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
+    if (!s.testPack5) {
+      s.testPack5 = true; s.resources.gold = (s.resources.gold || 0) + 10000;
+      if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "10,000 gold for the test", text: "The treasury sends you 10,000 gold to keep testing." });
+    }
     if (!s.testPack4) {   // matériaux de forge pour essayer
       s.testPack4 = true; s.mats = s.mats || {};
       (D.MATERIALS || []).forEach(function (M) { s.mats[M.key + 1] = (s.mats[M.key + 1] || 0) + 12; s.mats[M.key + 2] = (s.mats[M.key + 2] || 0) + 4; s.mats[M.key + 3] = (s.mats[M.key + 3] || 0) + 1; });
@@ -7194,7 +7202,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       var bar = $("rc-" + k); bar.style.width = Math.min(100, v / cap * 100).toFixed(1) + "%"; bar.className = full ? "full" : "";
       $("res-" + k).title = RES_NAME[k] + " : " + F.num(v) + " / " + F.num(cap) + " · " + (rate >= 0 ? "+" : "") + F.num(rate) + " par heure";
     });
-    $("gold").textContent = F.compact(state.resources.gold);
+    $("gold").textContent = "Gold " + F.compact(state.resources.gold);
     $("power").textContent = F.num(E.power(state));
     $("heroLvl").textContent = state.hero.level;
     var hxp = state.hero.level >= D.HERO.maxLevel ? 1 : state.hero.xp / E.heroXpNeeded(state);
