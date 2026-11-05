@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050806";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050833";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -773,6 +773,44 @@ body.has-vip .vipbox b { top: 75%; transform: translateY(-50%) !important; }
 body.has-gold .goldbox .gb-label { top: 34%; } body.has-gold .goldbox b { top: 63%; }
 body.has-vip .vipbox .vip-l { top: 52%; } body.has-vip .vipbox b { top: 77%; }
 @media (max-width: 760px) { body.has-gold .goldbox b { font-size: 13px; } body.has-vip .vipbox b { font-size: 11px; } body.has-vip .vipbox .vip-l { font-size: 8px; } }
+/* or et VIP : le cadre intérieur est trop fin pour deux lignes → une seule ligne bien centrée */
+body.has-gold .goldbox .gb-label { display: none; }
+body.has-gold .goldbox b { top: 50% !important; transform: translateY(-50%) !important; font-size: 17px; }
+body.has-vip .vipbox .vip-l, body.has-vip .vipbox b { position: static !important; transform: none !important; display: inline; }
+body.has-vip .vipbox { flex-direction: row !important; align-items: center; justify-content: center; gap: 3px !important; padding: 0 !important; }
+body.has-vip .vipbox > span, body.has-vip .vipbox > b { margin-top: 18% !important; }
+body.has-vip .vipbox .vip-l { font-size: 11px; } body.has-vip .vipbox b { font-size: 15px; }
+@media (max-width: 760px) {
+  body.has-gold .goldbox b { font-size: 14px; }
+  body.has-vip .vipbox .vip-l { font-size: 8.5px; } body.has-vip .vipbox b { font-size: 12px; }
+}
+/* ---- bandeau du bas : icônes et libellés centrés, le bouton ville ne déborde plus ---- */
+.nav { align-items: center !important; grid-template-columns: 80px repeat(5, 1fr); }
+.nav button { align-content: center !important; justify-content: center; height: 58px !important; margin: 0 !important; padding: 0; gap: 2px; }
+.nav .viewtoggle { height: 58px !important; width: 66px; justify-self: center; margin: 0 !important; }
+body.has-nav .nav button .navimg { width: 38px !important; height: 38px !important; margin: 0 auto; }
+body.has-nav .nav button span { display: block; width: 100%; text-align: center; line-height: 1; margin: 0; }
+@media (max-width: 760px) {
+  .nav { height: 62px !important; grid-template-columns: 70px repeat(5, 1fr); padding-top: 3px; }
+  .nav button { height: 54px !important; }
+  .nav .viewtoggle { height: 52px !important; width: 58px; }
+  body.has-nav .nav button .navimg { width: 34px !important; height: 34px !important; }
+  body.has-nav .nav button span { font-size: 8.5px; }
+}
+/* ---- fiches de la carte du monde ---- */
+.wcard { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: start; padding: 12px; border-radius: 10px; color: #2a1a0c;
+  --muted: #6b5638; background: linear-gradient(180deg, #efe4cb, #dccba5); border: 1px solid rgba(0,0,0,.45); box-shadow: 0 2px 0 rgba(0,0,0,.28); }
+.wc-art { width: 96px; height: 96px; display: grid; place-items: center; border-radius: 8px; border: 2px solid #3a2410; overflow: hidden; background: radial-gradient(circle at 50% 45%, #6f9a4c, #2c4a22); box-shadow: inset 0 0 0 1px rgba(255,230,170,.35); }
+.wc-art img, .wc-art canvas { width: 100%; height: 100%; object-fit: contain; border: 0; border-radius: 0; background: none; }
+.wc-res .ico, .wc-res .rimg { width: 64px; height: 64px; }
+.wc-rows { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; margin: 0; font-size: 14px; align-content: start; }
+.wc-rows dt { color: #6b5638; font-weight: 700; } .wc-rows dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.wc-rows .bad { color: #b0281c; } .wc-rows .ok { color: #1d6a2a; }
+.wbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wbtns .btn { width: 100%; white-space: normal; text-align: center; line-height: 1.15; min-height: 44px; }
+.wbtns .btn:only-child { grid-column: 1 / -1; }
+.btn.teal { background: linear-gradient(180deg, #2f9aa2, #146066); }
+@media (max-width: 380px) { .wcard { grid-template-columns: 80px 1fr; } .wc-art { width: 80px; height: 80px; } }
 
 </style>
 
@@ -788,6 +826,7 @@ body.has-vip .vipbox .vip-l { top: 52%; } body.has-vip .vipbox b { top: 77%; }
     <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/><path d="M5 21h14"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5z"/><path d="M12 6.5v13"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z" fill="currentColor" stroke="rgba(0,0,0,.45)" stroke-width="1" stroke-linejoin="round"/></symbol>
     <symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h11a2 2 0 012 2v12a2 2 0 01-2 2H8a2 2 0 01-2-2V4z"/><path d="M6 4a2 2 0 00-2 2v2h2M9 9h7M9 13h7M9 17h4"/></symbol>
     <symbol id="i-sword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5 10-11"/></symbol>
@@ -847,6 +886,7 @@ body.has-vip .vipbox .vip-l { top: 52%; } body.has-vip .vipbox b { top: 77%; }
       <button class="iconbtn" data-act="zoomin" aria-label="Zoom in"><svg class="ico"><use href="#i-plus"></use></svg></button>
       <button class="iconbtn" data-act="zoomout" aria-label="Zoom out"><svg class="ico"><use href="#i-minus"></use></svg></button>
       <button class="iconbtn" data-act="fit" aria-label="Recenter"><svg class="ico"><use href="#i-fit"></use></svg></button>
+      <button class="iconbtn wm-only" data-act="panel" data-arg="marks" aria-label="Saved places"><svg class="ico"><use href="#i-star"></use></svg></button>
     </div>
   </div>
   <div class="coords" id="coords" hidden></div>
@@ -1138,7 +1178,7 @@ Medieval.Data = (function () {
   var WORLD = {
     size: 30, home: { x: 15, y: 15 }, kingdom: 7,
     botCount: 12, resTiles: 42, camps: 18,
-    sharedSize: 60, layout: 3, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 56,   // carte commune
+    sharedSize: 60, layout: 4, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 56,   // carte commune
     forestSlow: 0.8,             // +80 % de temps de marche à travers la forêt
     wonderHoldMs: 3600000,       // garder la Merveille 1 h pour devenir roi
     secondsPerTile: 8, tickMs: 3600000,
@@ -3076,6 +3116,18 @@ Medieval.Engine = (function (D) {
     return { ok: true, report: rep };
   };
 
+  /** Espionner un château robot : même rapport qu'un joueur ; son armée devient visible 24 h. */
+  E.spyBot = function (s, bot, now) {
+    var p = { name: bot.name, lord: bot.lord, stronghold: bot.level, power: E.troopPower(bot.troops) + bot.level * 400, wall: bot.level, army: bot.troops,
+      loot: bot.stock, traps: 0, marches: (s.world.botMarches || []).filter(function (m) { return m.botId === bot.id; }).length, hero: bot.hero.level, x: bot.x, y: bot.y };
+    var r = E.spyPlayer(s, p, now);
+    if (r.ok) { s.scouted = s.scouted || {}; s.scouted[bot.id] = now; }
+    return r;
+  };
+  E.botScouted = function (s, bot, now) { return !!(s.scouted && s.scouted[bot.id] && now - s.scouted[bot.id] < 86400000); };
+  /** Même alliance que moi ? (on n'espionne pas ses alliés) */
+  E.isAlly = function (s, p) { var al = s.alliance; return !!(al && p && ((p.tag && p.tag === al.tag) || (p.alliance && p.alliance === al.name))); };
+
   E.registerSystem({
     next: function (s) {
       var al = E.alliance(s); if (!al) return Infinity;
@@ -3278,7 +3330,7 @@ Medieval.Engine = (function (D) {
     for (var i = 0; i < W.sharedBots; i++) {
       var pos = randomFree(s, 9, C - 2, 4) || randomFree(s, 8, C, 2);
       if (!pos) continue;
-      var d = dist(pos, center), lv = Math.max(1, Math.min(12, Math.round(12 - (d - 9) * 0.7 + E.rand(s) * 2 - 1)));
+      var lv = Math.max(1, Math.min(8, 1 + Math.round(E.zoneT(s.world, pos) * 6 + E.rand(s) - 0.5)));
       s.world.bots.push(makeBot(s, i, pos, lv));
     }
     // répartition régulière : une grille de cases de 4×4, mélangée ; un élément au plus par case de grille
@@ -3379,6 +3431,7 @@ Medieval.Engine = (function (D) {
 
   E.checkMarch = function (s, kind, targetId, troops, withHero) {
     var reasons = [], tg = target(s, kind, targetId), t = clean(troops), n = E.troopTotal(t);
+    if (kind === "attack" && tg && tg.shieldUntil > s.lastTick) reasons.push(tg.name + " is protected by a Peace Shield.");
     if (!tg) return { ok: false, reasons: ["This target no longer exists."] };
     if (s.world.marches.length >= E.maxMarches(s)) reasons.push("All your marches are out (" + E.maxMarches(s) + " max).");
     for (var id in t) if (t[id] > (s.army[id] || 0)) { reasons.push("Not enough " + D.TROOPS[id].name + " in the city."); break; }
@@ -3598,7 +3651,8 @@ Medieval.Engine = (function (D) {
     if (res.win) {
       s.stats.wins++;
       rep.events.push("You drove " + (occ.name || "them") + " off " + (tile.label || "the tile") + ".");
-      E.netEmit(s, { op: "dislodge", tileId: tile.id, victim: occ.uid, lost: res.def.lost, before: res.def.before, rounds: res.rounds, atk: res.att.before, atkLost: res.att.lost });
+      if (occ.bot) E.botDriven(s, occ, res.def.lost, t);
+      else E.netEmit(s, { op: "dislodge", tileId: tile.id, victim: occ.uid, lost: res.def.lost, before: res.def.before, rounds: res.rounds, atk: res.att.before, atkLost: res.att.lost });
       tile.occ = null;
     } else s.stats.losses++;
     E.report(s, rep);
@@ -3661,6 +3715,87 @@ Medieval.Engine = (function (D) {
     events.push({ type: "returned", kind: m.kind, load: m.load, items: m.items, at: t });
   }
 
+  // ------------------------------------------------------------ vie des robots
+  /* Chaque château robot a un caractère : il récolte, chasse les monstres, attaque, se protège… On voit ses marches sur la carte. */
+  var PROFILES = ["gatherer", "hunter", "raider", "turtle", "balanced"];
+  E.PROFILE_NAMES = { gatherer: "Gatherer", hunter: "Monster hunter", raider: "Warmonger", turtle: "Turtle (shields)", balanced: "Balanced" };
+  var BOT_ACT_MS = 10 * 60000;
+  E.botProfile = function (bot) {
+    if (!bot.profile) { var i = parseInt(String(bot.id).replace(/\D/g, ""), 10) || 0; bot.profile = PROFILES[i % PROFILES.length]; }
+    return bot.profile;
+  };
+  function nearestOf(list, from, maxD) { var best = null, bd = maxD; list.forEach(function (x) { var d = dist(x, from); if (d < bd) { bd = d; best = x; } }); return best; }
+  function botTargeted(w, id) { return (w.botMarches || []).some(function (m) { return m.targetId === id; }); }
+  function botSend(s, bot, kind, tg, t, work) {
+    var w = s.world, travel = Math.max(90, Math.round(dist(bot, tg) * W.secondsPerTile * 4));
+    w.botMarches.push({ id: E.uid(s, "bm"), botId: bot.id, name: bot.name, kind: kind, fx: bot.x, fy: bot.y, tx: tg.x, ty: tg.y, targetId: tg.id,
+      phase: "out", start: t, arrive: t + travel * 1000, next: t + travel * 1000, travel: travel, work: work || 0 });
+  }
+  function botBack(m, at) { m.phase = "back"; m.backStart = at; m.next = at + m.travel * 1000; }
+  function botAct(s, t) {
+    var w = s.world; w.botMarches = w.botMarches || [];
+    w.bots.forEach(function (bot) {
+      var p = E.botProfile(bot);
+      if ((p === "turtle" || p === "balanced") && !(bot.shieldUntil > t) && E.rand(s) < (p === "turtle" ? 0.25 : 0.05)) bot.shieldUntil = t + (4 + Math.floor(E.rand(s) * 8)) * 3600000;
+      if (w.botMarches.some(function (m) { return m.botId === bot.id; })) return;
+      if (E.rand(s) > { gatherer: 0.5, hunter: 0.4, raider: 0.3, turtle: 0.15, balanced: 0.3 }[p]) return;
+      var kind = p === "gatherer" || p === "turtle" ? "gather" : p === "hunter" ? "hunt" : p === "raider" ? "raid" : ["gather", "hunt", "raid"][Math.floor(E.rand(s) * 3)], tg = null;
+      if (kind === "gather") tg = nearestOf(w.tiles.filter(function (x) { return x.kind === "res" && !x.by && !x.occ && !botTargeted(w, x.id); }), bot, 14);
+      else if (kind === "hunt") tg = nearestOf(w.tiles.filter(function (x) { return x.kind === "camp" && !x.by && x.level <= bot.level + 2 && !botTargeted(w, x.id); }), bot, 14);
+      else tg = nearestOf(w.bots.filter(function (b) { return b !== bot && !(b.shieldUntil > t); }), bot, 16);
+      if (tg) botSend(s, bot, kind, tg, t, kind === "gather" ? Math.round((1 + E.rand(s) * 2) * 3600000) : 0);
+    });
+  }
+  function runBotMarches(s, t) {
+    var w = s.world; if (!w.botMarches) return;
+    w.botMarches.slice().forEach(function (m) {
+      for (var g = 0; g < 4 && m.next <= t; g++) {
+        var tile = E.findTile(s, m.targetId);
+        if (m.phase === "out") {
+          if (m.kind === "gather" && tile && !tile.by && !(tile.occ && !tile.occ.bot)) { m.phase = "work"; m.next = m.arrive + m.work; }
+          else { if (m.kind === "hunt" && tile && !tile.by) removeTile(s, tile); botBack(m, m.arrive); }
+        } else if (m.phase === "work") botBack(m, m.next);
+        else { w.botMarches.splice(w.botMarches.indexOf(m), 1); break; }
+      }
+    });
+    E.applyBotOcc(s);
+  }
+  /** Les robots qui récoltent occupent la case : on peut les attaquer pour la prendre. */
+  E.applyBotOcc = function (s) {
+    var w = s.world; if (!w) return;
+    w.tiles.forEach(function (t) { if (t.occ && t.occ.bot) t.occ = null; });
+    (w.botMarches || []).forEach(function (m) {
+      if (m.phase !== "work") return;
+      var tile = E.findTile(s, m.targetId), bot = E.findBot(s, m.botId);
+      if (!tile || tile.occ || tile.by || !bot) return;
+      var tr = {}; for (var id in bot.troops) { var n = Math.floor(bot.troops[id] * 0.3); if (n > 0) tr[id] = n; }
+      tile.occ = { bot: true, botId: bot.id, marchId: m.id, name: bot.name + " (" + bot.lord + ")", troops: tr, bonus: E.botBonus(bot), start: m.arrive, end: m.next };
+    });
+  };
+  /** Le joueur a chassé un robot d'une case : ses pertes, puis il rentre. */
+  E.botDriven = function (s, occ, lost, t) {
+    var bot = E.findBot(s, occ.botId), m = (s.world.botMarches || []).filter(function (x) { return x.id === occ.marchId; })[0];
+    if (bot) for (var id in lost) bot.troops[id] = Math.max(0, (bot.troops[id] || 0) - lost[id]);
+    if (m) botBack(m, t);
+  };
+  E.registerSystem({
+    next: function (s) {
+      var w = s.world; if (!w || !w.bots.length) return Infinity;
+      if (!w.nextBotAct) w.nextBotAct = s.lastTick + BOT_ACT_MS;
+      var t = w.nextBotAct; (w.botMarches || []).forEach(function (m) { if (m.next < t) t = m.next; });
+      return t;
+    },
+    run: function (s, t) {
+      var w = s.world; if (!w || !w.bots.length) return;
+      w.botMarches = w.botMarches || [];
+      runBotMarches(s, t);
+      if (t >= w.nextBotAct) {
+        if (t - w.nextBotAct > 2 * 3600000) w.nextBotAct = t;   // longue absence : on ne rejoue pas tout
+        botAct(s, t); w.nextBotAct += BOT_ACT_MS;
+      }
+    }
+  });
+
   // ------------------------------------------------------------ raids des robots
   function launchRaid(s, t) {
     var w = s.world, L = E.castleLevel(s);
@@ -3668,7 +3803,8 @@ Medieval.Engine = (function (D) {
       return !(E.isAllyBot && E.isAllyBot(s, b)) && b.level >= Math.max(1, L - 4) && E.troopTotal(b.troops) > W.botTroops(b.level) * 0.5;
     }).sort(function (a, b) { return dist(a, HOME(s)) - dist(b, HOME(s)); }).slice(0, 4);
     if (!cands.length) return;
-    var bot = cands[Math.floor(E.rand(s) * cands.length)], share = 0.35 + E.rand(s) * 0.25, troops = {};
+    var raiders = cands.filter(function (b) { return E.botProfile(b) === "raider"; });
+    var bot = raiders.length && E.rand(s) < 0.7 ? raiders[Math.floor(E.rand(s) * raiders.length)] : cands[Math.floor(E.rand(s) * cands.length)], share = 0.35 + E.rand(s) * 0.25, troops = {};
     for (var id in bot.troops) { var n = Math.floor(bot.troops[id] * share); if (n > 0) { troops[id] = n; bot.troops[id] -= n; } }
     var secs = Math.max(600, Math.round(dist(bot, HOME(s)) * W.secondsPerTile * 6 / E.marchSpeed(troops)));
     w.incoming.push({ id: E.uid(s, "a"), botId: bot.id, name: bot.name, lord: bot.lord, troops: troops, launched: t, arrive: t + secs * 1000 });
@@ -3727,7 +3863,7 @@ Medieval.Engine = (function (D) {
         if (!bot.hero.captured) bot.hero.level = Math.max(bot.hero.level, bot.level * 2);
       }
     });
-    if (L >= W.raidFromCastle && w.incoming.length === 0 && !E.shielded(s, t) && E.rand(s) < W.raidChancePerHour) launchRaid(s, t);
+    if (L >= W.raidFromCastle && w.incoming.length === 0 && !E.shielded(s, t) && E.rand(s) < W.raidChancePerHour * (w.bots.some(function (b) { return E.botProfile(b) === "raider"; }) ? 1.8 : 1)) launchRaid(s, t);
     var resN = w.tiles.filter(function (x) { return x.kind === "res"; }).length;
     var campN = w.tiles.length - resN;
     if (!w.shared) for (var i = 0; i < 3 && resN < W.resTiles; i++, resN++) spawnRes(s);
@@ -5621,6 +5757,7 @@ Medieval.WorldView = (function (D, E, G) {
         var b = it.o;
         var bimg = G.asset("castle", b.level);
         if (bimg) G.drawAsset(ctx, bimg, p.x, p.y, TW * (1 + Math.min(b.level, 21) * 0.025)); else miniCastle(ctx, p.x, p.y, b.level, "#4a5f8a", false, t);
+        if (b.shieldUntil > now) cityFx(ctx, p.x, p.y, b.level, { shieldUntil: b.shieldUntil }, t, ui);
         labels.push(function () { plate(ctx, p.x, p.y + 30 * ui, b.name, "lv. " + b.level, "#8aa0c8", ui * 0.85); });
       } else if (it.k === "wonder") {
         var wd = it.o, wimg = G.asset("wonder", 1) || G.asset("castle", 11), glow = 0.5 + 0.5 * Math.sin(t * 2);
@@ -5644,6 +5781,26 @@ Medieval.WorldView = (function (D, E, G) {
         cityFx(ctx, p.x, p.y, E.castleLevel(state), { burnUntil: state.burnUntil, shieldUntil: state.shieldUntil, king: myK, title: myK ? null : myT }, t, ui);
         labels.push(function () { plate(ctx, p.x, p.y + 32 * ui, (state.alliance && state.alliance.tag ? "[" + state.alliance.tag + "] " : "") + (state.name || "My city"), (myK ? "King of " + D.KINGDOM.name + " · " : myT ? myT.name + " · " : "") + "lv. " + E.castleLevel(state), "#5fe3ff", ui * 0.95, "#7cf0ff"); });
       }
+    });
+
+    // marches des robots (gris : récolte et chasse, rouge : attaque)
+    (w.botMarches || []).forEach(function (m) {
+      var a0 = tileXY(m.fx, m.fy), b0 = tileXY(m.tx, m.ty), pos2;
+      ctx.setLineDash([5, 7]); ctx.strokeStyle = m.kind === "raid" ? "rgba(230,90,70,.55)" : "rgba(235,235,235,.45)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(a0.x, a0.y); ctx.lineTo(b0.x, b0.y); ctx.stroke(); ctx.setLineDash([]);
+      if (m.phase === "work") pos2 = b0;
+      else {
+        var out = m.phase === "out", t0 = out ? m.start : m.backStart, t1 = out ? m.arrive : m.next, f = Math.min(1, Math.max(0, (now - t0) / Math.max(1, t1 - t0)));
+        var A = out ? a0 : b0, B = out ? b0 : a0; pos2 = { x: A.x + (B.x - A.x) * f, y: A.y + (B.y - A.y) * f };
+      }
+      if (m.phase === "work") { ctx.fillStyle = "#c0392b"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(b0.x + 18, b0.y - 18, 6, 0, 6.3); ctx.fill(); ctx.stroke(); return; }
+      var army2 = ARMY_IMG();
+      if (army2) {
+        var right = (m.phase === "out" ? b0.x - a0.x : a0.x - b0.x) >= 0, aw2 = 40 * Math.max(1, ui * 0.8), ah2 = aw2 * army2.h / army2.w;
+        ctx.save(); ctx.globalAlpha = 0.9; ctx.translate(pos2.x, pos2.y); if (!right) ctx.scale(-1, 1);
+        ctx.drawImage(army2.img, -aw2 / 2, -ah2 * 0.92, aw2, ah2); ctx.restore();
+        ctx.fillStyle = m.kind === "raid" ? "#b0281c" : "#5a6b80"; ctx.fillRect(pos2.x - 2, pos2.y - ah2 - 10, 10, 7); ctx.fillStyle = "#3a2a1a"; ctx.fillRect(pos2.x - 3, pos2.y - ah2 - 10, 1.5, 16);
+      } else { ctx.fillStyle = "#5a6b80"; ctx.beginPath(); ctx.arc(pos2.x, pos2.y - 8, 7, 0, 6.3); ctx.fill(); }
     });
 
     // marches
@@ -5790,7 +5947,7 @@ Medieval.WorldView = (function (D, E, G) {
   function loop(ts) {
     requestAnimationFrame(loop);
     if (document.hidden || !active) return;
-    var animate = state && state.world && (state.world.marches.length || state.world.incoming.length || (state.shieldUntil || 0) > Date.now() || (state.burnUntil || 0) > Date.now() || (state.royal && state.royal.king) || E.OTHERS.length || state.world.wonder);
+    var animate = state && state.world && (state.world.marches.length || (state.world.botMarches || []).length || state.world.incoming.length || (state.shieldUntil || 0) > Date.now() || (state.burnUntil || 0) > Date.now() || (state.royal && state.royal.king) || E.OTHERS.length || state.world.wonder);
     if (!dirty && ts - last < (animate ? 60 : 120)) return;
     if (ts - last < 16) return;
     last = ts; dirty = false; render();
@@ -6423,6 +6580,7 @@ Medieval.Online = (function (D, E, S) {
     });
     var res = keep.filter(function (t) { return t.kind === "res"; });
     w.tiles = keep.filter(function (t) { return t.kind === "res" || t.by || !res.some(function (r) { return E.cheb(r, t) < 2; }); });
+    if (E.applyBotOcc) E.applyBotOcc(s);
   }
 
   function send(s) {
@@ -7524,30 +7682,43 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   // --- carte du monde : case et marche
   var TERRAIN = { g: "Plains", f: "Forest", m: "Mountains", w: "Lake", x: "Outside the kingdom" };
+  // --- fiches de la carte du monde : portrait, infos clés, boutons d'action
+  function assetSrc(key) { var a = (Medieval.ASSETS || []).filter(function (x) { return x.key === key; })[0]; return a ? a.src : null; }
+  function wcard(art, rows, extra) {
+    return '<section class="wcard"><div class="wc-art">' + art + '</div><dl class="wc-rows">' + rows.filter(Boolean).map(function (r) { return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join("") + '</dl>' + (extra || "") + '</section>';
+  }
+  function wbtns(list) { return '<div class="wbtns">' + list.filter(Boolean).join("") + '</div>'; }
+  function wbtn(act, arg, ico, label, cls, disabled) { return '<button class="btn ' + (cls || "teal") + '" data-act="' + act + '" data-arg="' + esc(arg) + '"' + (disabled ? " disabled" : "") + '>' + icon(ico) + label + '</button>'; }
+  function castleArt(lv) { return '<canvas class="pv" data-pv="castle" data-lv="' + Math.max(1, lv || 1) + '"></canvas>'; }
+  function markBtn(pos, label) {
+    var on = (state.marks || []).some(function (m) { return m.x === pos.x && m.y === pos.y; });
+    return wbtn("mark", pos.x + ":" + pos.y + ":" + label, "star", on ? "Saved" : "Save place", on ? "gold" : "ghost");
+  }
+  function coordTxt(p) { return D.KINGDOM.name + " · X:" + p.x + " Y:" + p.y; }
   PANELS.tile = function (pos) {
-    var o = E.objectAt(state, pos.x, pos.y), coord = "X:" + pos.x + " Y:" + pos.y;
+    var o = E.objectAt(state, pos.x, pos.y), coord = "X:" + pos.x + " Y:" + pos.y, t0 = now();
     if (!o) {
       var canGo = E.canSettle(state, pos.x, pos.y), haveTp = E.bagCount(state, "tpAdvanced"), tpPrice = D.SHOP_BY_ID.tpAdvanced.price;
-      return head(coord, TERRAIN[E.terrainAt(state.world, pos.x, pos.y)] || "Terrain") + '<div class="p-body"><p class="muted">Nothing of interest here.</p>' +
-        (canGo ? '<button class="btn primary wide" data-act="teleport-here" data-arg="' + pos.x + ':' + pos.y + '">' + icon("globe") + 'Move my city here · ' + (haveTp ? "Advanced Teleport (×" + haveTp + ")" : icon("gold") + tpPrice) + '</button><p class="muted small">Settle next to your allies. All your marches must be home.</p>' : "") + '</div>';
+      return head(coordTxt(pos), "Open plain") + '<div class="p-body">' + wbtns([
+        canGo ? wbtn("teleport-here", pos.x + ":" + pos.y, "globe", "Move my city here" + (haveTp ? " (Teleport ×" + haveTp + ")" : " · " + tpPrice + " gold"), "primary") : "",
+        markBtn(pos, "Plain")]) + '</div>';
     }
-    if (o.kind === "home") return head(coord, esc(state.name || "My city")) + '<div class="p-body">' + royalLine(state.royal && state.royal.king, state.royal && state.royal.title) +
-      (E.shielded(state, now()) ? '<p class="small">' + icon("check") + '<b>Peace Shield</b> active for <span data-live-until="' + state.shieldUntil + '"></span>.</p>' : '<p class="muted small">No shield. Buy a Peace Shield in Items to stop all attacks on your city.</p>') +
-      '<p>Your city, Stronghold level ' + E.castleLevel(state) + '.</p><button class="btn primary" data-act="toggle-view">' + icon("castle") + 'Enter the city</button></div>';
+    if (o.kind === "home") return head(coordTxt(pos), esc(state.name || "My city")) + '<div class="p-body">' + royalLine(state.royal && state.royal.king, state.royal && state.royal.title) +
+      wcard(castleArt(E.castleLevel(state)), [["Power", F.num(E.power(state))], ["Stronghold", "level " + E.castleLevel(state)], state.alliance ? ["Alliance", esc(state.alliance.name)] : null,
+        ["Shield", E.shielded(state, t0) ? '<span data-live-until="' + state.shieldUntil + '"></span>' : '<span class="muted">none</span>']]) +
+      wbtns([wbtn("toggle-view", "", "castle", "Enter the city", "primary")]) + '</div>';
     if (o.kind === "wonder") {
-      var wd = o.wonder, open = E.wonderOpen(state, now()), mineM = state.world.marches.filter(function (x) { return x.kind === "wonder"; })[0];
-      var wh = head(coord + " · heart of " + D.KINGDOM.name, "The Wonder") + '<div class="p-body"><p class="small">Hold the Wonder with your troops for <b>' + Math.round(D.WORLD.wonderHoldMs / 60000) + ' minutes</b> without being driven off, and you are crowned <b>King of ' + D.KINGDOM.name + '</b>: ' + F.num(D.KINGDOM.kingGold) + ' gold, +' + D.KINGDOM.kingBonus.all_def + '% troop defense, and the power to grant titles. One contest per week; the Wonder is shielded in between.</p><dl class="stats">' +
-        '<dt>King of ' + D.KINGDOM.name + '</dt><dd>' + (wd.king ? '<b>' + esc(wd.king.name || "?") + '</b> <span class="muted">(' + F.ago(wd.king.at) + ')</span>' : '<span class="muted">nobody yet</span>') + '</dd>' +
-        (wd.titles && Object.keys(wd.titles).length ? '<dt>Titles</dt><dd>' + Object.keys(wd.titles).map(function (u) { var o2 = E.OTHERS.filter(function (x) { return x.uid === u; })[0], ti = D.TITLE_BY_ID[wd.titles[u]]; return ti ? esc(ti.name) + ": " + esc(o2 ? o2.name : u === S.uid() ? "you" : "?") : ""; }).join(" · ") + '</dd>' : "") +
-        '<dt>Status</dt><dd>' + (open ? '<span class="pill green">Open</span>' : 'Closed until ' + new Date(wd.openAt).toLocaleString("en-GB", { weekday: "long", hour: "2-digit", minute: "2-digit" })) + '</dd>' +
-        '<dt>Held by</dt><dd>' + (mineM && mineM.phase === "garrison" ? '<b>you</b> · crowned in <span data-live-until="' + (mineM.garrisonAt + D.WORLD.wonderHoldMs) + '"></span>' : wd.occ ? esc(wd.occ.name || "another lord") + (wd.occ.since ? ' · since ' + F.ago(wd.occ.since) : "") : '<span class="muted">nobody</span>') + '</dd>' +
-        '<dt>Distance</dt><dd>' + E.worldDistance(wd, E.homeOf(state)).toFixed(1) + ' tiles · the sacred forest slows marches</dd></dl>';
-      if (mineM) return wh + (mineM.phase !== "back" ? '<button class="btn" data-act="recall" data-arg="' + mineM.id + '">Recall your troops</button>' : '<p class="muted small">Your troops are coming back.</p>') + '</div>';
-      if (!open) return wh + '</div>';
-      return wh + '<button class="btn primary wide" data-act="march" data-arg="wonder:wonder">' + icon("sword") + (wd.occ ? "Attack the holder" : "Send troops to hold it") + '</button></div>';
+      var wd = o.wonder, open = E.wonderOpen(state, t0), mineM = state.world.marches.filter(function (x) { return x.kind === "wonder"; })[0];
+      var wh = head(coordTxt(pos), "The Wonder") + '<div class="p-body">' + wcard('<img src="' + (assetSrc("wonder") || "") + '" alt="">', [
+        ["King", wd.king ? '<b>' + esc(wd.king.name || "?") + '</b>' : '<span class="muted">nobody yet</span>'],
+        ["Status", open ? '<span class="pill green">Open</span>' : 'Closed until ' + new Date(wd.openAt).toLocaleString("en-GB", { weekday: "short", hour: "2-digit", minute: "2-digit" })],
+        ["Held by", mineM && mineM.phase === "garrison" ? '<b>you</b> · <span data-live-until="' + (mineM.garrisonAt + D.WORLD.wonderHoldMs) + '"></span>' : wd.occ ? esc(wd.occ.name || "another lord") : '<span class="muted">nobody</span>'],
+        ["Prize", F.num(D.KINGDOM.kingGold) + " gold · +" + D.KINGDOM.kingBonus.all_def + "% defense · titles"]]);
+      var acts = mineM ? (mineM.phase !== "back" ? wbtn("recall", mineM.id, "march", "Recall troops", "") : "") : open ? wbtn("march", "wonder:wonder", "sword", wd.occ ? "Attack the holder" : "Hold the Wonder", "primary") : "";
+      return wh + wbtns([acts, markBtn(pos, "The Wonder")]) + '<p class="muted small">Hold it ' + Math.round(D.WORLD.wonderHoldMs / 60000) + ' min to be crowned. One contest per week.</p></div>';
     }
     if (o.kind === "player") {
-      var pl = o.player;
+      var pl = o.player, ally = E.isAlly(state, pl);
       var wk = state.world.wonder || {}, plKing = wk.king && wk.king.uid === pl.uid, plTitle = wk.titles && wk.titles[pl.uid];
       var grant = "";
       if (state.royal && state.royal.king) {
@@ -7556,42 +7727,49 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
           return '<button class="titlebtn ' + (ti.good ? "good" : "bad") + (plTitle === ti.id ? " on" : "") + '" data-act="grant-title" data-arg="' + esc(pl.uid) + ':' + ti.id + '"><b>' + ti.name + '</b><span>' + ti.desc + (holder && holder !== pl.uid ? " · taken" : "") + '</span></button>';
         }).join("") + '</div>' + (plTitle ? '<button class="btn tiny ghost" data-act="grant-title" data-arg="' + esc(pl.uid) + ':">Remove the title</button>' : "") + '</section>';
       }
-      return head(coord + " · Stronghold " + (pl.stronghold || 1), (pl.tag ? "[" + esc(pl.tag) + "] " : "") + esc(pl.name || "City")) + '<div class="p-body">' + royalLine(plKing, plTitle) +
-        ((pl.shieldUntil || 0) > now() ? '<p class="small">' + icon("check") + 'Protected by a <b>Peace Shield</b>.</p>' : "") + '<dl class="stats"><dt>Lord</dt><dd>' + esc(pl.lord || "") + '</dd>' +
-        '<dt>Power</dt><dd>' + F.num(pl.power || 0) + '</dd><dt>Hero</dt><dd>level ' + (pl.hero || 1) + '</dd>' + (pl.alliance ? '<dt>Alliance</dt><dd>' + esc(pl.alliance) + '</dd>' : "") +
-        '<dt>Last seen</dt><dd>' + (pl.updatedAt ? F.ago(pl.updatedAt) : "—") + '</dd></dl>' +
-        '<button class="btn teal wide" data-act="spy" data-arg="' + esc(pl.uid) + '">' + icon("globe") + 'Scout · ' + icon("silver") + F.num(E.spyCost(pl).silver) + '</button>' +
-        '<p class="muted small">Scouting research shows more: level 1 troop types, level 3 traps, level 5 the exact army.</p>' + grant + '</div>';
+      return head(coordTxt(pos), (pl.tag ? "[" + esc(pl.tag) + "] " : "") + esc(pl.name || "City")) + '<div class="p-body">' + royalLine(plKing, plTitle) +
+        wcard(castleArt(pl.stronghold), [["Lord", esc(pl.lord || "—")], ["Power", '<b>' + F.num(pl.power || 0) + '</b>'], ["Alliance", pl.alliance ? esc(pl.alliance) + (ally ? ' <span class="pill green">ally</span>' : "") : '<span class="muted">none</span>'],
+          ["Stronghold", "level " + (pl.stronghold || 1) + " · hero " + (pl.hero || 1)], ["Seen", pl.updatedAt ? F.ago(pl.updatedAt) : "—"],
+          (pl.shieldUntil || 0) > t0 ? ["Shield", '<span class="pill">Peace Shield</span>'] : null]) +
+        wbtns([ally ? wbtn("noop", "", "globe", "Ally: no scouting", "ghost", true) : wbtn("spy", pl.uid, "globe", "Scout · " + F.num(E.spyCost(pl).silver) + " silver"), markBtn(pos, pl.name || "City")]) + grant + '</div>';
     }
     if (o.kind === "res") {
       var t = o.tile, mine = t.by ? E.findMarch(state, t.by) : null;
-      var html = head(coord + " · level " + t.level, E.resTileName(t.res)) + '<div class="p-body"><dl class="stats"><dt>Left</dt><dd>' + icon(t.res) + F.num(t.amount) + ' ' + RES_NAME[t.res].toLowerCase() + '</dd><dt>Gathering speed</dt><dd>' + F.num(D.WORLD.gatherRate[t.res] * (1 + E.bonus(state, "gather_speed") / 100)) + ' /h</dd><dt>Distance</dt><dd>' + E.worldDistance(t, E.homeOf(state)).toFixed(1) + ' tiles</dd></dl>';
-      if (mine) return html + '<p class="small">One of your marches is gathering here: ' + F.num(E.gatherProgress(state, mine, now())) + ' / ' + F.num(mine.gatherAmount || 0) + ' gathered.</p><button class="btn" data-act="recall" data-arg="' + mine.id + '">Recall</button></div>';
-      if (t.occ) {
-        var on = E.troopTotal(t.occ.troops), sc = E.bonus(state, "scouting");
-        return html + '<section class="card"><p class="small">' + icon("alert") + '<b>' + esc(t.occ.name || "Another lord") + '</b> is gathering here until <span data-live-until="' + t.occ.end + '"></span>.</p>' +
-          '<p class="small">' + (sc >= 5 ? esc(troopsLine(t.occ.troops)) : "About " + F.num(Math.max(50, Math.round(on / 50) * 50)) + " soldiers" + (sc >= 1 ? "" : ' <span class="muted">(research Scouting to see more)</span>')) + '</p>' +
-          '<p class="muted small">Attack them: if you win, your march drives them off and starts gathering.</p></section>' +
-          '<button class="btn primary wide" data-act="march" data-arg="gather:' + t.id + '">' + icon("sword") + 'Attack and take the tile</button></div>';
-      }
-      return html + '<p class="muted small">Each soldier carries a load; gold is heavy (×' + D.WORLD.weight.gold + '). This tile is shared: other lords see the same amount.</p><button class="btn teal wide" data-act="march" data-arg="gather:' + t.id + '">' + icon("march") + 'Gather</button></div>';
+      var owner = mine ? '<b class="ok">You</b>' : t.occ ? '<b class="bad">' + esc(t.occ.name || "Another lord") + '</b>' : '<b class="bad">Unoccupied</b>';
+      var html = head(coordTxt(pos), E.resTileName(t.res) + " · level " + t.level) + '<div class="p-body">' + wcard('<span class="wc-res">' + icon(t.res) + '</span>', [
+        ["Available", '<b>' + F.num(t.amount) + '</b> ' + RES_NAME[t.res].toLowerCase()], ["Owner", owner],
+        t.occ ? ["Leaves in", '<span data-live-until="' + t.occ.end + '"></span>'] : null, ["Distance", E.worldDistance(t, E.homeOf(state)).toFixed(1) + " tiles"]]);
+      if (mine) return html + '<p class="small">Gathered: ' + F.num(E.gatherProgress(state, mine, t0)) + ' / ' + F.num(mine.gatherAmount || 0) + '</p>' + wbtns([wbtn("recall", mine.id, "march", "Recall", ""), markBtn(pos, E.resTileName(t.res))]) + '</div>';
+      if (t.occ) return html + wbtns([wbtn("march", "gather:" + t.id, "sword", "Attack", "primary"), markBtn(pos, E.resTileName(t.res))]) + '<p class="muted small">Win the battle to drive them off and start gathering.</p></div>';
+      return html + wbtns([wbtn("march", "gather:" + t.id, "march", "Occupy"), markBtn(pos, E.resTileName(t.res))]) + '</div>';
     }
     if (o.kind === "camp") {
-      var c = o.tile;
-      var mo = E.monsterOf(c.level);
-      return head(coord + " · level " + c.level, mo.icon + " " + esc(mo.name)) + '<div class="p-body"><section class="card"><p class="desc">' + esc(mo.desc) + '</p>' +
-        '<dl class="stats"><dt>Strength</dt><dd>' + F.compact(E.troopPower(c.troops)) + ' power · ' + F.num(E.troopTotal(c.troops)) + ' hit points</dd><dt>Reward</dt><dd>Resources, gold, hero XP, sometimes gear</dd></dl>' +
-        '<p class="small muted">Send your hero with the march: monsters give him ×3 experience, and the Hero research tree makes him a better hunter.</p></section>' +
-        '<button class="btn primary wide" data-act="march" data-arg="bandit:' + c.id + '">' + icon("sword") + 'Hunt the ' + esc(mo.name) + '</button></div>';
+      var c = o.tile, mo = E.monsterOf(c.level, t0), img = assetSrc("mon-" + mo.key);
+      return head(coordTxt(pos), esc(mo.name) + " · level " + c.level) + '<div class="p-body">' + wcard(img ? '<img src="' + img + '" alt="">' : '<span class="wc-res">' + icon("alert") + '</span>', [
+        ["Strength", '<b>' + F.compact(E.troopPower(c.troops)) + '</b> power'], ["Health", F.num(E.troopTotal(c.troops))], ["Reward", "Resources, gold, hero XP, gear"],
+        ["Distance", E.worldDistance(c, E.homeOf(state)).toFixed(1) + " tiles"]]) +
+        wbtns([wbtn("march", "bandit:" + c.id, "sword", "Attack", "primary"), markBtn(pos, mo.name)]) + '</div>';
     }
-    var b = o.bot, doc = D.WORLD.doctrines[b.doctrine], wl = watch(), sc = E.bonus(state, "scouting"), exact = wl >= 10 || sc >= 5;
-    var mixTxt = function () { var tot = {}, n = E.troopTotal(b.troops) || 1; for (var id in b.troops) tot[D.TROOPS[id].type] = (tot[D.TROOPS[id].type] || 0) + b.troops[id];
-      return Object.keys(tot).sort(function (x, y) { return tot[y] - tot[x]; }).map(function (k) { return Math.round(tot[k] / n * 100) + "% " + D.TROOP_TYPES[k].name.toLowerCase(); }).join(", "); };
-    var h2 = head(coord + " · castle level " + b.level, esc(b.name)) + '<div class="p-body"><dl class="stats"><dt>Lord</dt><dd>' + esc(b.lord) + (b.hero.captured ? ' <span class="pill red">in your prison</span>' : ' · hero lv. ' + b.hero.level) + '</dd>' +
-      '<dt>Known for</dt><dd>' + doc.name + '</dd><dt>' + (exact ? "Army" : "Estimated army") + '</dt><dd>' + (exact ? esc(troopsLine(b.troops)) : "≈ " + F.num(Math.round(E.troopTotal(b.troops) / 500) * 500 || E.troopTotal(b.troops)) + " soldiers" + (sc >= 1 ? " · " + esc(mixTxt()) : "")) + '</dd><dt>City wall</dt><dd>+' + Math.round(b.level * 1.2) + '% defense and health</dd></dl>';
+    var b = o.bot, seen = E.botScouted(state, b, t0), prof = E.botProfile(b);
+    var power = E.troopPower(b.troops) + b.level * 400;
+    var h2 = head(coordTxt(pos), esc(b.name)) + '<div class="p-body">' + wcard(castleArt(b.level), [
+      ["Lord", esc(b.lord) + (b.hero.captured ? ' <span class="pill red">your prisoner</span>' : "")], ["Power", '<b>' + (seen ? F.num(power) : "≈ " + F.compact(Math.round(power / 1000) * 1000 || power)) + '</b>'],
+      ["Castle", "level " + b.level], ["Character", E.PROFILE_NAMES[prof]],
+      ["Army", seen ? esc(troopsLine(b.troops)) : '<span class="muted">unknown — scout first</span>'],
+      b.shieldUntil > t0 ? ["Shield", '<span class="pill">Peace Shield</span> <span data-live-until="' + b.shieldUntil + '"></span>'] : null]);
     if (state.hero.status === "captured" && state.hero.captor === b.id) h2 += '<p class="warn">' + icon("alert") + 'Your hero is held here. A victory frees him.</p>';
-    if (!exact) h2 += '<p class="muted small">' + (sc < 1 ? "Research <b>Scouting</b> (Combat) to learn their troop types; level 5 reveals the exact army." : "Scouting level 5 (or Watchtower level 10) reveals the exact army.") + '</p>';
-    return h2 + '<button class="btn primary wide" data-act="march" data-arg="attack:' + b.id + '">' + icon("sword") + 'Attack</button></div>';
+    return h2 + wbtns([wbtn("spy-bot", b.id, "globe", "Scout · " + F.num(100 * b.level) + " silver"), wbtn("march", "attack:" + b.id, "sword", "Attack", "primary", b.shieldUntil > t0), markBtn(pos, b.name)]) + '</div>';
+  };
+
+  // --- lieux enregistrés
+  PANELS.marks = function () {
+    var list = state.marks || [];
+    var html = head(list.length + " saved", "Saved places") + '<div class="p-body">';
+    if (!list.length) return html + '<p class="mail-empty">Tap anything on the world map, then <b>Save place</b> to find it again here.</p></div>';
+    return html + '<div class="mail-list">' + list.map(function (m, i) {
+      return '<div class="qrow"><div class="qr-txt"><b>' + icon("star") + ' ' + esc(m.label) + '</b><span class="small">X:' + m.x + ' Y:' + m.y + '</span></div><div class="row">' +
+        '<button class="btn tiny teal" data-act="mark-go" data-arg="' + i + '">Go</button><button class="btn tiny danger" data-act="mark-del" data-arg="' + i + '">' + icon("close") + '</button></div></div>';
+    }).join("") + '</div></div>';
   };
 
   function enemyOf(kind, target) {
@@ -7682,7 +7860,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (kind === "reports" && arg !== "keep") ui.reportId = null;
     if (ui.view === "city") M.setSelection(kind === "building" ? { kind: "building", id: arg } : kind === "plot" ? { kind: "plot", plot: arg } : kind === "locked" ? { kind: "locked", plot: arg } : null);
     if (kind === "tile") WV.setSelection(arg);
-    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming)$/.test(kind)); document.body.classList.add("panel-open");
+    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks)$/.test(kind)); document.body.classList.add("panel-open");
     renderPanel(true); $("panelBody").scrollTop = 0;
     document.querySelectorAll(".nav button[data-arg]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-arg") === kind); });
   }
@@ -7879,9 +8057,24 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     spy: function (arg) {
       var p = E.OTHERS.filter(function (x) { return x.uid === arg; })[0];
       if (!p) return;
+      if (E.isAlly(state, p)) { toast(icon("alert") + "<span>You cannot scout a member of your alliance.</span>"); return; }
       var r = E.spyPlayer(state, p, now());
       if (result(r, icon("globe") + "<span>Scout report on <b>" + esc(p.name || "the city") + "</b> in your mail.</span>")) { ui.reportId = r.report.id; E.markRead(state, r.report.id); openPanel("reports", "keep"); }
     },
+    "spy-bot": function (arg) {
+      var b = E.findBot(state, arg); if (!b) return;
+      var r = E.spyBot(state, b, now());
+      if (result(r, icon("globe") + "<span>Scout report on <b>" + esc(b.name) + "</b> in your mail.</span>")) { ui.reportId = r.report.id; E.markRead(state, r.report.id); openPanel("reports", "keep"); }
+    },
+    mark: function (arg) {
+      var p = arg.split(":"), x = +p[0], y = +p[1], label = p.slice(2).join(":") || "Place";
+      state.marks = state.marks || [];
+      var i = state.marks.findIndex(function (m) { return m.x === x && m.y === y; });
+      if (i >= 0) state.marks.splice(i, 1); else { state.marks.unshift({ x: x, y: y, label: label }); if (state.marks.length > 30) state.marks.pop(); toast(icon("star") + "<span><b>" + esc(label) + "</b> saved. Find it with the ★ button on the map.</span>"); }
+      persist(); renderPanel(true);
+    },
+    "mark-go": function (arg) { var m = (state.marks || [])[+arg]; if (!m) return; setView("world"); WV.centerOn(m.x, m.y); openPanel("tile", { x: m.x, y: m.y }); },
+    "mark-del": function (arg) { (state.marks || []).splice(+arg, 1); persist(); renderPanel(true); },
     "grant-title": function (arg) {
       var p = arg.split(":"), wk = state.world.wonder || {}, cur = Object.keys(wk.titles || {}).filter(function (u) { return wk.titles[u] === p[1]; })[0];
       var jobs = [];
