@@ -7953,7 +7953,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   // --- héros
   function itemSlotBtn(it, slotKey, act) {
     var gimg = it && UI_SRC["gear-" + it.set + "-" + it.slot], tbg = it && UI_SRC["bg-t" + it.tier];
-    return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background-image:url(' + tbg + ')"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
+    return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background:url(' + tbg + ') center/cover !important"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
   }
   function itemRow(it, actions) {
     return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
