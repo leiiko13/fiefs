@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051223";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051237";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1038,6 +1038,26 @@ body.in-forge .bottom, body.in-forge .topbar, body.in-forge .resrow { visibility
 .hnav .fbtn { position: relative; } .hnav .badge { top: 2px; right: 10px; min-width: 16px; height: 16px; font-size: 10px; line-height: 14px; padding: 0 3px; }
 @media (max-width: 380px) { .hcol .slot { width: 58px; height: 58px; } }
 .fsheet .item-name { filter: brightness(.7) saturate(1.3); } .fsheet .item { background: #fff8e8; }
+/* couleurs des niveaux = les fonds de l'image (gris, vert, rouge, bleu, violet, or) */
+.lvb.q1, .qlegend .q1, .qbtn.q1 { background: var(--bg-t1, var(--q1)) center / cover !important; }
+.lvb.q2, .qlegend .q2, .qbtn.q2 { background: var(--bg-t2, var(--q2)) center / cover !important; }
+.lvb.q3, .qlegend .q3, .qbtn.q3 { background: var(--bg-t3, var(--q3)) center / cover !important; }
+.lvb.q4, .qlegend .q4, .qbtn.q4 { background: var(--bg-t4, var(--q4)) center / cover !important; }
+.lvb.q5, .qlegend .q5, .qbtn.q5 { background: var(--bg-t5, var(--q5)) center / cover !important; }
+.lvb.q6, .qlegend .q6, .qbtn.q6 { background: var(--bg-t6, var(--q6)) center / cover !important; }
+.lvb[class*=" q"] { border: 0; border-radius: 6px; min-height: 32px; } .lvb[class*=" q"] small { color: #fff !important; text-shadow: 0 1px 2px #000, 0 0 3px #000; font-size: 13px; }
+.qlegend span { color: #fff !important; text-shadow: 0 1px 2px #000; border: 0; padding: 3px 9px; }
+.qpick { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.qbtn { aspect-ratio: 1; border: 0; border-radius: 8px; cursor: pointer; display: grid; place-items: end center; padding-bottom: 4px; }
+.qbtn small { font: 800 12px var(--f-body); color: #fff; text-shadow: 0 1px 2px #000; } .qbtn.on { outline: 3px solid #2a1a0c; outline-offset: 1px; } .qbtn:disabled { opacity: .3; }
+/* héros : un peu plus petit, entre les deux colonnes de pièces */
+.hstage .hero-fig { left: 70px; right: 70px; width: auto; }
+@media (max-width: 380px) { .hstage .hero-fig { left: 62px; right: 62px; } }
+/* bandeau du bas : icônes un peu plus bas */
+.nav button { padding-top: 8px !important; }
+.nav .viewtoggle { margin-top: 6px !important; }
+.hstage .hero-fig { left: 70px !important; right: auto !important; width: calc(100% - 140px) !important; }
+@media (max-width: 380px) { .hstage .hero-fig { left: 62px !important; width: calc(100% - 124px) !important; } }
 
 </style>
 
@@ -1599,7 +1619,7 @@ Medieval.Data = (function () {
   var RESEARCH_BY_ID = {}; RESEARCH.forEach(function (r) { RESEARCH_BY_ID[r.id] = r; });
   /* coût/temps : selon le niveau d'académie requis ; croissance par niveau plus douce pour les recherches à 10 niveaux */
   var RESEARCH_SCALE = { cost: 500, costAcad: 1.32, costLevel5: 1.55, costLevel10: 1.3, time: 90, timeAcad: 1.22, timeLevel5: 1.5, timeLevel10: 1.25,
-    unlockMult: 3, xp: 25, xpAcad: 1.18, power: 4 };
+    unlockMult: 3, xp: 25, xpAcad: 1.18, power: 40 };
   var STARTER_SETS = ["legion"];
 
 
@@ -1824,6 +1844,12 @@ Medieval.Data = (function () {
       if (c.t === "trained" || c.t === "army") sp.tsp15m = 1;
     });
   })();
+  // Quêtes de recherche (ajoutées à la fin : les indices des anciennes quêtes ne bougent pas)
+  RESEARCH.forEach(function (r) {
+    var base = Math.round(300 * Math.pow(1.25, r.acad - 1) / 50) * 50;
+    QUESTS.push(Q("Research " + r.name, { t: "research", id: r.id, n: 1 }, { food: base, wood: base, rsp15m: 1 }));
+    if (r.max > 1) QUESTS.push(Q("Research " + r.name + " to level " + r.max, { t: "research", id: r.id, n: r.max }, { food: base * 3, wood: base * 3, silver: base, rsp1h: 1 }));
+  });
   /** Pack offert une fois aux comptes de la phase de test. */
   var TEST_PACK = { food100k: 2, wood100k: 2, stone100k: 2, ore100k: 2, silver100k: 1, sp1h: 3 };
   var TEST_PACK2 = { shield24h: 2, tpAdvanced: 2 };
@@ -2405,7 +2431,7 @@ Medieval.Engine = (function (D) {
   };
   E.power = function (s) {
     var p = 0;
-    E.listBuildings(s).forEach(function (b) { p += Math.round(D.BUILDINGS[b.type].power * 2.5 * Math.pow(b.level, 1.6)); });
+    E.listBuildings(s).forEach(function (b) { p += Math.round(D.BUILDINGS[b.type].power * 3 * Math.pow(b.level, 2.1)); });
     p += E.troopPower(s.army);
     if (s.world) s.world.marches.forEach(function (m) { p += E.troopPower(m.troops); });
     if (s.hero) p += E.heroPower(s);
@@ -3113,7 +3139,7 @@ Medieval.Engine = (function (D) {
   };
   /** XP du héros et puissance gagnées par un niveau de recherche. */
   E.researchXp = function (id, lv) { var r = D.RESEARCH_BY_ID[id]; return Math.round(SC.xp * Math.pow(SC.xpAcad, r.acad - 1) * Math.sqrt(lv) * (isUnlock(r) ? 3 : 1)); };
-  E.researchPowerOf = function (id, lv) { var r = D.RESEARCH_BY_ID[id]; return Math.round(SC.power * Math.pow(1.15, r.acad - 1) * lv * (isUnlock(r) ? 3 : 1)); };
+  E.researchPowerOf = function (id, lv) { var r = D.RESEARCH_BY_ID[id]; return Math.round(SC.power * Math.pow(1.25, r.acad - 1) * lv * (isUnlock(r) ? 3 : 1)); };
   E.researchPower = function (s) {
     var p = 0, l = (s.research && s.research.levels) || {};
     for (var id in l) if (D.RESEARCH_BY_ID[id]) p += E.researchPowerOf(id, l[id]);
@@ -4405,6 +4431,7 @@ Medieval.Engine = (function (D) {
       case "army": cur = E.armyTotal(s); break;
       case "hero": cur = s.hero ? s.hero.level : 0; break;
       case "equipped": cur = E.equippedItems(s).length; break;
+      case "research": cur = E.researchLevel ? E.researchLevel(s, c.id) : 0; break;
       default: cur = s.stats[c.t] || 0;
     }
     return { cur: Math.min(cur, c.n), need: c.n, done: cur >= c.n, claimed: s.quests.claimed.indexOf(i) >= 0 };
@@ -7408,7 +7435,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function applyUiImages() {
     var root = document.documentElement;
-    Object.keys(UI_SRC).forEach(function (k) { if (/^(ico|nav)-/.test(k)) root.style.setProperty("--" + k, 'url("' + UI_SRC[k] + '")'); });
+    Object.keys(UI_SRC).forEach(function (k) { if (/^(ico|nav|bg)-/.test(k)) root.style.setProperty("--" + k, 'url("' + UI_SRC[k] + '")'); });
     (Medieval.ASSETS || []).forEach(function (x) { if (x.key === "castle" && x.min === 1) root.style.setProperty("--img-castle", 'url("' + x.src + '")'); });
     [["ui-power", "--img-power", "has-power"], ["ui-gold", "--img-gold", "has-gold"], ["ui-resbar", "--img-resbar", "has-resbar"], ["ui-avatar", "--img-avatar", "has-avatar"], ["nav-quests", "--img-navq", "has-nav"], ["ui-qplate", "--img-qplate", "has-quest"], ["ui-qribbon", "--img-qribbon", "has-quest"], ["ui-vip", "--img-vip", "has-vip"], ["ui-forgebg", "--img-forgebg", "has-forgebg"]].forEach(function (u) {
       if (!UI_SRC[u[0]]) return;
@@ -7538,7 +7565,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var i = E.currentQuest(state);
     if (i < 0) return '<span class="q-tag">Quest</span><span class="q-text">All quests completed. Glory to you!</span>';
     var p = E.questProgress(state, i);
-    return '<span class="q-tag">' + (p.done ? "Claim" : "Quest") + '</span><span class="q-text">' + esc(D.QUESTS[i].text) + '</span><span class="q-prog">' + F.compact(p.cur) + ' / ' + F.compact(p.need) + '</span>';
+    return '<span class="q-tag"' + (p.done ? ' data-act="claim" data-arg="' + i + '"' : "") + '>' + (p.done ? "Claim" : "Quest") + '</span><span class="q-text">' + esc(D.QUESTS[i].text) + '</span><span class="q-prog">' + F.compact(p.cur) + ' / ' + F.compact(p.need) + '</span>';
   }
   function tickerHtml() {
     var r = state.reports[0];
@@ -7910,12 +7937,19 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       return html + '</div>' + nav;
     }
     if (view === "pick") {
-      var idx = ui.forgePick || 0, owned = [];
+      var idx = ui.forgePick || 0, owned = [], curP = picks[idx];
+      var quality = "";
+      if (curP) {
+        quality = '<h3>' + matChip(curP.key, curP.lv) + esc(D.MAT_BY_KEY[curP.key].name) + ' · choose the quality</h3><div class="qpick">' + [1, 2, 3, 4, 5, 6].map(function (L) {
+          var n = E.matCount(state, curP.key, L) - pickedCount(curP.key, L) + (L === curP.lv ? 1 : 0);
+          return '<button class="qbtn q' + L + (L === curP.lv ? " on" : "") + '" data-act="forge-put" data-arg="' + curP.key + ':' + L + '"' + (n > 0 ? "" : " disabled") + '><small>×' + Math.max(0, n) + '</small></button>';
+        }).join("") + '</div><button class="btn danger wide" data-act="forge-put" data-arg="">Remove from the anvil</button><h3>Or another material</h3>';
+      }
       D.MATERIALS.forEach(function (M) { for (var L = 1; L <= 6; L++) { var n = E.matCount(state, M.key, L) - pickedCount(M.key, L); if (n > 0) owned.push({ key: M.key, lv: L, n: n }); } });
-      html += '<div class="fsheet"><h3>Pick a material · slot ' + (idx + 1) + '</h3>' + (owned.length ? '<div class="fpickgrid">' + owned.map(function (o) {
+      html += '<div class="fsheet">' + (quality || '<h3>Pick a material · slot ' + (idx + 1) + '</h3>') + (owned.length ? '<div class="fpickgrid">' + owned.map(function (o) {
         return '<button class="fpick" data-act="forge-put" data-arg="' + o.key + ':' + o.lv + '">' + matChip(o.key, o.lv) + '<b>' + esc(D.MAT_BY_KEY[o.key].name) + '</b><small>×' + o.n + '</small></button>';
       }).join("") + '</div>' : '<p class="small">No materials left. Hunt monsters and gather resources to find more.</p>') +
-        '<div class="wbtns">' + (picks[idx] ? '<button class="btn ghost" data-act="forge-put" data-arg="">Empty this slot</button>' : "") + '<button class="btn" data-act="forge-view" data-arg="anvil">Back</button></div></div>';
+        '<div class="wbtns"><button class="btn" data-act="forge-view" data-arg="anvil">Back</button></div></div>';
       return html + '</div>' + nav;
     }
     // l'enclume
@@ -7925,14 +7959,14 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     }
     var c = E.checkForge(state, ui.forgeSet, picks), filled = picks.filter(Boolean);
     html += setTabs() + '<div class="fspacer"></div><div class="fslots">' + picks.map(function (p, i) {
-      return '<button class="fslot' + (p ? " full" : "") + '" data-act="' + (p ? "forge-clear" : "forge-slot-pick") + '" data-arg="' + i + '">' + (p ? '<span class="fmat">' + matChip(p.key, p.lv) + '</span><small>' + esc(D.MAT_BY_KEY[p.key].name) + '</small>' : '<span class="fplus">+</span>') + '</button>';
+      return '<button class="fslot' + (p ? " full" : "") + '" data-act="forge-slot-pick" data-arg="' + i + '">' + (p ? '<span class="fmat">' + matChip(p.key, p.lv) + '</span><small>' + esc(D.MAT_BY_KEY[p.key].name) + '</small>' : '<span class="fplus">+</span>') + '</button>';
     }).join("") + '</div>';
     html += '<div class="fresult">';
     if (filled.length >= 2) {
       html += '<p>' + (c.recipe.exact ? 'You will forge: <b>' + esc(pieceName(ui.forgeSet, c.recipe.slot)) + '</b>' : '<b>Unknown mix</b> · the forge will decide what comes out') + '</p>';
       html += '<div class="odds">' + c.odds.map(function (pp, i) { return pp > 0.0005 ? '<span class="od' + (i + 1 > c.cap ? " capped" : "") + '"><b>Tier ' + ROMAN[i + 1] + '</b>' + (pp >= 0.995 ? "sure" : (pp * 100 < 1 ? "<1" : Math.round(pp * 100)) + "%") + '</span>' : ""; }).join("") + '<span class="od">' + icon("clock") + F.duration(c.time) + '</span></div>';
     } else html += '<p>Tap the slots to place 2 to 4 materials on the anvil.</p>';
-    if (filled.length) html += '<p class="fhint">Tap a material to take it off the anvil.</p>';
+    if (filled.length) html += '<p class="fhint">Tap a material to change its quality or take it off.</p>';
     html += '</div><button class="btn primary wide fgo" data-act="forge-go"' + (c.ok ? "" : " disabled") + '>' + icon("anvil") + 'Forge it</button>' +
       (filled.length >= 2 && !c.ok ? '<p class="freasons">' + c.reasons.map(esc).join(" ") + '</p>' : "");
     return html + '</div>' + nav;
