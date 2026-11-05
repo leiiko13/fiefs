@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051534";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051548";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1070,6 +1070,25 @@ body.in-forge .bottom, body.in-forge .topbar, body.in-forge .resrow { visibility
 .slot .gimg { width: 84% !important; height: 84% !important; max-width: none; max-height: none; object-fit: contain; margin: auto; }
 .slot { display: grid !important; place-items: center !important; }
 .rslot { display: grid; place-items: center; } .rslot img { width: 86% !important; height: 86% !important; max-width: none !important; max-height: none !important; }
+/* tenues */
+.presets { display: grid; gap: 6px; }
+.preset { background: rgba(255,248,230,.6); border: 1px solid rgba(120,90,40,.35); border-radius: 10px; padding: 6px 8px; }
+.preset.empty { display: flex; justify-content: space-between; align-items: center; }
+.pr-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.minis { display: flex; gap: 3px; margin-top: 5px; }
+.mini { width: 34px; height: 34px; border-radius: 6px; background: #d8ccb0 center/cover; display: grid; place-items: center; overflow: hidden; }
+.mini img { width: 90%; height: 90%; object-fit: contain; }
+.mini.empty { background: rgba(0,0,0,.08); border: 1px dashed rgba(0,0,0,.2); }
+.setlist { display: grid; gap: 6px; }
+.setrow { display: grid; grid-template-columns: 40px 1fr auto; gap: 8px; align-items: center; background: rgba(255,248,230,.6); border-radius: 10px; padding: 5px 8px; }
+.setrow img, .setrow .ico { width: 40px; height: 40px; object-fit: contain; }
+.obonus { display: grid; gap: 1px; padding: 5px 8px; margin: 4px 0; border-radius: 8px; background: rgba(255,248,230,.6); border-left: 4px solid #8a7a5a; }
+.obonus.full { border-left-color: #3f8f4f; } .obonus.color { border-left-color: #c79a2a; } .obonus.set7 { border-left-color: #7b3fa8; } .obonus.set4 { border-left-color: #3d6fb0; }
+.oguide { margin: 6px 0; } .oguide summary { cursor: pointer; font-weight: 600; }
+dd.malus { color: #b3261e; }
+.hnav { grid-template-columns: repeat(4, 1fr) !important; gap: 5px; } .hnav .fbtn { font-size: 11px; padding-left: 2px; padding-right: 2px; }
+.oguide summary { color: #6b3d12; }
+.preset .btn.ghost { color: #4a2c10; border-color: rgba(90,60,20,.45); }
 
 </style>
 
@@ -1401,7 +1420,32 @@ Medieval.Data = (function () {
       pieces: ["Scholar's Circlet", "Scholar's Robe", "Scribe's Gloves", "Scholar's Tunic", "Scholar's Slippers", "Stylus of Wisdom", "Owl Pendant"],
       roles: { helmet: [["research_speed", 1]], armor: [["research_speed", 1]], gloves: [["craft_speed", 1]], legs: [["hero_xp", 1]],
                boots: [["research_speed", 0.8]], weapon: [["research_speed", 1.4]], amulet: [["forge_luck", 1], ["hero_xp", 0.5]] },
-      bonus4: { research_speed: 10 }, bonus7: { research_speed: 15, craft_speed: 15 } }
+      bonus4: { research_speed: 10 }, bonus7: { research_speed: 15, craft_speed: 15 } },
+    // panoplies à double tranchant : un gros point fort, un vrai point faible
+    berserker: { name: "Berserker", focus: null, desc: "All-out attack, weaker defense",
+      pieces: ["Wolf-Jaw Helm", "Scarred Harness", "Spiked Gauntlets", "Bare-Knee Wraps", "Charger Boots", "Twin War Axes", "Blood-Oath Torc"],
+      roles: { helmet: [["all_atk", 0.9], ["all_def", -0.4]], armor: [["all_atk", 0.8], ["all_def", -0.5]], gloves: [["all_atk", 1.2]], legs: [["all_atk", 0.7], ["all_hp", -0.3]],
+               boots: [["march_speed", 1], ["all_def", -0.3]], weapon: [["all_atk", 1.6], ["all_def", -0.4]], amulet: [["all_atk", 1], ["hero_atk", 0.6]] },
+      bonus4: { all_atk: 8 }, bonus7: { all_atk: 8, enemy_def: -4 } },
+    bulwark: { name: "Iron Bulwark", focus: null, desc: "Unbreakable defense, slow march",
+      pieces: ["Great Iron Helm", "Plated Cuirass", "Iron Gauntlets", "Plated Greaves", "Iron-Shod Sabatons", "Tower Shield", "Aegis Brooch"],
+      roles: { helmet: [["all_def", 1], ["all_hp", 0.5]], armor: [["all_hp", 1.2], ["all_def", 0.6], ["march_speed", -0.4]], gloves: [["all_def", 1]], legs: [["all_hp", 1], ["march_speed", -0.3]],
+               boots: [["all_def", 0.8], ["march_speed", -0.5]], weapon: [["all_def", 1.4], ["all_hp", 0.6], ["all_atk", -0.3]], amulet: [["all_hp", 1], ["all_def", 0.6]] },
+      bonus4: { all_def: 8 }, bonus7: { all_hp: 8, enemy_atk: -4 } },
+    raider: { name: "Raider", focus: null, desc: "Fast and greedy, fragile",
+      pieces: ["Leather Raider Cap", "Light Scale Jerkin", "Grip Gloves", "Riding Trousers", "Swift Sandals", "Curved Sica", "Plunder Coin"],
+      roles: { helmet: [["march_speed", 0.8], ["all_hp", -0.3]], armor: [["load", 1], ["all_hp", -0.4]], gloves: [["gather_speed", 1], ["load", 0.5]], legs: [["march_speed", 1]],
+               boots: [["march_speed", 1.4], ["all_def", -0.3]], weapon: [["all_atk", 0.8], ["load", 0.8]], amulet: [["load", 1.2], ["gather_speed", 0.8]] },
+      bonus4: { march_speed: 10 }, bonus7: { load: 20, gather_speed: 15 } }
+  };
+  /* bonus de tenue (7 pièces portées) : selon le palier.
+     - tenue complète (n'importe quelles pièces) : petit bonus selon le palier le plus bas
+     - 7 pièces de la même couleur (même palier) : bonus qui grimpe vite jusqu'au palier VI
+     - 7 pièces de la même panoplie : son bonus "7" multiplié selon le palier le plus bas */
+  var OUTFIT = {
+    full:  function (t) { var v = t; return { all_atk: v, all_def: v, all_hp: v }; },
+    color: function (t) { var v = Math.round(1.5 * Math.pow(t, 1.4) * 10) / 10; return { all_atk: v, all_def: v, all_hp: v }; },
+    setMult: function (t) { return 0.5 + 0.5 * t; }
   };
   // Rôle de chaque emplacement : [statistique, poids]. "T" = type de troupe de la panoplie.
   var SLOT_ROLES = {
@@ -1632,6 +1676,9 @@ Medieval.Data = (function () {
     R("insignia",   "tech", 1, "Civic Insignia",   1, { set: "steward" }, { scribes: 2 }, "The forge can craft the Steward set (economy)."),
     R("huntgear",   "tech", 1, "Hunter's Craft",   1, { set: "hunter" }, { bellows: 1 }, "The forge can craft the Hunter set (monster hunting)."),
     R("scholargear","tech", 1, "Scholar's Craft",  1, { set: "scholar" }, { scribes: 2 }, "The forge can craft the Scholar set (research)."),
+    R("furygear",   "tech", 2, "Berserker Rites",  1, { set: "berserker" }, { horsetack: 1 }, "The forge can craft the Berserker set: huge attack, weaker defense."),
+    R("bulwarkgear","tech", 2, "Iron Bulwark",     1, { set: "bulwark" }, { bows: 1 }, "The forge can craft the Iron Bulwark set: defense and health, slower marches."),
+    R("raidgear",   "tech", 2, "Raider's Kit",     1, { set: "raider" }, { insignia: 1 }, "The forge can craft the Raider set: speed and loot, fragile."),
     R("bronze",     "tech", 2, "Bronze Casting",   1, { gearTier: 2 }, { bellows: 2 }, "New material: the forge can craft tier II gear."),
     R("assaying",   "tech", 3, "Assaying",         5, { stat: "craft_cost", per: 4 }, { bronze: 1 }, "Test the ore before smelting: gear costs less."),
     R("smiths",     "tech", 3, "Master Smiths",    5, { stat: "forge_luck", per: 1 }, { bronze: 1 }, "Better odds of rare, epic and legendary pieces."),
@@ -1887,7 +1934,7 @@ Medieval.Data = (function () {
     BUILDERS: BUILDERS, MARCHES: MARCHES, marchSize: marchSize, BASE_STORAGE: BASE_STORAGE, BASE_PROTECT: BASE_PROTECT,
     TROOP_TYPES: TROOP_TYPES, TYPE_KEYS: TYPE_KEYS, TROOPS: TROOPS, TROOP_IDS: TROOP_IDS, HEAL: HEAL,
     STATS: STATS, COMBAT_STATS: COMBAT_STATS, SLOTS: SLOTS, SETS: SETS, SLOT_ROLES: SLOT_ROLES, STEWARD_ROLES: STEWARD_ROLES,
-    STAT_BASE: STAT_BASE, GEAR_TIERS: GEAR_TIERS, RARITIES: RARITIES, HERO: HERO, SKILLS: SKILLS, PRISON: PRISON, CAPTURE: CAPTURE,
+    STAT_BASE: STAT_BASE, OUTFIT: OUTFIT, GEAR_TIERS: GEAR_TIERS, RARITIES: RARITIES, HERO: HERO, SKILLS: SKILLS, PRISON: PRISON, CAPTURE: CAPTURE,
     WORLD: WORLD, START: START, SPEEDUP: SPEEDUP, QUESTS: QUESTS, QUEST_INSERTS_V5: [4, 5, 26],
     RESEARCH: RESEARCH, RESEARCH_BY_ID: RESEARCH_BY_ID, RESEARCH_TREES: RESEARCH_TREES, SHOP: SHOP, SHOP_BY_ID: SHOP_BY_ID, KINGDOM: KINGDOM, TITLE_BY_ID: TITLE_BY_ID, VIP: VIP, ALLIANCE: ALLIANCE, TRAPS: TRAPS, TRAP_IDS: TRAP_IDS, TRAP_RULES: TRAP_RULES, START_BAG: START_BAG, STRONGHOLD_GIFT: STRONGHOLD_GIFT,
     RESEARCH_SCALE: RESEARCH_SCALE, STARTER_SETS: STARTER_SETS
@@ -2566,7 +2613,8 @@ Medieval.Engine = (function (D) {
     if (s.world) s.world.tiles = s.world.tiles.filter(function (x) { return !(x.elite && x.expiresAt - s.lastTick > 3600000); });   // anciens légendaires de 4-8 h
     if (s.world && s.world.shared) s.world.tiles = s.world.tiles.filter(function (x) { return x.kind !== "arena" || x.shared; });
     if (!s.arenaSeed && s.world && !s.world.shared && E.spawnArena) { s.arenaSeed = true; E.spawnArena(s, s.lastTick); if (E.spawnElite) E.spawnElite(s, s.lastTick); }
-    if (!s.testPack9) {
+    (s.items || []).forEach(function (it) { if (it.trait) delete it.trait; });   // les traits aléatoires ont été remplacés par des panoplies
+        if (!s.testPack9) {
       s.testPack9 = true; s.resources.gold = (s.resources.gold || 0) + 500000;
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "500,000 gold for the test", text: "The treasury sends you 500,000 gold. The shop now has bigger hero XP tomes, a ×10 button, and Use all in your bag." });
     }
@@ -2814,6 +2862,73 @@ Medieval.Engine = (function (D) {
     return c;
   };
 
+  function scaled(stats, m) { var o = {}; for (var k in stats) o[k] = Math.round(stats[k] * m * 10) / 10; return o; }
+  /** Bonus de panoplie et de tenue actifs : [{ kind, label, stats }]. */
+  E.outfitBonuses = function (s) {
+    var items = E.equippedItems(s), out = [], sc = E.setCounts(s);
+    for (var set in sc) {
+      var S = D.SETS[set]; if (!S) continue;
+      if (sc[set] >= 4) out.push({ kind: "set4", set: set, label: S.name + " · 4 pieces", stats: S.bonus4 });
+    }
+    if (items.length === D.SLOTS.length) {
+      var tiers = items.map(function (it) { return it.tier; }), minT = Math.min.apply(null, tiers), same = tiers.every(function (t) { return t === tiers[0]; });
+      out.push({ kind: "full", tier: minT, label: "Full outfit · tier " + D.GEAR_TIERS[minT - 1].name, stats: D.OUTFIT.full(minT) });
+      if (same) out.push({ kind: "color", tier: minT, label: "Same color · 7 × tier " + D.GEAR_TIERS[minT - 1].name, stats: D.OUTFIT.color(minT) });
+      for (var set2 in sc) if (sc[set2] === D.SLOTS.length && D.SETS[set2])
+        out.push({ kind: "set7", set: set2, tier: minT, label: D.SETS[set2].name + " · full set (tier " + D.GEAR_TIERS[minT - 1].name + ")", stats: scaled(D.SETS[set2].bonus7, D.OUTFIT.setMult(minT)) });
+    }
+    return out;
+  };
+
+  // ------------------------------------------------------------ tenues
+  /** Pour chaque emplacement, la meilleure pièce de la panoplie que le héros peut porter. */
+  E.bestOfSet = function (s, set) {
+    var pick = {};
+    s.items.forEach(function (it) {
+      if (it.set !== set || !E.canEquip(s, it).ok) return;
+      var c = pick[it.slot];
+      if (!c || it.tier > c.tier || (it.tier === c.tier && it.rarity > c.rarity)) pick[it.slot] = it;
+    });
+    return pick;
+  };
+  /** Panoplies dont on possède au moins une pièce : [{ set, have, wearable }]. */
+  E.ownedSets = function (s) {
+    var out = [];
+    Object.keys(D.SETS).forEach(function (k) {
+      var have = {}; s.items.forEach(function (it) { if (it.set === k) have[it.slot] = 1; });
+      var n = Object.keys(have).length; if (!n) return;
+      out.push({ set: k, have: n, wearable: Object.keys(E.bestOfSet(s, k)).length });
+    });
+    return out;
+  };
+  E.equipSet = function (s, set) {
+    if (s.hero.status === "captured") return { ok: false, reasons: ["Your hero is a prisoner."] };
+    var pick = E.bestOfSet(s, set), n = 0;
+    for (var slot in pick) { s.hero.equipped[slot] = pick[slot].id; n++; }
+    return n ? { ok: true, n: n } : { ok: false, reasons: ["No piece of this set can be worn yet."] };
+  };
+  E.MAX_PRESETS = 4;
+  E.savePreset = function (s, idx, name) {
+    if (!(idx >= 0 && idx < E.MAX_PRESETS)) return { ok: false, reasons: ["Invalid outfit."] };
+    var h = s.hero; h.presets = h.presets || [];
+    var eq = {}, n = 0; D.SLOTS.forEach(function (sl) { if (h.equipped[sl.key]) { eq[sl.key] = h.equipped[sl.key]; n++; } });
+    if (!n) return { ok: false, reasons: ["Equip some pieces first."] };
+    h.presets[idx] = { name: (name || "Outfit " + (idx + 1)).slice(0, 20), items: eq };
+    return { ok: true };
+  };
+  E.loadPreset = function (s, idx) {
+    var h = s.hero, p = h.presets && h.presets[idx];
+    if (!p) return { ok: false, reasons: ["Empty outfit."] };
+    if (h.status === "captured") return { ok: false, reasons: ["Your hero is a prisoner."] };
+    var n = 0, miss = 0;
+    D.SLOTS.forEach(function (sl) {
+      var id = p.items[sl.key], it = id && E.findItem(s, id);
+      if (it && E.canEquip(s, it).ok) { h.equipped[sl.key] = id; n++; } else { h.equipped[sl.key] = null; if (id) miss++; }
+    });
+    return { ok: true, n: n, missing: miss };
+  };
+  E.deletePreset = function (s, idx) { var h = s.hero; if (h.presets && h.presets[idx]) { h.presets[idx] = null; return { ok: true }; } return { ok: false, reasons: ["Empty outfit."] }; };
+
   function add(out, stats, filter) {
     for (var k in stats) if (!filter || filter(k)) out[k] = (out[k] || 0) + stats[k];
   }
@@ -2829,13 +2944,9 @@ Medieval.Engine = (function (D) {
     var out = {}, h = s.hero, t = opts.t || s.lastTick;
     if (h && h.status !== "captured") {
       D.SKILLS.forEach(function (sk) { var n = h.skills[sk.key] || 0; if (n) out[sk.key] = (out[sk.key] || 0) + n * sk.per; });
-      var filter = function (k) { return opts.combat || !COMBAT[k]; };
+      var filter = function (k) { return opts.combat || !(COMBAT[k] || /^enemy_/.test(k)); };
       E.equippedItems(s).forEach(function (it) { add(out, E.itemStats(it), filter); });
-      var sc = E.setCounts(s);
-      for (var set in sc) {
-        if (sc[set] >= 4) add(out, D.SETS[set].bonus4, filter);
-        if (sc[set] >= 7) add(out, D.SETS[set].bonus7, filter);
-      }
+      E.outfitBonuses(s).forEach(function (b) { add(out, b.stats, filter); });
     }
     if (s.buffs && s.buffs.fury > t) add(out, D.PRISON.fury);
     if (E.researchBonuses) add(out, E.researchBonuses(s));
@@ -2929,7 +3040,6 @@ Medieval.Engine = (function (D) {
   }
   E.makeItem = function (s, set, slot, tier, rarity, noTrait) {
     var it = { id: E.uid(s, "it"), set: set, slot: slot, tier: tier, rarity: rarity };
-    if (!noTrait && D.TRAITS && E.rand(s) < 0.35) it.trait = D.TRAITS[Math.floor(E.rand(s) * D.TRAITS.length)].key;   // 1 pièce sur 3 environ
     return it;
   };
   E.craftCost = function (s, tier) {
@@ -7683,7 +7793,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function reasonsHtml(r) { return r.reasons && r.reasons.length ? '<p class="reasons">' + r.reasons.map(esc).join("<br>") + '</p>' : ""; }
   function statsLine(st) {
-    return Object.keys(st).map(function (k) { return '<b' + (st[k] < 0 ? ' class="malus"' : "") + '>' + F.pct(st[k]) + '</b> ' + D.STATS[k]; }).join(" · ");
+    return Object.keys(st).map(function (k) { var bad = /^enemy_/.test(k) ? st[k] > 0 : st[k] < 0; return '<b' + (bad ? ' class="malus"' : "") + '>' + F.pct(st[k]) + '</b> ' + D.STATS[k]; }).join(" · ");
   }
   function watch() { return E.highestLevel(state, "watchtower"); }
 
@@ -8231,8 +8341,18 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background:url(' + tbg + ') center/cover !important"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
   }
   function itemRow(it, actions) {
-    var T = it.trait && D.TRAIT_BY_KEY[it.trait];
-    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + (T ? ' <span class="trait">' + esc(T.name) + '</span>' : "") + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
+    return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
+  }
+  function outfitList() {
+    var ob = E.outfitBonuses(state), sc = E.setCounts(state), html = "";
+    html += ob.length ? ob.map(function (b) { return '<div class="obonus ' + b.kind + '"><b>' + esc(b.label) + '</b><span class="small">' + statsLine(b.stats) + '</span></div>'; }).join("") : '<p class="small">No set bonus yet: wear 4 pieces of one set, or all 7 slots.</p>';
+    Object.keys(sc).forEach(function (k) { if (sc[k] < 7 && D.SETS[k]) html += '<p class="muted small">' + esc(D.SETS[k].name) + ' ' + sc[k] + '/7' + (sc[k] < 4 ? ' · at 4: ' + statsLine(D.SETS[k].bonus4) : '') + ' · at 7: ' + statsLine(D.SETS[k].bonus7) + ' (× tier)</p>'; });
+    return html;
+  }
+  function outfitGuide() {
+    var rows = D.GEAR_TIERS.map(function (g, i) { var t = i + 1; return '<tr><td>' + g.name + '</td><td class="r">+' + D.OUTFIT.full(t).all_atk + '%</td><td class="r">+' + D.OUTFIT.color(t).all_atk + '%</td><td class="r">×' + D.OUTFIT.setMult(t) + '</td></tr>'; }).join("");
+    return '<details class="oguide"><summary class="small">How outfit bonuses work</summary><p class="muted small">With all 7 slots filled you always get the <b>full outfit</b> bonus (attack, defense, health), even with mixed pieces. If all 7 share the same color (tier), add the <b>same color</b> bonus. If they are all from one set, its 7-piece bonus is multiplied by the lowest tier. All three stack.</p>' +
+      '<div class="tablewrap"><table class="table"><thead><tr><th>Tier</th><th class="r">Full</th><th class="r">Same color</th><th class="r">Set ×</th></tr></thead><tbody>' + rows + '</tbody></table></div></details>';
   }
   PANELS.hero = function () {
     var h = state.hero, need = E.heroXpNeeded(state), view = ui.heroTab || "gear", max = h.level >= D.HERO.maxLevel;
@@ -8276,13 +8396,28 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         return itemRow(it, act);
       }).join("") + '</div>' : '<p class="small">Inventory empty.</p>') + '</div>';
     } else if (view === "bonus") {
-      var war = E.bonuses(state, { combat: true }), sc = E.setCounts(state);
-      sheet = '<div class="fsheet hsheet"><h3>Sets worn</h3>' + (Object.keys(sc).length ? Object.keys(sc).map(function (k) {
-        return '<p class="small"><b>' + D.SETS[k].name + '</b> ' + sc[k] + '/7 · 4: ' + statsLine(D.SETS[k].bonus4) + ' · 7: ' + statsLine(D.SETS[k].bonus7) + '</p>'; }).join("") : '<p class="small">None.</p>') +
-        '<h3>Hero bonuses</h3>' + (Object.keys(war).length ? '<dl class="stats">' + Object.keys(war).map(function (k) { return '<dt>' + D.STATS[k] + '</dt><dd>' + F.pct(war[k]) + '</dd>'; }).join("") + '</dl>' : '<p class="small">No bonuses yet.</p>') + '</div>';
+      var war = E.bonuses(state, { combat: true });
+      sheet = '<div class="fsheet hsheet"><h3>Set & outfit bonuses</h3>' + outfitList() + outfitGuide() +
+        '<h3>Hero bonuses</h3>' + (Object.keys(war).length ? '<dl class="stats">' + Object.keys(war).map(function (k) { var bad = /^enemy_/.test(k) ? war[k] > 0 : war[k] < 0; return '<dt>' + D.STATS[k] + '</dt><dd' + (bad ? ' class="malus"' : "") + '>' + F.pct(war[k]) + '</dd>'; }).join("") + '</dl>' : '<p class="small">No bonuses yet.</p>') + '</div>';
+    } else if (view === "outfits") {
+      var pre = h.presets || [], owned = E.ownedSets(state);
+      sheet = '<div class="fsheet hsheet"><h3>Saved outfits</h3><div class="presets">';
+      for (var pi = 0; pi < E.MAX_PRESETS; pi++) {
+        var P = pre[pi];
+        if (P) {
+          var minis = D.SLOTS.map(function (sl) { var it = E.findItem(state, P.items[sl.key]); return it ? '<span class="mini t' + it.tier + '"' + (UI_SRC["bg-t" + it.tier] ? ' style="background-image:url(' + UI_SRC["bg-t" + it.tier] + ')"' : "") + '>' + (UI_SRC["gear-" + it.set + "-" + it.slot] ? '<img src="' + UI_SRC["gear-" + it.set + "-" + it.slot] + '" alt="">' : "") + '</span>' : '<span class="mini empty"></span>'; }).join("");
+          sheet += '<div class="preset"><div class="pr-top"><b>' + esc(P.name) + '</b><span class="row"><button class="btn tiny teal" data-act="preset-load" data-arg="' + pi + '">Wear</button><button class="btn tiny ghost" data-act="preset-save" data-arg="' + pi + '">Save</button>' +
+            (ui.confirm === "pdel:" + pi ? '<button class="btn tiny danger" data-act="preset-del" data-arg="' + pi + '">Delete?</button>' : '<button class="btn tiny ghost" data-act="preset-askdel" data-arg="' + pi + '">' + icon("close") + '</button>') + '</span></div><div class="minis">' + minis + '</div></div>';
+        } else sheet += '<div class="preset empty"><span class="muted small">Empty outfit ' + (pi + 1) + '</span><button class="btn tiny" data-act="preset-save" data-arg="' + pi + '">' + icon("plus") + 'Save current</button></div>';
+      }
+      sheet += '</div><h3>Wear a full set</h3>' + (owned.length ? '<div class="setlist">' + owned.map(function (o) {
+        var S = D.SETS[o.set], img = UI_SRC["gear-" + o.set + "-armor"];
+        return '<div class="setrow">' + (img ? '<img src="' + img + '" alt="">' : icon("armor")) + '<div><b>' + esc(S.name) + '</b><div class="muted small">' + esc(S.desc) + ' · ' + o.wearable + '/7 wearable' + (o.have > o.wearable ? " (" + (o.have - o.wearable) + " need a higher level)" : "") + '</div></div>' +
+          '<button class="btn tiny teal" data-act="wear-set" data-arg="' + o.set + '" ' + (o.wearable ? "" : "disabled") + '>Wear</button></div>';
+      }).join("") + '</div>' : '<p class="small">No gear yet. Forge pieces or hunt monsters.</p>') + '<p class="muted small">"Wear" puts on the best piece of that set you can use in each slot.</p></div>';
     }
     if (sheet) html += '<div class="hover">' + sheet + '</div>';
-    html += '</div><div class="fnav hnav">' + [["skills", "Skills", "crown", h.points], ["bag", "Inventory", "bag", 0], ["bonus", "Bonuses", "sword", 0]].map(function (t) {
+    html += '</div><div class="fnav hnav">' + [["skills", "Skills", "crown", h.points], ["outfits", "Outfits", "armor", 0], ["bag", "Inventory", "bag", 0], ["bonus", "Bonuses", "sword", 0]].map(function (t) {
       return '<button class="fbtn' + (view === t[0] && !ui.heroSheet ? " on" : "") + '" data-act="hero-tab" data-arg="' + t[0] + '">' + icon(t[2]) + t[1] + (t[3] ? '<i class="badge">' + t[3] + '</i>' : "") + '</button>'; }).join("") + '</div>';
     return html;
   };
@@ -8924,6 +9059,11 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "hero-xp": function () { ui.itemsTab = "shop"; ui.itemsCat = "hero"; openPanel("items"); },
     equip: function (arg) { var it = E.findItem(state, arg); if (it) ui.heroSlot = it.slot; result(E.equip(state, arg)); },
     unequip: function (arg) { result(E.unequip(state, arg)); },
+    "wear-set": function (arg) { var r = E.equipSet(state, arg); if (result(r)) toast(icon("armor") + "<span>" + esc(D.SETS[arg].name) + " set on · " + r.n + " pieces.</span>"); },
+    "preset-save": function (arg) { var r = E.savePreset(state, +arg); if (result(r)) toast(icon("check") + "<span>Outfit saved.</span>"); },
+    "preset-load": function (arg) { var r = E.loadPreset(state, +arg); if (result(r)) toast(icon("armor") + "<span>" + esc(state.hero.presets[+arg].name) + " on" + (r.missing ? " · " + r.missing + " piece(s) missing" : "") + ".</span>"); },
+    "preset-askdel": function (arg) { ui.confirm = "pdel:" + arg; renderPanel(true); },
+    "preset-del": function (arg) { ui.confirm = null; result(E.deletePreset(state, +arg)); },
     salvage: function (arg) { ui.confirm = "salv:" + arg; renderPanel(true); },
     "salvage-confirm": function (arg) { ui.confirm = null; var r = E.salvage(state, arg); if (result(r)) toast(icon("anvil") + "<span>Piece salvaged.</span>"); },
     learn: function (arg) { result(E.learnSkill(state, arg)); },
