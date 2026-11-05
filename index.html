@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050833";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050857";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -811,6 +811,28 @@ body.has-nav .nav button span { display: block; width: 100%; text-align: center;
 .wbtns .btn:only-child { grid-column: 1 / -1; }
 .btn.teal { background: linear-gradient(180deg, #2f9aa2, #146066); }
 @media (max-width: 380px) { .wcard { grid-template-columns: 80px 1fr; } .wc-art { width: 80px; height: 80px; } }
+/* VIP : « VIP 3 » sur une seule ligne, même police dorée */
+body.has-vip .vipbox .vip-l, body.has-vip .vipbox b { font-family: var(--f-display) !important; font-weight: 800 !important; color: #ffd76a !important; letter-spacing: .04em;
+  text-shadow: 0 1px 0 #6b3a00, 0 0 4px rgba(0,0,0,.6) !important; font-size: 12px !important; line-height: 1 !important; }
+body.has-vip .vipbox { gap: 4px !important; }
+@media (max-width: 760px) { body.has-vip .vipbox .vip-l, body.has-vip .vipbox b { font-size: 10px !important; } body.has-vip .vipbox { gap: 3px !important; } }
+/* fiches de la carte : fenêtre centrée, la carte reste visible sur les bords */
+@media (max-width: 760px) {
+  .panel.pop { left: 14px; right: 14px; top: 50%; bottom: auto; transform: translateY(-46%); max-height: 72%; height: auto; border-radius: 14px; border-bottom: 2px solid #a8873f; padding-bottom: 0; box-shadow: 0 12px 40px rgba(0,0,0,.65); }
+}
+/* bouton d'aide d'alliance, au-dessus du bandeau de quête à droite */
+.allyhelp { position: absolute; right: 10px; top: -62px; z-index: 6; width: 56px; height: 56px; display: grid; place-items: center; padding: 0; border-radius: 50%; cursor: pointer;
+  border: 2px solid #e7c062; background: radial-gradient(circle at 50% 40%, #2f9aa2, #0e4a50); box-shadow: 0 4px 10px rgba(0,0,0,.55), 0 0 12px rgba(80,220,230,.5); animation: helpPulse 1.6s ease-in-out infinite; }
+.allyhelp[hidden] { display: none; }
+.allyhelp .navimg { grid-area: 1 / 1; width: 40px !important; height: 40px !important; display: block; background: var(--nav-alliance) center / contain no-repeat; }
+.allyhelp > svg.ico { grid-area: 1 / 1; width: 28px; height: 28px; color: #fff; }
+body.has-nav .allyhelp > svg.ico { display: none; }
+.allyhelp b { position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: #c62f28; color: #fff; font: 800 11px/18px var(--f-body); border: 1.5px solid #fff; }
+.allyhelp span { position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); padding: 1px 6px; border-radius: 6px; background: #2a1a0c; color: #ffe7b0; font: 800 9px var(--f-display); letter-spacing: .06em; text-transform: uppercase; border: 1px solid #e7c062; }
+@keyframes helpPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+.cost li.itrew { font-size: 12.5px; color: #1f4a6e; } .cost li.itrew .ico { width: 15px; height: 15px; }
+body.has-vip .vipbox .vip-l { display: none !important; }
+body.has-vip .vipbox b { font-variant-numeric: lining-nums; white-space: nowrap; margin-top: 18% !important; }
 
 </style>
 
@@ -892,6 +914,7 @@ body.has-nav .nav button span { display: block; width: 100%; text-align: center;
   <div class="coords" id="coords" hidden></div>
 
   <footer class="bottom">
+    <button class="allyhelp" id="allyHelp" data-act="ally-help" aria-label="Help your allies" hidden><i class="navimg ni-alliance"></i><svg class="ico"><use href="#i-heal"></use></svg><b id="allyHelpN">0</b><span>Help</span></button>
     <button class="questbar" id="questBar" data-act="panel" data-arg="quests"></button>
     <button class="ticker" id="ticker" data-act="panel" data-arg="reports"></button>
     <nav class="nav" aria-label="Menus">
@@ -1373,6 +1396,13 @@ Medieval.Data = (function () {
     { id: "shield24h", kind: "shield", name: "Peace Shield (24 h)", seconds: 24 * 3600, price: 200 },
     { id: "shield3d", kind: "shield", name: "Peace Shield (3 days)", seconds: 72 * 3600, price: 480 }
   );
+  // accélérateurs spéciaux : gagnés dans les quêtes, valables seulement sur un type de tâche
+  function SS(id, name, only, sec) { return { id: id, kind: "speedup", name: name, seconds: sec, only: only, noShop: true, price: 0 }; }
+  SHOP.push(
+    SS("bsp15m", "Building speed-up 15 min", ["build", "upgrade"], 900), SS("bsp1h", "Building speed-up 1 h", ["build", "upgrade"], 3600),
+    SS("tsp15m", "Training speed-up 15 min", ["train", "heal", "trap"], 900), SS("rsp15m", "Research speed-up 15 min", ["research"], 900),
+    SS("rsp1h", "Research speed-up 1 h", ["research"], 3600)
+  );
   var SHOP_BY_ID = {}; SHOP.forEach(function (x) { SHOP_BY_ID[x.id] = x; });
 
   // ------------------------------------------------------------ monstres (remplacent les camps de barbares)
@@ -1537,6 +1567,19 @@ Medieval.Data = (function () {
       QUESTS.push(Q("Upgrade " + (BUILDINGS[b].unique || b === "wall" ? "the " : "a ") + name + " to level " + L, { t: "level", b: b, n: L }, b === "wall" ? { stone: v * 2, wood: v } : { wood: v, stone: v, food: v, ore: Math.round(v / 2) }));
     });
     QUESTS.forEach(function (q) { if (q.reward.gold) q.reward.gold = Math.max(5, Math.round(q.reward.gold / 2 / 5) * 5); });  // moins d'or
+    // moins de ressources (une quête ne rembourse plus le bâtiment) et des accélérateurs à la place
+    QUESTS.forEach(function (q, i) {
+      ["wood", "stone", "ore", "food", "silver"].forEach(function (k) { if (q.reward[k]) q.reward[k] = Math.max(100, Math.round(q.reward[k] * 0.3 / 50) * 50); });
+      var c = q.cond, lv = c.t === "castle" || c.t === "level" ? c.n : 1 + Math.floor(i / 8);
+      var build = c.t === "castle" || c.t === "level" || c.t === "count", sp = q.reward;
+      if (lv <= 3) { sp.sp1m = 3; sp.sp5m = 1; }
+      else if (lv <= 6) { sp.sp5m = 2; if (build) sp.bsp15m = 1; else sp.sp15m = 1; }
+      else if (lv <= 10) { sp.sp15m = 2; if (build) sp.bsp15m = 1; }
+      else if (lv <= 15) { sp.sp15m = 1; if (build) sp.bsp1h = 1; else sp.sp1h = 1; }
+      else { sp.sp1h = 2; if (build) sp.bsp1h = 1; }
+      if (c.t === "researched") sp.rsp15m = 1;
+      if (c.t === "trained" || c.t === "army") sp.tsp15m = 1;
+    });
   })();
   /** Pack offert une fois aux comptes de la phase de test. */
   var TEST_PACK = { food100k: 2, wood100k: 2, stone100k: 2, ore100k: 2, silver100k: 1, sp1h: 3 };
@@ -1763,6 +1806,11 @@ Medieval.Engine = (function (D) {
   E.pay = function (s, cost) { for (var k in cost) s.resources[k] -= cost[k]; };
   /** Ajoute des ressources (gains de quêtes, récoltes, butins) ; peut dépasser la capacité. */
   E.grant = function (s, res) { for (var k in res) if (k in s.resources) s.resources[k] += res[k]; };
+  /** Ressources et objets (accélérateurs…) d'une récompense. */
+  E.grantAll = function (s, rew) {
+    E.grant(s, rew);
+    for (var k in rew) if (!(k in s.resources) && D.SHOP_BY_ID && D.SHOP_BY_ID[k]) { if (!s.bag) s.bag = {}; s.bag[k] = (s.bag[k] || 0) + rew[k]; }
+  };
   E.scaleCost = function (cost, n) { var o = {}; for (var k in cost) o[k] = Math.round(cost[k] * n); return o; };
   function refund(s, cost, ratio) {
     var cap = E.capacity(s);
@@ -2767,7 +2815,7 @@ Medieval.Engine = (function (D) {
 
   E.buyItem = function (s, id, n) {
     var it = D.SHOP_BY_ID[id]; n = Math.floor(n || 1);
-    if (!it) return { ok: false, reasons: ["Unknown item."] };
+    if (!it || it.noShop) return { ok: false, reasons: ["This item cannot be bought."] };
     if (!(n >= 1)) return { ok: false, reasons: ["Pick at least one."] };
     var price = it.price * n;
     if (s.resources.gold + 1e-9 < price) return { ok: false, reasons: ["Not enough gold (" + price + " needed)."] };
@@ -2784,6 +2832,7 @@ Medieval.Engine = (function (D) {
     if (it.kind === "speedup") {
       var j = E.findJob(s, opts && opts.jobId);
       if (!j) return { ok: false, reasons: ["This task is already finished."], events: events };
+      if (it.only && it.only.indexOf(j.kind) < 0) return { ok: false, reasons: ["This speed-up only works on " + it.name.split(" ")[0].toLowerCase() + "."], events: events };
       j.end = Math.max(now, j.end - it.seconds * 1000);
       if (j.end <= now) { j.end = now; E._pushEvent(events, E._completeJob(s, j, now)); }
     } else if (it.kind === "xp") {
@@ -3951,7 +4000,7 @@ Medieval.Engine = (function (D) {
     var p = E.questProgress(s, i);
     if (p.claimed) return { ok: false, reasons: ["Reward already claimed."] };
     if (!p.done) return { ok: false, reasons: ["Goal not reached yet."] };
-    s.quests.claimed.push(i); E.grant(s, D.QUESTS[i].reward);
+    s.quests.claimed.push(i); E.grantAll(s, D.QUESTS[i].reward);
     return { ok: true, reward: D.QUESTS[i].reward };
   };
 })(Medieval.Engine, Medieval.Data);
@@ -6911,7 +6960,10 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   function resList(res) {
     var keys = Object.keys(res || {}).filter(function (k) { return res[k] > 0; });
     if (!keys.length) return '<span class="muted">nothing</span>';
-    return '<ul class="cost">' + keys.map(function (k) { return '<li>' + icon(k) + F.compact(res[k]) + '</li>'; }).join("") + '</ul>';
+    return '<ul class="cost">' + keys.map(function (k) {
+      var it = D.SHOP_BY_ID[k];
+      if (it && !(k in state.resources)) return '<li class="itrew">' + icon(it.kind === "speedup" ? "clock" : "bag") + esc(itemShort(it)) + ' ×' + res[k] + '</li>';
+      return '<li>' + icon(k) + F.compact(res[k]) + '</li>'; }).join("") + '</ul>';
   }
   function reasonsHtml(r) { return r.reasons && r.reasons.length ? '<p class="reasons">' + r.reasons.map(esc).join("<br>") + '</p>' : ""; }
   function statsLine(st) {
@@ -6927,6 +6979,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   function updateHud() {
     var cap = E.capacity(state), rates = E.rates(state);
+    var hb = $("allyHelp"), nreq = E.alliance(state) ? E.allyRequests(state, now()) : 0;
+    if (hb) { hb.hidden = !nreq; var hn = $("allyHelpN"); if (hn) hn.textContent = nreq; }
     HUD_RES.forEach(function (k) {
       var v = state.resources[k], rate = rates[k], full = v >= cap;
       $("rv-" + k).textContent = F.compact(v);
@@ -6947,7 +7001,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     var q = E.claimableCount(state); $("bQuests").hidden = !q; $("bQuests").textContent = q;
 
     var mb = Math.max(state.unread, E.claimableMails(state)); $("bReports").hidden = !mb; $("bReports").textContent = mb;
-    if ($("vipLvl")) $("vipLvl").textContent = state.vip ? state.vip.level : 0;
+    if ($("vipLvl")) $("vipLvl").textContent = "VIP " + (state.vip ? state.vip.level : 0);
     var hp = state.hero.points; $("bHero").hidden = !hp; $("bHero").textContent = hp;
   }
 
@@ -7091,7 +7145,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   }
   /** Accélérateurs du sac utilisables sur une tâche. */
   function speedItems(j) {
-    var own = D.SHOP.filter(function (it) { return it.kind === "speedup" && E.bagCount(state, it.id) > 0; });
+    var own = D.SHOP.filter(function (it) { return it.kind === "speedup" && E.bagCount(state, it.id) > 0 && (!it.only || it.only.indexOf(j.kind) >= 0); });
     if (!own.length) return '<p class="muted small">No speed-ups in your bag. <button class="linkbtn" data-act="panel" data-arg="items">Buy some</button></p>';
     return '<div class="speeditems">' + own.map(function (it) {
       return '<button class="btn tiny violet" data-act="use-speed" data-arg="' + it.id + ':' + j.id + '">' + icon("clock") + esc(F.duration(it.seconds)) + ' <span class="cnt">×' + E.bagCount(state, it.id) + '</span></button>';
@@ -7545,6 +7599,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     ["hero", "Hero/VIP", "crown", function (x) { return x.kind === "xp" || x.kind === "vip"; }]
   ];
   function itemShort(it) {
+    if (it.kind === "speedup" && it.only) return { build: "Build ", upgrade: "Build ", train: "Train ", research: "Research " }[it.only[0]] + (it.seconds < 3600 ? it.seconds / 60 + " min" : it.seconds / 3600 + " h");
     if (it.kind === "speedup") return it.seconds < 3600 ? it.seconds / 60 + " min" : it.seconds < 86400 ? it.seconds / 3600 + " h" : it.seconds / 86400 + " day";
     if (it.kind === "boost") return (/enemy/.test(it.stat) ? "Enemy " : "") + D.STATS[it.stat].replace(/^Enemy /, "").toLowerCase().replace(/^troop /, "") + (/enemy/.test(it.stat) ? " −" : " +") + it.pct + "% · " + (it.seconds / 3600) + " h";
     if (it.kind === "shield") return "Shield " + (it.seconds <= 86400 ? it.seconds / 3600 + " h" : it.seconds / 86400 + " days");
@@ -7560,7 +7615,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     }).join("") + '</div>';
     var tileIcon = function (it) { var im = UI_SRC["item-" + it.id] || UI_SRC["item-" + it.kind]; if (im) return '<img class="itimg" src="' + im + '" alt="">'; return it.kind === "speedup" ? icon("clock") : it.kind === "shield" ? icon("castle") : it.kind === "xp" ? icon("helm") : it.kind === "vip" ? icon("crown") : it.kind === "teleport" ? icon("globe") : it.kind === "boost" ? icon(/enemy/.test(it.stat) ? "alert" : "sword") : icon(it.res); };
     var C = ITEM_CATS.filter(function (c) { return c[0] === cat; })[0] || ITEM_CATS[0];
-    var list = D.SHOP.filter(C[3]);
+    var list = D.SHOP.filter(C[3]).filter(function (x) { return mode === "bag" || !x.noShop; });
     if (cat === "shield" && E.shielded(state, now())) html += '<section class="card"><div class="jb-top"><span>' + icon("castle") + 'Peace Shield active</span><span class="num" data-live-until="' + state.shieldUntil + '"></span></div></section>';
     var boosts = E.activeBoosts(state, now());
     if (cat === "boost" && boosts.length) html += '<section class="card"><h3>Active boosts</h3>' + boosts.map(function (b) {
@@ -7860,7 +7915,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     if (kind === "reports" && arg !== "keep") ui.reportId = null;
     if (ui.view === "city") M.setSelection(kind === "building" ? { kind: "building", id: arg } : kind === "plot" ? { kind: "plot", plot: arg } : kind === "locked" ? { kind: "locked", plot: arg } : null);
     if (kind === "tile") WV.setSelection(arg);
-    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks)$/.test(kind)); document.body.classList.add("panel-open");
+    $("panel").hidden = false; $("panel").classList.toggle("wide", kind === "research"); $("panel").classList.toggle("pop", kind === "tile"); $("panel").classList.toggle("tall", /^(reports|quests|items|alliance|realm|vip|research|hero|army|incoming|marks)$/.test(kind)); document.body.classList.add("panel-open");
     renderPanel(true); $("panelBody").scrollTop = 0;
     document.querySelectorAll(".nav button[data-arg]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-arg") === kind); });
   }
@@ -7980,7 +8035,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     panel: function (arg) { if (ui.panel && ui.panel.kind === arg) closePanel(); else openPanel(arg); },
     close: closePanel,
     timers: function () { ui.timersOpen = !ui.timersOpen; renderChrome(); },
-    claim: function (arg) { var r = E.claimQuest(state, +arg); if (result(r)) toast(icon("crown") + "<span>Reward received.</span>", "big"); },
+    claim: function (arg) { result(E.claimQuest(state, +arg)); },
     "hero-tab": function (arg) { ui.heroTab = arg; ui.confirm = null; renderPanel(true); },
     "hero-slot": function (arg) { ui.heroSlot = arg; renderPanel(true); },
     equip: function (arg) { var it = E.findItem(state, arg); if (it) ui.heroSlot = it.slot; result(E.equip(state, arg)); },
@@ -8051,7 +8106,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       result(E.leaveAlliance(state), icon("dot") + "<span>You left the alliance.</span>");
     },
     "ally-gift": function () { var r = E.claimAllianceGift(state, now()); result(r, r.ok ? icon("crown") + "<span>Gift: " + esc(E.giftText(r.gift)) + ".</span>" : null); },
-    "ally-help": function () { var r = E.helpAllies(state, now()); result(r, r.ok ? icon("check") + "<span>You helped " + r.count + " allies: +" + r.honor + " honor.</span>" : null); },
+    "ally-help": function () { var r = E.helpAllies(state, now()); result(r, r.ok ? icon("check") + "<span>You helped " + r.count + " allies: +" + r.honor + " honor.</span>" : null); updateHud(); },
     "ask-help": function (arg) { result(E.askHelp(state, arg, now()), icon("check") + "<span>Help requested from your alliance.</span>"); },
     "honor-buy": function (arg) { result(E.buyWithHonor(state, arg), icon("bag") + "<span>Bought: <b>" + esc(E.itemLabel(arg)) + "</b>.</span>"); },
     spy: function (arg) {
@@ -8111,7 +8166,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     "research-back": function () { ui.researchView = null; renderPanel(true); $("panelBody").scrollTop = 0; },
     "research-sel": function (arg) { var r = D.RESEARCH_BY_ID[arg]; if (r) { ui.researchSel[r.tree] = ui.researchSel[r.tree] === arg ? null : arg; renderPanel(true); } },
     noop: function () {},
-    research: function (arg) { result(E.research(state, arg, now())); },
+    research: function (arg) { var r = E.research(state, arg, now()); if (r.ok) { var rr = D.RESEARCH_BY_ID[arg]; if (rr) ui.researchSel[rr.tree] = null; } result(r); },
     "forge-tier": function (arg) { ui.forgeTier = +arg; renderPanel(true); },
     "forge-slot": function (arg) { ui.forgeSlot = arg; renderPanel(true); },
     craft: function () { result(E.craft(state, ui.forgeSet, ui.forgeSlot, ui.forgeTier, now())); },
