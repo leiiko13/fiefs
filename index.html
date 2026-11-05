@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611052015";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611052043";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1767,15 +1767,6 @@ Medieval.Data = (function () {
     // --- technologie
     R("scribes",    "tech", 0, "Scribes",          5, { stat: "research_speed", per: 4 }, null, "Copyists and libraries speed up every research."),
     R("bellows",    "tech", 0, "Bellows",          5, { stat: "craft_speed", per: 6 }, null, "Hotter fires: the forge works faster."),
-    R("horsetack",  "tech", 1, "Horse Tack",       1, { set: "rider" }, { bellows: 1 }, "The forge can craft the Rider set (cavalry)."),
-    R("bows",       "tech", 1, "Composite Bows",   1, { set: "archer" }, { bellows: 1 }, "The forge can craft the Sagittarius set (ranged)."),
-    R("insignia",   "tech", 1, "Civic Insignia",   1, { set: "steward" }, { scribes: 2 }, "The forge can craft the Steward set (economy)."),
-    R("huntgear",   "tech", 1, "Hunter's Craft",   1, { set: "hunter" }, { bellows: 1 }, "The forge can craft the Hunter set (monster hunting)."),
-    R("scholargear","tech", 1, "Scholar's Craft",  1, { set: "scholar" }, { scribes: 2 }, "The forge can craft the Scholar set (research)."),
-    R("harvestgear","tech", 1, "Harvest Craft",    1, { set: "harvest" }, { scribes: 1 }, "The forge can craft the Harvest set: more production and much faster gathering."),
-    R("furygear",   "tech", 2, "Ember Rites",  1, { set: "berserker" }, { horsetack: 1 }, "The forge can craft the Berserker set: huge attack, weaker defense."),
-    R("bulwarkgear","tech", 2, "Sentinel Masonry", 1, { set: "bulwark" }, { bows: 1 }, "The forge can craft the Sentinel set: defense and health, slower marches."),
-    R("raidgear",   "tech", 2, "Corsair's Kit",    1, { set: "raider" }, { insignia: 1 }, "The forge can craft the Corsair set: speed and loot, fragile."),
     R("bronze",     "tech", 2, "Bronze Casting",   1, { gearTier: 2 }, { bellows: 2 }, "New material: the forge can craft tier II gear."),
     R("assaying",   "tech", 3, "Assaying",         5, { stat: "craft_cost", per: 4 }, { bronze: 1 }, "Test the ore before smelting: gear costs less."),
     R("smiths",     "tech", 3, "Master Smiths",    5, { stat: "forge_luck", per: 1 }, { bronze: 1 }, "Better odds of rare, epic and legendary pieces."),
@@ -2135,7 +2126,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, testPack9: true, eliteSeed: true, arenaSeed: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, testPack9: true, gemPack: true, youngSeed: true, gems: (function () { var g = {}; (D.GEMS || []).forEach(function (G) { g[G.key + 1] = 2; }); return g; })(), eliteSeed: true, arenaSeed: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2712,7 +2703,7 @@ Medieval.Engine = (function (D) {
     if (s.world && s.world.shared) s.world.tiles = s.world.tiles.filter(function (x) { return x.kind !== "arena" || x.shared; });
     if (!s.arenaSeed && s.world && !s.world.shared && E.spawnArena) { s.arenaSeed = true; E.spawnArena(s, s.lastTick); if (E.spawnElite) E.spawnElite(s, s.lastTick); }
     (s.items || []).forEach(function (it) { if (it.trait) delete it.trait; });
-    if (s.world && E.ensureYoung) E.ensureYoung(s, 8);
+    if (!s.youngSeed && s.world && E.ensureYoung) { s.youngSeed = true; E.ensureYoung(s, 8); }   // des monstres à votre niveau autour de la cité
     if (!s.gemPack && E.addGem) {
       s.gemPack = true; (D.GEMS || []).forEach(function (G) { E.addGem(s, G.key, 1, 3); E.addGem(s, G.key, 3, 1); });
       if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "Jewels and gems", text: "Leg guards are now Jewels: rings, bracelets and armlets with up to 3 gem settings (1 for common, 2 for rare, 3 for epic and legendary). Raw gems drop from monsters, rich tiles and the Arena. Here are 3 rough gems and 1 polished gem of each kind to try. Open your hero, tap the jewel slot, then tap a setting." });
@@ -3483,7 +3474,7 @@ Medieval.Engine = (function (D) {
     return (l[type + "_t" + tier] || 0) >= 1;
   };
   E.gearTierResearched = function (s, tier) { return tier <= 1 || unlocked(s, "gearTier", Math.min(tier, 4)); };
-  E.setResearched = function (s, set) { return D.STARTER_SETS.indexOf(set) >= 0 || unlocked(s, "set", set); };
+  E.setResearched = function (s, set) { return !!D.SETS[set]; };   // toutes les panoplies se forgent dès qu'on a les matériaux
   /** La recherche qui débloque une chose ({troopTier: 2}, {set: "rider"}…). */
   E.researchFor = function (key, val) { return D.RESEARCH.filter(function (r) { return r.effect[key] === val; })[0] || null; };
 
@@ -4201,6 +4192,7 @@ Medieval.Engine = (function (D) {
     });
     for (var r = 0; r < W.resTiles; r++) spawnRes(s);
     for (var c2 = 0; c2 < W.camps; c2++) spawnCamp(s);
+    for (var c3 = 0; c3 < 8; c3++) { var py = randomFree(s, 2, 9, 1); if (py) { var ly = 1 + (E.rand(s) < 0.4 ? 1 : 0); s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: ly, troops: E.campTroops(s, ly), x: py.x, y: py.y, by: null, young: true }); } }
     return s.world;
   };
 
