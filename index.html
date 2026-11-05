@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051152";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611051207";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1003,6 +1003,9 @@ body.in-forge .bottom, body.in-forge .topbar, body.in-forge .resrow { visibility
 .mchip.l3 { background: radial-gradient(circle at 50% 38%, #b8ffae, #3fbf4f 50%, #0f4d1c) !important; } .mchip.l4 { background: radial-gradient(circle at 50% 38%, #b3d4ff, #2f74ff 50%, #0c2a7a) !important; }
 .mchip.l5 { background: radial-gradient(circle at 50% 38%, #f0c4ff, #a347e8 50%, #3d0f6e) !important; } .mchip.l6 { background: radial-gradient(circle at 50% 38%, #fff6c2, #f5b81e 50%, #8a4f02) !important; }
 .slot { overflow: hidden; } .slot .gimg { max-width: 86%; max-height: 86%; width: auto; height: auto; }
+.slot.hasbg { background-size: cover !important; background-position: center !important; }
+.icard .b10 { margin-top: 2px; padding: 3px 2px; font-size: 11px; color: #3a2410; border-color: rgba(0,0,0,.35); }
+.icard .btn + .btn { margin-top: 3px; }
 
 </style>
 
@@ -1593,6 +1596,9 @@ Medieval.Data = (function () {
   SHOP.push(
     { id: "xp1k", kind: "xp", name: "Hero XP tome (1,000)", amount: 1000, price: 30 },
     { id: "xp10k", kind: "xp", name: "Hero XP tome (10,000)", amount: 10000, price: 250 },
+    { id: "xp100k", kind: "xp", name: "Hero XP tome (100,000)", amount: 100000, price: 2200 },
+    { id: "xp1m", kind: "xp", name: "Hero XP tome (1,000,000)", amount: 1000000, price: 19000 },
+    { id: "xp10m", kind: "xp", name: "Hero XP tome (10,000,000)", amount: 10000000, price: 170000 },
     { id: "vip100", kind: "vip", name: "100 VIP points", amount: 100, price: 40 },
     { id: "vip1000", kind: "vip", name: "1,000 VIP points", amount: 1000, price: 350 },
     { id: "tpRandom", kind: "teleport", name: "Random Teleport", price: 60 },
@@ -1900,7 +1906,7 @@ Medieval.Engine = (function (D) {
       army: {}, wounded: {}, items: [], prison: [], buffs: {},
       hero: null, world: null, quests: { claimed: [] },
       stats: { built: 0, upgraded: 0, trained: 0, gathered: 0, bandits: 0, wins: 0, losses: 0, crafted: 0, captures: 0, defended: 0, researched: 0 },
-      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
+      testPack1: true, testPack2: true, testPack3: true, testPack4: true, testPack5: true, testPack6: true, testPack7: true, testPack8: true, testPack9: true, monsterLv1: true, mats: (function () { var m = {}; (D.MATERIALS || []).forEach(function (M) { m[M.key + 1] = 8; m[M.key + 2] = 2; }); return m; })(), research: { levels: {} }, vip: { points: 0, level: 0, lastDay: null, streak: 0 }, traps: {}, boosts: {}, bag: JSON.parse(JSON.stringify(D.START_BAG || {})),
       reports: [], unread: 0, alliance: null
     };
     RES_KEYS.forEach(function (k) { s.resources[k] = D.START.resources[k] || 0; });
@@ -2473,6 +2479,10 @@ Medieval.Engine = (function (D) {
     if (!s.testPack1) { s.testPack1 = true; for (var tp in D.TEST_PACK) s.bag[tp] = (s.bag[tp] || 0) + D.TEST_PACK[tp]; }
     if (s.hero && s.hero.level > D.HERO.maxLevel) { s.hero.level = D.HERO.maxLevel; s.hero.xp = 0; }
     if (!s.monsterLv1) { s.monsterLv1 = true; if (E.reshuffleMonsters) E.reshuffleMonsters(s); }
+    if (!s.testPack9) {
+      s.testPack9 = true; s.resources.gold = (s.resources.gold || 0) + 500000;
+      if (s.name) E.report(s, { kind: "info", at: s.lastTick, title: "500,000 gold for the test", text: "The treasury sends you 500,000 gold. The shop now has bigger hero XP tomes, a ×10 button, and Use all in your bag." });
+    }
     if (!s.testPack8) {   // 200 000 or et 20 matériaux de chaque niveau (remplace les 1 500 gris)
       s.testPack8 = true; s.mats = s.mats || {}; s.resources.gold = (s.resources.gold || 0) + 200000;
       var had7 = s.testPack7; s.testPack7 = true;
@@ -3143,7 +3153,7 @@ Medieval.Engine = (function (D) {
   E.bagCount = function (s, id) { return (s.bag && s.bag[id]) || 0; };
   E.bagTotal = function (s) { var n = 0, b = s.bag || {}; for (var k in b) n += b[k]; return n; };
 
-  E.buyItem = function (s, id, n) {
+  E.buyItem = function (s, id, n) {   // n : quantité (×1, ×10…)
     var it = D.SHOP_BY_ID[id]; n = Math.floor(n || 1);
     if (!it || it.noShop) return { ok: false, reasons: ["This item cannot be bought."] };
     if (!(n >= 1)) return { ok: false, reasons: ["Pick at least one."] };
@@ -3159,6 +3169,7 @@ Medieval.Engine = (function (D) {
     var events = E.advance(s, now), it = D.SHOP_BY_ID[id], b = bag(s);
     if (!it) return { ok: false, reasons: ["Unknown item."], events: events };
     if (!(b[id] > 0)) return { ok: false, reasons: ["You don't have this item."], events: events };
+    var n = (it.kind === "xp" || it.kind === "vip" || it.kind === "res") && opts && opts.count ? Math.min(b[id], Math.max(1, opts.count | 0)) : 1;   // « tout utiliser »
     if (it.kind === "speedup") {
       var j = E.findJob(s, opts && opts.jobId);
       if (!j) return { ok: false, reasons: ["This task is already finished."], events: events };
@@ -3166,10 +3177,10 @@ Medieval.Engine = (function (D) {
       j.end = Math.max(now, j.end - it.seconds * 1000);
       if (j.end <= now) { j.end = now; E._pushEvent(events, E._completeJob(s, j, now)); }
     } else if (it.kind === "xp") {
-      E.heroGainXp(s, it.amount, events, now);
+      E.heroGainXp(s, it.amount * n, events, now);
     } else if (it.kind === "vip") {
       if (!s.vip) s.vip = { points: 0, level: 0, lastDay: null, streak: 0 };
-      s.vip.points += it.amount; var before = s.vip.level; s.vip.level = E.vipLevelFor(s.vip.points);
+      s.vip.points += it.amount * n; var before = s.vip.level; s.vip.level = E.vipLevelFor(s.vip.points);
       if (s.vip.level > before) events.push({ type: "vipDaily", points: it.amount, streak: s.vip.streak, level: s.vip.level, up: true, at: now });
     } else if (it.kind === "teleport") {
       var tr = E.teleport(s, it.target ? opts && opts.x : null, it.target ? opts && opts.y : null, now);
@@ -3181,9 +3192,9 @@ Medieval.Engine = (function (D) {
       var cur = s.boosts[it.stat];
       s.boosts[it.stat] = { pct: Math.max(it.pct, cur && cur.until > now ? cur.pct : 0), until: Math.max(now, cur ? cur.until : 0) + it.seconds * 1000 };
     } else if (it.kind === "res") {
-      var add = {}; add[it.res] = it.amount; E.grant(s, add);
+      var add = {}; add[it.res] = it.amount * n; E.grant(s, add);
     }
-    if (--b[id] <= 0) delete b[id];
+    b[id] -= n; if (b[id] <= 0) delete b[id];
     return { ok: true, events: events };
   };
 
@@ -7811,7 +7822,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   var ROMAN = ["", "I", "II", "III", "IV", "V", "VI"];
   function matChip(key, lv, n) {
     var M = D.MAT_BY_KEY[key], img = UI_SRC["mat-" + key];
-    return '<span class="mchip l' + lv + '" style="--mc:' + M.color + '" title="Level ' + lv + '">' + (img ? '<img src="' + img + '" alt="">' : '<i></i>') + (n !== undefined ? '<em>' + n + '</em>' : "") + '</span>';
+    var qb = UI_SRC["bg-t" + lv];
+    return '<span class="mchip l' + lv + '" style="--mc:' + M.color + (qb ? ';background:url(' + qb + ') center/cover !important' : "") + '" title="Level ' + lv + '">' + (img ? '<img src="' + img + '" alt="">' : '<i></i>') + (n !== undefined ? '<em>' + n + '</em>' : "") + '</span>';
   }
   function matsLine(list) {
     if (!list || !list.length) return "";
@@ -7932,8 +7944,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
 
   // --- héros
   function itemSlotBtn(it, slotKey, act) {
-    var gimg = it && UI_SRC["gear-" + it.set + "-" + it.slot];
-    return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '" ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + (it ? '<span class="tier">' + D.GEAR_TIERS[it.tier - 1].name + '</span>' + (it.rarity ? '<i class="rgem g' + it.rarity + '"></i>' : "") : "") + '</button>';
+    var gimg = it && UI_SRC["gear-" + it.set + "-" + it.slot], tbg = it && UI_SRC["bg-t" + it.tier];
+    return '<button class="slot ' + (it ? "t" + it.tier + " r" + it.rarity + (gimg ? " hasimg" : "") + (tbg ? " hasbg" : "") : "empty") + (ui.heroSlot === slotKey && act ? " on" : "") + '"' + (tbg ? ' style="background-image:url(' + tbg + ')"' : "") + ' ' + (act ? 'data-act="hero-slot" data-arg="' + slotKey + '"' : 'tabindex="-1"') + ' title="' + esc(it ? E.itemName(it) + " · " + D.RARITIES[it.rarity].name : slotName(slotKey)) + '">' + (gimg ? '<img class="gimg" src="' + gimg + '" alt="">' : '<svg viewBox="0 0 32 32"><use href="#i-' + slotKey + '"></use></svg>') + '</button>';
   }
   function itemRow(it, actions) {
     return '<div class="item">' + itemSlotBtn(it, it.slot, false) + '<div><div class="item-name" style="color:' + D.RARITIES[it.rarity].color + '">' + esc(E.itemName(it)) + '</div><div class="item-stats">' + D.RARITIES[it.rarity].name + ' · ' + statsLine(E.itemStats(it)) + '</div></div><div class="row">' + actions + '</div></div>';
@@ -8139,14 +8151,16 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
     };
     if (mode === "shop") {
       html += '<div class="igrid">' + list.map(function (it) {
-        return card(it, '<button class="btn tiny gold" data-act="buy" data-arg="' + it.id + '" ' + (state.resources.gold >= it.price ? "" : "disabled") + '>' + icon("gold") + F.num(it.price) + '</button>');
+        return card(it, '<button class="btn tiny gold" data-act="buy" data-arg="' + it.id + '" ' + (state.resources.gold >= it.price ? "" : "disabled") + '>' + icon("gold") + F.num(it.price) + '</button>' +
+          '<button class="btn tiny ghost b10" data-act="buy10" data-arg="' + it.id + '" ' + (state.resources.gold >= it.price * 10 ? "" : "disabled") + '>×10 · ' + F.compact(it.price * 10) + '</button>');
       }).join("") + '</div>';
       if (cat === "tp") html += '<p class="muted small">Advanced Teleport: tap an empty tile on the world map, then "Move my city here".</p>';
     } else {
       var mine = list.filter(function (x) { return E.bagCount(state, x.id) > 0; });
       if (!mine.length) html += '<p class="mail-empty">Nothing here yet. <button class="linkbtn" data-act="items-tab" data-arg="shop">Open the shop</button></p>';
       else html += '<div class="igrid">' + mine.map(function (it) {
-        return card(it, it.kind === "speedup" ? '<span class="muted small">On a timer</span>' : '<button class="btn tiny teal" data-act="use-item" data-arg="' + it.id + '">Use</button>');
+        var many = E.bagCount(state, it.id) > 1 && (it.kind === "xp" || it.kind === "vip" || it.kind === "res");
+        return card(it, it.kind === "speedup" ? '<span class="muted small">On a timer</span>' : '<button class="btn tiny teal" data-act="use-item" data-arg="' + it.id + '">Use</button>' + (many ? '<button class="btn tiny gold" data-act="use-all" data-arg="' + it.id + '">Use all</button>' : ""));
       }).join("") + '</div>';
       var jobs = state.jobs.slice().sort(function (a, b) { return a.end - b.end; });
       if (cat === "speed" && jobs.length && mine.length) {
@@ -8743,6 +8757,8 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       toast(icon("castle") + "<span>Peace Shield removed.</span>");
       if (a && ACTIONS[a.act]) ACTIONS[a.act](a.arg);
     },
+    "use-all": function (arg) { var it = D.SHOP_BY_ID[arg], n = E.bagCount(state, arg); result(E.useItem(state, arg, { count: n }, now()), icon("check") + "<span>" + n + " × <b>" + esc(E.itemLabel(arg)) + "</b> used.</span>"); },
+    "buy10": function (arg) { result(E.buyItem(state, arg, 10), icon("gold") + "<span>10 × <b>" + esc(E.itemLabel(arg)) + "</b> bought.</span>"); },
     "use-item": function (arg) {
       var it = D.SHOP_BY_ID[arg];
       if (it.kind === "teleport" && it.target) { toast(icon("globe") + "<span>Open the world map and tap an empty tile to move your city there.</span>"); return; }
