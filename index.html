@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050739";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1220"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Rise & Conquer"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><script>window.MEDIEVAL_WEB=true;window.RC_VERSION="202611050806";window.RC_FIREBASE={"apiKey":"AIzaSyCC7TQJdkI9PuUnT89pWVraDV8nauJzy8k","authDomain":"rise-and-conquer-874ae.firebaseapp.com","projectId":"rise-and-conquer-874ae","storageBucket":"rise-and-conquer-874ae.firebasestorage.app","messagingSenderId":"368348234028","appId":"1:368348234028:web:526e133728630b88632c89"};</script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>html,body{margin:0;height:100%;overflow:hidden;background:#0b1220;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}</style></head><body><title>Rise &amp; Conquer</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -762,6 +762,17 @@ body.has-gold .goldbox .gb-txt { position: absolute; left: 8%; right: 36%; top: 
 body.has-gold .goldbox .gb-label { top: 26%; } body.has-gold .goldbox b { top: 46%; }
 body.has-vip .vipbox .vip-l { top: 40%; } body.has-vip .vipbox b { top: 64%; }
 body.has-gold .goldbox .gb-label { top: 23%; } body.has-gold .goldbox b { top: 48%; }
+/* barre du haut, réglage serré (iPhone) : chaque ligne est centrée sur un point précis du cadre */
+body.has-power .powerplate .pp-label { top: 37%; transform: translateY(-50%) !important; font-size: 8px; }
+body.has-power .powerplate b { top: 59%; transform: translateY(-50%) !important; }
+body.has-gold .goldbox .gb-label { top: 37%; transform: translateY(-50%) !important; }
+body.has-gold .goldbox b { top: 60%; transform: translateY(-50%) !important; }
+body.has-vip .vipbox .vip-l { top: 55%; transform: translateY(-50%) !important; }
+body.has-vip .vipbox b { top: 75%; transform: translateY(-50%) !important; }
+@media (min-width: 761px) { body.has-power .powerplate .pp-label { font-size: 10px; } }
+body.has-gold .goldbox .gb-label { top: 34%; } body.has-gold .goldbox b { top: 63%; }
+body.has-vip .vipbox .vip-l { top: 52%; } body.has-vip .vipbox b { top: 77%; }
+@media (max-width: 760px) { body.has-gold .goldbox b { font-size: 13px; } body.has-vip .vipbox b { font-size: 11px; } body.has-vip .vipbox .vip-l { font-size: 8px; } }
 
 </style>
 
@@ -1127,7 +1138,7 @@ Medieval.Data = (function () {
   var WORLD = {
     size: 30, home: { x: 15, y: 15 }, kingdom: 7,
     botCount: 12, resTiles: 42, camps: 18,
-    sharedSize: 60, layout: 2, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 50,   // carte commune
+    sharedSize: 60, layout: 3, layoutShift: 8, sharedBots: 18, sharedRes: 120, sharedCamps: 56,   // carte commune
     forestSlow: 0.8,             // +80 % de temps de marche à travers la forêt
     wonderHoldMs: 3600000,       // garder la Merveille 1 h pour devenir roi
     secondsPerTile: 8, tickMs: 3600000,
@@ -3171,12 +3182,29 @@ Medieval.Engine = (function (D) {
     return bot;
   }
 
-  function spawnRes(s) {
+  /** 0 aux bords de la carte → 1 contre la forêt sacrée (ou loin de chez vous sans Merveille). */
+  E.zoneT = function (w, pos) {
+    if (w.wonder) { var half = Math.floor(w.size / 2), d = cheb(pos, w.wonder); return Math.max(0, Math.min(1, (half - 1 - d) / (half - 8))); }
+    return Math.max(0, Math.min(1, dist(pos, w.home || w.center || W.home) / 16));
+  };
+  E.resLevelAt = function (w, pos, r) { return Math.max(1, Math.min(5, 1 + Math.round(E.zoneT(w, pos) * 4 + (r - 0.5) * 1.2))); };
+  E.monsterLevelAt = function (w, pos, r) { return Math.max(1, Math.min(10, 1 + Math.round(E.zoneT(w, pos) * 9 + (r - 0.5) * 2))); };
+  /** Place libre la plus isolée parmi quelques tirages : la carte se remplit régulièrement. */
+  function isolatedFree(s) {
+    var w = s.world, best = null, bestD = -1;
+    for (var k = 0; k < 14; k++) {
+      var p = randomFree(s, 3, w.spawnMax || 16); if (!p) continue;
+      var dmin = 99; w.tiles.forEach(function (t) { var d = cheb(t, p); if (d < dmin) dmin = d; });
+      if (dmin > bestD) { bestD = dmin; best = p; }
+    }
+    return best;
+  }
+  function spawnRes(s, at) {
     var r = E.rand(s) * 100, k = 0;
     while (r > RES_TILE_WEIGHTS[k]) { r -= RES_TILE_WEIGHTS[k]; k++; }
-    var res = RES_TILE_KINDS[k], pos = randomFree(s, 3, (s.world && s.world.spawnMax) || 16);
+    var res = RES_TILE_KINDS[k], pos = at || isolatedFree(s);
     if (!pos) return;
-    var d = s.world.wonder && !s.world.home ? Math.max(0, 24 - dist(pos, HOME(s))) : dist(pos, HOME(s)), level = Math.max(1, Math.min(5, Math.round(d / 3.2 + E.rand(s) * 1.6 - 0.6)));
+    var level = E.resLevelAt(s.world, pos, E.rand(s));
     var amount = W.resAmount(res, level);
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "res", res: res, level: level, amount: amount, max: amount, x: pos.x, y: pos.y, by: null });
   }
@@ -3194,12 +3222,20 @@ Medieval.Engine = (function (D) {
   /** Remet des niveaux bien répartis sur les monstres déjà présents (ancienne carte trop forte). */
   E.reshuffleMonsters = function (s) {
     if (!s.world) return;
-    s.world.tiles.forEach(function (t) { if (t.kind === "camp" && !t.by) { t.level = E.monsterLevel(s); t.troops = E.campTroops(s, t.level); } });
+    s.world.tiles.forEach(function (t) { if (t.kind === "camp" && !t.by) { t.level = E.monsterLevelAt(s.world, t, E.rand(s)); t.troops = E.campTroops(s, t.level); } });
   };
-  function spawnCamp(s) {
-    var pos = randomFree(s, 3, (s.world && s.world.spawnMax) || 16);
+  /** Rien sur les 8 cases autour d'une cité (la vôtre, les autres joueurs, les châteaux). */
+  E.clearAroundCities = function (s) {
+    var w = s.world; if (!w) return 0;
+    var cities = [HOME(s)].concat(w.shared ? E.OTHERS : []).concat(w.bots), n0 = w.tiles.length;
+    var busy = {}; w.marches.forEach(function (m) { busy[m.targetId] = 1; });
+    w.tiles = w.tiles.filter(function (t) { return busy[t.id] || t.by || !cities.some(function (c) { return cheb(c, t) < 2; }); });
+    return n0 - w.tiles.length;
+  };
+  function spawnCamp(s, at) {
+    var pos = at || isolatedFree(s);
     if (!pos) return;
-    var level = E.monsterLevel(s);
+    var level = E.monsterLevelAt(s.world, pos, E.rand(s));
     s.world.tiles.push({ id: E.uid(s, "t"), kind: "camp", level: level, troops: E.campTroops(s, level), x: pos.x, y: pos.y, by: null });
   }
 
@@ -3245,8 +3281,25 @@ Medieval.Engine = (function (D) {
       var d = dist(pos, center), lv = Math.max(1, Math.min(12, Math.round(12 - (d - 9) * 0.7 + E.rand(s) * 2 - 1)));
       s.world.bots.push(makeBot(s, i, pos, lv));
     }
-    for (var r = 0; r < W.sharedRes; r++) spawnRes(s);
-    for (var k = 0; k < W.sharedCamps; k++) spawnCamp(s);
+    // répartition régulière : une grille de cases de 4×4, mélangée ; un élément au plus par case de grille
+    var cells = [], G = 4, Wd = s.world.wonder;
+    for (var gy = 1; gy < size - 1; gy += G) for (var gx = 1; gx < size - 1; gx += G) {
+      if (Math.abs(gx + G / 2 - Wd.x) <= 8 && Math.abs(gy + G / 2 - Wd.y) <= 8) continue;
+      cells.push({ x: gx, y: gy });
+    }
+    for (var c = cells.length - 1; c > 0; c--) { var j = Math.floor(E.rand(s) * (c + 1)), tmp = cells[c]; cells[c] = cells[j]; cells[j] = tmp; }
+    var pick = function (cell) {
+      for (var t = 0; t < 16; t++) {
+        var x = cell.x + Math.floor(E.rand(s) * G), y = cell.y + Math.floor(E.rand(s) * G);
+        if (x > size - 2 || y > size - 2) continue;
+        if (Math.abs(x - Wd.x) <= 6 && Math.abs(y - Wd.y) <= 6) continue;
+        if (free(s, x, y, 0)) return { x: x, y: y };
+      }
+      return null;
+    };
+    var ci = 0;
+    for (var r = 0; r < W.sharedRes && ci < cells.length; ci++) { var pr = pick(cells[ci]); if (pr) { spawnRes(s, pr); r++; } }
+    for (var k = 0; k < W.sharedCamps && ci < cells.length; ci++) { var pc = pick(cells[ci]); if (pc) { spawnCamp(s, pc); k++; } }
     return s.world;
   };
   /** Choisit une place libre, loin des autres cités. taken : [{x,y}] */
@@ -3274,6 +3327,7 @@ Medieval.Engine = (function (D) {
     w.tiles.forEach(function (t) { t.id = E.uid(s, "t"); });
     w.nextTick = now + W.tickMs;
     s.world = w;
+    E.clearAroundCities(s);
     return w;
   };
 
@@ -3696,6 +3750,7 @@ Medieval.Engine = (function (D) {
     },
     run: function (s, t, events) {
       var w = s.world; if (!w) return;
+      E.clearAroundCities(s);
       var due = w.marches.filter(function (m) { return m.next <= t; }).sort(function (a, b) { return a.next - b.next; });
       due.forEach(function (m) {
         var at = m.next;
@@ -5249,7 +5304,7 @@ Medieval.WorldView = (function (D, E, G) {
   function tileXY(x, y) { return { x: (x - y) * HW, y: (x + y) * HH }; }
   function diamond(cx, cy, k) { return [[cx, cy - HH * k], [cx + HW * k, cy], [cx, cy + HH * k], [cx - HW * k, cy]]; }
   function size() { return state && state.world ? state.world.size : 30; }
-  var FOG = 14;   // cases de « monde caché » dessinées autour de la carte
+  var FOG = 40;   // cases de « monde caché » dessinées autour de la carte
   function bounds() {
     var n = size() + FOG, o = -FOG;
     var top = tileXY(o, o), left = tileXY(o, n), right = tileXY(n, o), bot = tileXY(n, n);
@@ -6337,21 +6392,22 @@ Medieval.Online = (function (D, E, S) {
   /** Nouvel emplacement pour un gisement épuisé. */
   var KINDS = ["wood", "stone", "ore", "food", "silver", "gold"], WEIGHTS = [24, 19, 18, 24, 12, 3];
   function respawn(tx, s, existing) {
-    var w = s.world, taken = existing.concat(E.OTHERS).concat([E.homeOf(s)]).concat(w.bots);
-    for (var k = 0; k < 300; k++) {
+    var w = s.world, taken = existing.concat(E.OTHERS).concat([E.homeOf(s)]).concat(w.bots), best = null, bestD = -1;
+    // plusieurs tirages : on garde la place la plus isolée (la carte reste bien répartie)
+    for (var k = 0, found = 0; k < 400 && found < 12; k++) {
       var x = 1 + Math.floor(Math.random() * (w.size - 2)), y = 1 + Math.floor(Math.random() * (w.size - 2)), t = E.terrainAt(w, x, y);
-      if (t !== "g" && t !== "f") continue;
-      var p = { x: x, y: y };
-      if (taken.some(function (o) { return E.cheb(o, p) < 2; })) continue;
-      if (w.tiles.some(function (o) { return E.cheb(o, p) < 2; })) continue;
-      if (existing.some(function (o) { return E.cheb(o, p) < 2; })) continue;
-      var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
-      var res = KINDS[i], d = Math.max(0, 24 - dist(p, w.center || D.WORLD.home));
+      if (t !== "g") continue;
       if (w.wonder && Math.abs(x - w.wonder.x) <= 6 && Math.abs(y - w.wonder.y) <= 6) continue;
-      var level = Math.max(1, Math.min(5, Math.round(d / 3.2 + Math.random() * 1.6 - 0.6))), amount = D.WORLD.resAmount(res, level);
-      tx.set(tilesRef().doc("t" + x + "_" + y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: x, y: y });
-      return;
+      var p = { x: x, y: y }, near = function (o) { return E.cheb(o, p) < 2; };
+      if (taken.some(near) || w.tiles.some(near)) continue;
+      found++;
+      var dmin = 99; existing.concat(w.tiles).forEach(function (o) { var d = E.cheb(o, p); if (d < dmin) dmin = d; });
+      if (dmin > bestD) { bestD = dmin; best = p; }
     }
+    if (!best) return;
+    var r = Math.random() * 100, i = 0; while (r > WEIGHTS[i]) { r -= WEIGHTS[i]; i++; }
+    var res = KINDS[i], level = E.resLevelAt(w, best, Math.random()), amount = D.WORLD.resAmount(res, level);
+    tx.set(tilesRef().doc("t" + best.x + "_" + best.y + "_" + Date.now().toString(36)), { res: res, level: level, amount: amount, max: amount, x: best.x, y: best.y });
   }
 
   /** Applique l'état du serveur aux cases ressources locales. */
@@ -6360,7 +6416,7 @@ Medieval.Online = (function (D, E, S) {
     var mine = {}; w.marches.forEach(function (m) { if (m.kind === "gather" && m.phase === "gather") mine[m.targetId] = m.id; });
     var home = E.homeOf(s);
     docs.forEach(function (d) {
-      if (!mine[d.id] && E.cheb(d.data, home) < 2) return;   // jamais collé à votre cité
+      if (!mine[d.id] && (E.cheb(d.data, home) < 2 || E.OTHERS.some(function (o) { return E.cheb(o, d.data) < 2; }))) return;   // jamais collé à une cité
       var v = d.data, t = { id: d.id, kind: "res", res: v.res, level: v.level, amount: v.amount, max: v.max, x: v.x, y: v.y, by: mine[d.id] || null, occ: null };
       if (v.uid && v.uid !== me && v.end > now) t.occ = { uid: v.uid, name: v.name, troops: v.troops || {}, bonus: v.bonus || {}, end: v.end, start: v.start, rate: v.rate, amount: v.gather };
       keep.push(t);
@@ -6606,18 +6662,19 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
   function ensureShared() {
     if (!S.uid() || !state) return Promise.resolve();
     return S.listPlayers().then(function (list) {
-      var LAY = D.WORLD.layout, shiftP = function (p) { if (p && isFinite(p.x) && (p.layout || 1) < LAY) { p.x += D.WORLD.layoutShift; p.y += D.WORLD.layoutShift; p.layout = LAY; } return p; };
+      var LAY = D.WORLD.layout, shiftP = function (p) { if (p && isFinite(p.x) && (p.layout || 1) < 2) { p.x += D.WORLD.layoutShift; p.y += D.WORLD.layoutShift; p.layout = LAY; } return p; };
       list.forEach(shiftP);
       var me = list.filter(function (p) { return p.uid === S.uid(); })[0], others = list.filter(function (p) { return p.uid !== S.uid() && p.world === SHARED_SEED && isFinite(p.x); });
       var oldLayout = state.world && state.world.shared === SHARED_SEED && (state.world.layout || 1) < LAY;
       if (!(state.world && state.world.shared === SHARED_SEED) || oldLayout) {
         var world = E.sharedWorld(SHARED_SEED, now());
-        var spot = oldLayout && state.world.home ? { x: state.world.home.x + D.WORLD.layoutShift, y: state.world.home.y + D.WORLD.layoutShift }
+        var sh = (state.world && state.world.layout || 1) < 2 ? D.WORLD.layoutShift : 0;
+        var spot = oldLayout && state.world.home ? { x: state.world.home.x + sh, y: state.world.home.y + sh }
           : me && me.world === SHARED_SEED && isFinite(me.x) ? { x: me.x, y: me.y } : E.findHomeSpot(world, others, uidSalt());
         if (world.tiles.some(function (t) { return E.cheb(t, spot) < 1; }) || E.terrainAt(world, spot.x, spot.y) !== "g") spot = E.findHomeSpot(world, others, uidSalt());
         E.joinSharedWorld(state, SHARED_SEED, spot, now());
         WV.setState(state); persist(true); S.writeCloud(state);
-        toast(icon("globe") + "<span>" + (oldLayout ? "The world map grew. Your city is now" : "You joined the <b>shared world map</b>") + " at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
+        toast(icon("globe") + "<span>" + (oldLayout ? "The world map was redrawn. Your city is" : "You joined the <b>shared world map</b>") + " at X:" + spot.x + " Y:" + spot.y + ".</span>", "big");
       }
       S.publishPlayer(state);
       if (Medieval.Online) Medieval.Online.start(SHARED_SEED, { state: function () { return state; }, now: now, persist: function () { persist(); },
@@ -6625,9 +6682,10 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
       S.watchPlayers(function (ps) {
         var fresh = now() - 14 * 86400000;   // les seigneurs absents depuis 2 semaines disparaissent de la carte
         E.OTHERS = ps.filter(function (p) { return p.world === SHARED_SEED && isFinite(p.x) && (p.updatedAt || 0) > fresh; }).map(function (p) {
-          if ((p.layout || 1) < D.WORLD.layout) { p = Object.assign({}, p, { x: p.x + D.WORLD.layoutShift, y: p.y + D.WORLD.layoutShift }); }
+          if ((p.layout || 1) < 2) { p = Object.assign({}, p, { x: p.x + D.WORLD.layoutShift, y: p.y + D.WORLD.layoutShift }); }
           return p;
         });
+        if (state.world && E.clearAroundCities(state)) WV.markDirty();
         // deux cités au même endroit : celle dont l'identifiant est le plus grand déménage
         var h = state.world && state.world.home, clash = h && E.OTHERS.filter(function (o) { return Math.hypot(o.x - h.x, o.y - h.y) < 2 && o.uid < S.uid(); })[0];
         if (clash) {
@@ -7888,7 +7946,7 @@ Medieval.Game = (function (D, E, M, WV, S, F, HA) {
         return;
       }
       if (ui.lastNav && t - ui.lastNav < 400) { var h2 = E.homeOf(state); setView("world"); WV.centerOn(h2.x, h2.y); ui.lastNav = 0; return; }
-      ui.lastNav = t; setView("world");
+      ui.lastNav = t; setView("world"); var hh = E.homeOf(state); WV.centerOn(hh.x, hh.y);   // en revenant de la ville : centré sur votre bastion
     },
     "goto-march": function (arg) { var m = E.findMarch(state, arg); if (!m) return; setView("world"); WV.centerOn(m.tx, m.ty); openPanel("tile", { x: m.tx, y: m.ty }); },
     recall: function (arg) { result(E.recall(state, arg, now()), icon("march") + "<span>The march is turning back.</span>"); },
